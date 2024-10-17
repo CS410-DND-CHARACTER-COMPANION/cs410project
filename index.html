@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="canvas"></canvas>
+</canvas>
+<script>
+var canvas = document.getElementById("canvas"),
+ctx = canvas.getContext("2d");
+
+canvas.width = 1758;
+canvas.height = 4456;
+
+
+var background = new Image();
+background.src = "DnD_2024_Character_Sheet_Pg1.png"
+
+
+background.onload = function(){
+    ctx.drawImage(background,0,0);
+    ctx.font = "25px Arial";
+    ctx.fillStyle = "black"; // Set text color
+    ctx.fillText("ReEternity", 130, 100);
+}
+
+</script>
+</body>
+</html>
