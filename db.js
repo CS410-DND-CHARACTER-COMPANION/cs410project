@@ -1,3 +1,6 @@
+// Currently when you run "node db.js" it simply connects to the database
+// and prints a list of the databases in the cluster.
+
 const {MongoClient} = require('mongodb');
 
 async function main(){
