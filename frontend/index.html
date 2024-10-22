@@ -7,7 +7,7 @@
     </head>
     <body>
         <h1>DnD Character Sheet</h1>
-        <p>A simple interactive DnD Character Sheet.</p>
+        <p>A simple interactive DnD character sheet.</p>
 
         <!-- Connect to the BackEnd file (?) -->
         <script type="text/javascript" src="../Mains.js"></script>
@@ -16,6 +16,25 @@
         <form>
             <input id="TextBoxA" placeholder="Type something" type="text"> <!--Text Box-->
             <!--Link for more info on types of "input" user can make: https://www.w3schools.com/tags/tag_input.asp-->
+            <br/> <!--new line-->
+            <input id="Name" placeholder="Enter your name" type="text"> <!--Text Box-->
+            <br/>
+            <label for="Classes">Choose a class:</label>
+            <select name="Classes" id="Classes"> <!--Drop Box-->
+                <option value="Artificer">Artificer</option>
+                <option value="Barbarian">Barbarian</option>
+                <option value="Bard">Bard</option>
+                <option value="Cleric">Cleric</option>
+                <option value="Druid">Druid</option>
+                <option value="Fighter">Fighter</option>
+                <option value="Monk">Monk</option>
+                <option value="Paladin">Paladin</option>
+                <option value="Ranger">Ranger</option>
+                <option value="Rogue">Rogue</option>
+                <option value="Sorcerer">Sorcerer</option>
+                <option value="Warlock">Warlock</option>
+                <option value="Wizard">Wizard</option>
+            </select>
         </form>
     </body>
 </html>
