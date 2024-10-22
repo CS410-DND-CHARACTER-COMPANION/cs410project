@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Project Team 3 D&D</title>
+    <style>
+        /* Styles for the body and text elements */
+        body {
+            font-family: 'Arial', sans-serif; /* Font style for the page */
+            background-color: #f2f2f2; /* Light gray background */
+            color: #333; /* Dark gray text color */
+            padding: 20px; /* Space inside the body */
+            margin: 0; /* Remove default margin */
+        }
+        h1 {
+            text-align: center; /* Center-align the title */
+            font-size: 2.5em; /* Title font size */
+            font-weight: bold; /* Bold title text */
+            border-bottom: 2px solid black; /* Underline the title */
+        }
+
+        /* Styles for character sections */
+        .character-section {
+            margin-bottom: 20px; /* Space below each section */
+            padding: 10px; /* Space inside each section */
+            border: 2px solid black; /* Border around sections */
+            background-color: #fff; /* White background for sections */
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+        }
+        .section-title {
+            font-size: 1.5em; /* Title font size for sections */
+            margin-bottom: 10px; /* Space below section titles */
+        }
+        .attribute {
+            display: inline-block; /* Display attributes inline */
+            margin-right: 20px; /* Space between attributes */
+            font-size: 1.2em; /* Font size for attributes */
+        }
+        .value {
+            font-weight: bold; /* Bold font for values */
+            margin-left: 5px; /* Space between attribute name and value */
+        }
+        .bordered {
+            border: 2px solid black; /* Border around the bordered sections */
+            padding: 5px; /* Space inside bordered sections */
+            box-shadow: 5px 5px 0 black, -5px -5px 0 black; /* 3D shadow effect */
+        }
+    </style>
+</head>
+<body>
+    <h1>Long Project Team 3 D&D</h1>
+
+    <!-- Character information -->
+    <div class="character-section bordered">
+        <div class="section-title">Information</div>
+        <div class="attribute">Name: <span class="value" id="charName">Bob</span></div> <!-- Name -->
+        <div class="attribute">Class: <span class="value">Farmer</span></div> <!-- Class -->
+        <div class="attribute">Level: <span class="value">9</span></div> <!-- Level -->
+    </div>
+
+    <!-- Character stats -->
+    <div class="character-section bordered">
+        <div class="section-title">Stats</div>
+        <div class="attribute">Armor Class (AC): <span class="value">10</span></div> <!-- Armor class -->
+        <div class="attribute">Hit Points (HP): <span class="value">21</span></div> <!-- Hit points -->
+        <div class="attribute">Proficiency Bonus: <span class="value">+3</span></div> <!-- Proficiency bonus -->
+    </div>
+    
+    <!-- Character abilities -->
+    <div class="character-section bordered">
+        <div class="section-title">Abilities</div>
+        <div class="attribute">Strength: <span class="value">14</span></div> <!-- Strength -->
+        <div class="attribute">Dexterity: <span class="value">5</span></div> <!-- Dexterity -->
+        <div class="attribute">Constitution: <span class="value">11</span></div> <!-- Constitution -->
+        <div class="attribute">Intelligence: <span class="value">7</span></div> <!-- Intelligence -->
+        <div class="attribute">Wisdom: <span class="value">0</span></div> <!-- Wisdom -->
+        <div class="attribute">Charisma: <span class="value">2</span></div> <!-- Charisma -->
+    </div>
+
+    <!-- Character equipment -->
+    <div class="character-section bordered">
+        <div class="section-title">Equipment</div>
+        <div class="attribute">Weapon: <span class="value">Rake</span></div> <!-- Weapon -->
+        <div class="attribute">Armor: <span class="value">Tattered Shirt</span></div> <!-- Armor -->
+    </div>
+
+    <!-- Connect to the BackEnd file (?) -->
+    <script type="text/javascript" src="../Mains.js"></script>
+    <!-- WIP -->
+
+</body>
+</html>
