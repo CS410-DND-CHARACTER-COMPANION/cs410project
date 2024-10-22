@@ -14,12 +14,14 @@
         <!-- WIP -->
 
         <form>
+            <label for="TextBox">Example:</label><!--Depend if you want something in front of the text box-->
             <input id="TextBoxA" placeholder="Type something" type="text"> <!--Text Box-->
             <!--Link for more info on types of "input" user can make: https://www.w3schools.com/tags/tag_input.asp-->
             <br/> <!--new line-->
+            <label for="NameText">Name:</label>
             <input id="Name" placeholder="Enter your name" type="text"> <!--Text Box-->
             <br/>
-            <label for="Classes">Choose a class:</label>
+            <label for="Class">Choose a class:</label>
             <select name="Classes" id="Classes"> <!--Drop Box-->
                 <option value="Artificer">Artificer</option>
                 <option value="Barbarian">Barbarian</option>
@@ -35,6 +37,10 @@
                 <option value="Warlock">Warlock</option>
                 <option value="Wizard">Wizard</option>
             </select>
+            <br/>
+            <label for="bg">Background:</label>
+            <input id="Background" placeholder="Enter your background" type="text"> <!--Text Box-->
+            <br/>
         </form>
     </body>
 </html>
