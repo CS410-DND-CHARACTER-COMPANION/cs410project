@@ -20,12 +20,14 @@ const { MongoClient } = require("mongodb");
 
 // Database connection
 const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-const client = new MongoClient(uri);
 
 // Express app and HTTP server setup
 const app = express();
 const server = http.createServer(app);  // Create HTTP server
 const io = new Server(server);          // Attach socket.io to the server
+
+// Serve static files from the 'frontend' directory
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Port setup
 const port = 3000;
@@ -39,10 +41,27 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log("A user connected:", socket.id);
 
+  // get a list of all characters
+  socket.on('getAllCharacters', async () => {
+    const client = new MongoClient(uri);
+    try {
+      await client.connect();
+
+      const characters = await client.db("dnd_screen").collection("character_sheets").find().toArray();
+
+      // emit "charactersList" event
+      socket.emit('charactersList', characters);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await client.close();
+    }
+  });
+
   // real-time event: new character created
   socket.on('newCharacter', async (character) => {
     console.log('New character received:', character);
-
+    const client = new MongoClient(uri);
     try {
       await client.connect();
       // Insert the new character into the database
@@ -60,6 +79,7 @@ io.on('connection', (socket) => {
 
   // real-time event: character sheet updated
   socket.on('updateCharacter', async (updatedCharacter) => {
+    const client = new MongoClient(uri);
     try {
       await client.connect();
       const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
