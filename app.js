@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
 });
 
-// Get all characters
+/* Get all characters
 app.get('/api/characters', async (req, res) => {
   const client = new MongoClient(uri);
   try {
@@ -46,7 +46,8 @@ app.get('/api/characters', async (req, res) => {
   } finally {
     await client.close();
   }
-});
+}); 
+*/
 
 // Start listening on port
 server.listen(port, () => {
@@ -57,18 +58,27 @@ server.listen(port, () => {
 io.on('connection', (socket) => {
   console.log("A user connected:", socket.id);
 
-  // TODO 
   // real-time event: new character created
+  socket.on('newCharacter', async (character) => {
+    // TODO
+  });
 
-  // TODO
   // real-time event: character sheet updated
+  socket.on('updateCharacter', async (updatedCharacter) => {
+    // TODO
+  });
+
+  // real-time event: new character added
+  socket.on('addedCharacter', async (character) => {
+    // TODO
+  });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
 
-// Route to create a new character
+/* Route to create a new character
 app.post('/api/characters', async (req, res) => {
   const newCharacter = req.body;  // Expect new character data in request body
 
@@ -84,6 +94,7 @@ app.post('/api/characters', async (req, res) => {
     await client.close();
   }
 });
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Terminate the process BEFORE closing the IDE (The server will stays on if not)
