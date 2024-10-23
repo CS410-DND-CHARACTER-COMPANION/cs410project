@@ -1,4 +1,4 @@
-// connects to database and creates a character and inserts it into the collection
+// test file to test database connection 
 
 const {MongoClient} = require('mongodb');
 
