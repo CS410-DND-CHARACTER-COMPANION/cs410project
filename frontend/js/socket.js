@@ -1,5 +1,3 @@
-// Script to handle form submission
-
 // connect to socket.io server
 const socket = io();
 
@@ -24,5 +22,13 @@ form.addEventListener('submit', function(event) {
 });
 
 // Listen for updates when new character is added
+socket.on('characterAdded', function(character) {
+  console.log('New character added:', character);
+  // TODO: append character to DM's list of characters
+});
 
 // Listen for updates when a character is updated
+socket.on('characterUpdated', function(character) {
+  console.log('Character updated:', character);
+  // TODO: update list of characters/displayed sheet
+});

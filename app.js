@@ -18,12 +18,14 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { MongoClient } = require("mongodb");
 
+// Database connection
 const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const client = new MongoClient(uri);
 
 // Express app and HTTP server setup
 const app = express();
 const server = http.createServer(app);  // Create HTTP server
-const io = new Server(server);            // Attach socket.io to the server
+const io = new Server(server);          // Attach socket.io to the server
 
 // Port setup
 const port = 3000;
@@ -33,44 +35,47 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
 });
 
-/* Get all characters
-app.get('/api/characters', async (req, res) => {
-  const client = new MongoClient(uri);
-  try {
-    await client.connect();
-    const characters = await client.db("dnd_screen").collection("character_sheets").find().toArray();
-    res.status(200).json(characters);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch characters" });
-  } finally {
-    await client.close();
-  }
-}); 
-*/
-
-// Start listening on port
-server.listen(port, () => {
-  console.log("DnD app listening on port " + port)
-});
-
 // socket.io connection
 io.on('connection', (socket) => {
   console.log("A user connected:", socket.id);
 
   // real-time event: new character created
   socket.on('newCharacter', async (character) => {
-    // TODO
+    console.log('New character received:', character);
+
+    try {
+      await client.connect();
+      // Insert the new character into the database
+      const result = await client.db("dnd_screen").collection("character_sheets").insertOne(character);
+      console.log(`New character created with the following id: ${result.insertedId}`);
+
+      // Broadcast the 'characterAdded' event to all connected clients
+      io.emit('characterAdded', character);
+    } catch (e) {
+        console.error(e);
+    } finally {
+      await client.close();
+    }
   });
 
   // real-time event: character sheet updated
   socket.on('updateCharacter', async (updatedCharacter) => {
-    // TODO
-  });
+    try {
+      await client.connect();
+      const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
+        { _id: updatedCharacter._id }, 
+        { $set: updatedCharacter }
+      );
 
-  // real-time event: new character added
-  socket.on('addedCharacter', async (character) => {
-    // TODO
+      console.log('Character updated: ${updatedCharacter.name}');
+      
+      // Broadcast the 'characterUpdated' event to all connected clients
+      io.emit('characterUpdated', updatedCharacter);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await client.close();
+    }
   });
 
   socket.on("disconnect", () => {
@@ -78,23 +83,10 @@ io.on('connection', (socket) => {
   });
 });
 
-/* Route to create a new character
-app.post('/api/characters', async (req, res) => {
-  const newCharacter = req.body;  // Expect new character data in request body
-
-  const client = new MongoClient(uri);
-  try {
-    await client.connect();
-    const result = await client.db("dnd_screen").collection("character_sheets").insertOne(newCharacter);
-    res.status(201).json({ message: "Character created", characterId: result.insertedId });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create character" });
-  } finally {
-    await client.close();
-  }
+// Start listening on port
+server.listen(port, () => {
+  console.log("DnD app listening on port " + port)
 });
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Terminate the process BEFORE closing the IDE (The server will stays on if not)
