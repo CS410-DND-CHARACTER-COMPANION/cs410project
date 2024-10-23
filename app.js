@@ -28,24 +28,40 @@ const io = new Server(server);            // Attach socket.io to the server
 // Port setup
 const port = 3000;
 
-// Middleware to parse JSON bodies
-app.use(express.json()); 
+// Connect to frontend
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
+});
 
-// Port things
+// Get all characters
+app.get('/api/characters', async (req, res) => {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const characters = await client.db("dnd_screen").collection("character_sheets").find().toArray();
+    res.status(200).json(characters);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch characters" });
+  } finally {
+    await client.close();
+  }
+});
+
+// Start listening on port
 server.listen(port, () => {
   console.log("DnD app listening on port " + port)
 });
 
-// The "main" function when User gets in the address
-app.get('/', (req, res) => {
-  // Connect to frontend file
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
-});
-
+// socket.io connection
 io.on('connection', (socket) => {
   console.log("A user connected:", socket.id);
 
-  // Handle real-time events like character updates here
+  // TODO 
+  // real-time event: new character created
+
+  // TODO
+  // real-time event: character sheet updated
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
