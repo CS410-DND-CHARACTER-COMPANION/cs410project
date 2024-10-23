@@ -34,7 +34,7 @@ form.addEventListener('submit', function(event) {
   socket.emit('newCharacter', character);
 
   // Clear form after submission
-  form.reset();
+  document.getElementById('characterForm').reset();
 });
 
 // Listen for updates when new character is added
