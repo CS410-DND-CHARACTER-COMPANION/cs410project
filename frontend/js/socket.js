@@ -14,6 +14,22 @@ socket.on('charactersList', (characters) => {
     const characterItem = document.createElement('li');
     characterItem.textContent = `${character.name} - ${character.class} - ${character.species}`;
     characterList.appendChild(characterItem);
+
+    // Templates for Stats/Attributes
+    const HitPoint = document.createElement("div");
+      const HitPointText = document.createElement("label");
+      HitPointText.textContent = "HitPoint: "
+      HitPoint.appendChild(HitPointText);
+      const HitPointInput = document.createElement("input");
+      // Going to loop this or something
+      HitPoint.setAttribute('type', 'text');
+      HitPoint.setAttribute('maxlength', '4');
+      HitPoint.setAttribute('size', '4');
+      HitPoint.setAttribute('id', 'HPInput');
+      HitPoint.appendChild(HitPointInput);
+
+    characterList.appendChild(HitPoint);
+    //characterItem.appendChild(document.getElementById('HitPoint'));
   });
 });
 
