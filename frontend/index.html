@@ -239,103 +239,106 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>D&D Character Sheet V3.0</h1>
 
-        <section class="character-info">
-            <h2>Character Information</h2>
-            <label for="name">Name:</label>
-            <input type="text" id="name" placeholder="Enter character name">
-            
-            <label for="background">Background:</label>
-            <input type="text" id="background" placeholder="Enter character background">
-            
-            <label for="species">Species:</label>
-            <select id="species" class="custom-select">
-                <option value="">Select species</option>
-                <option value="Human">Human</option>
-                <option value="Elf">Elf</option>
-                <option value="Dwarf">Dwarf</option>
-                <option value="Halfling">Halfling</option>
-                <option value="Dragonborn">Dragonborn</option>
-                <option value="Tiefling">Tiefling</option>
-                <option value="Gnome">Gnome</option>
-                <option value="Half-Elf">Half-Elf</option>
-                <option value="Half-Orc">Half-Orc</option>
-                <option value="Orc">Orc</option>
-                <option value="Aasimar">Aasimar</option>
-                <option value="Genasi">Genasi</option>
-                <option value="Firbolg">Firbolg</option>
-                <option value="Goliath">Goliath</option>
-                <option value="Tabaxi">Tabaxi</option>
-                <option value="Triton">Triton</option>
-                <option value="Yuan-ti Pureblood">Yuan-ti Pureblood</option>
-                <option value="Kenku">Kenku</option>
-                <option value="Changeling">Changeling</option>
-                <option value="Warforged">Warforged</option>
-                <option value="Hobgoblin">Hobgoblin</option>
-                <option value="Bugbear">Bugbear</option>
-                <option value="Goblin">Goblin</option>
-                <option value="Kobold">Kobold</option>
-                <option value="Revenant">Revenant</option>
-                <option value="Fey'ri">Fey'ri</option>
-                <option value="Merfolk">Merfolk</option>
-                <option value="Sahuagin">Sahuagin</option>
-                <option value="Aarakocra">Aarakocra</option>
-                <option value="Lizardfolk">Lizardfolk</option>
-            </select>
-            
-            <label for="class">Class:</label>
-            <input type="text" id="class" placeholder="Enter character class">
-            
-            <label for="subclass">Subclass:</label>
-            <input type="text" id="subclass" placeholder="Enter character subclass">
-            
-            <label for="level">Level:</label>
-            <input type="number" id="level" placeholder="Enter character level">
-            
-            <label for="xp">Experience Points (XP):</label>
-            <input type="number" id="xp" placeholder="Enter character XP">
-        </section>
+        <form id = "characterForm">
+            <section class="character-info">
+                <h2>Character Information</h2>
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Enter character name">
+                
+                <label for="background">Background:</label>
+                <input type="text" id="background" placeholder="Enter character background">
+                
+                <label for="species">Species:</label>
+                <select id="species" class="custom-select">
+                    <option value="">Select species</option>
+                    <option value="Human">Human</option>
+                    <option value="Elf">Elf</option>
+                    <option value="Dwarf">Dwarf</option>
+                    <option value="Halfling">Halfling</option>
+                    <option value="Dragonborn">Dragonborn</option>
+                    <option value="Tiefling">Tiefling</option>
+                    <option value="Gnome">Gnome</option>
+                    <option value="Half-Elf">Half-Elf</option>
+                    <option value="Half-Orc">Half-Orc</option>
+                    <option value="Orc">Orc</option>
+                    <option value="Aasimar">Aasimar</option>
+                    <option value="Genasi">Genasi</option>
+                    <option value="Firbolg">Firbolg</option>
+                    <option value="Goliath">Goliath</option>
+                    <option value="Tabaxi">Tabaxi</option>
+                    <option value="Triton">Triton</option>
+                    <option value="Yuan-ti Pureblood">Yuan-ti Pureblood</option>
+                    <option value="Kenku">Kenku</option>
+                    <option value="Changeling">Changeling</option>
+                    <option value="Warforged">Warforged</option>
+                    <option value="Hobgoblin">Hobgoblin</option>
+                    <option value="Bugbear">Bugbear</option>
+                    <option value="Goblin">Goblin</option>
+                    <option value="Kobold">Kobold</option>
+                    <option value="Revenant">Revenant</option>
+                    <option value="Fey'ri">Fey'ri</option>
+                    <option value="Merfolk">Merfolk</option>
+                    <option value="Sahuagin">Sahuagin</option>
+                    <option value="Aarakocra">Aarakocra</option>
+                    <option value="Lizardfolk">Lizardfolk</option>
+                </select>
+                
+                <label for="class">Class:</label>
+                <input type="text" id="class" placeholder="Enter character class">
+                
+                <label for="subclass">Subclass:</label>
+                <input type="text" id="subclass" placeholder="Enter character subclass">
+                
+                <label for="level">Level:</label>
+                <input type="number" id="level" placeholder="Enter character level">
+                
+                <label for="xp">Experience Points (XP):</label>
+                <input type="number" id="xp" placeholder="Enter character XP">
+            </section>
 
-        <section class="combat-details">
-            <h2>Combat Details</h2>
-            <label for="ac">Armor Class (AC):</label>
-            <input type="number" id="ac" placeholder="Enter AC">
-            
-            <label for="shield">Shield Bonus:</label>
-            <input type="number" id="shield" placeholder="Enter shield bonus">
-            
-            <label for="current-hp">Current HP:</label>
-            <input type="number" id="current-hp" placeholder="Enter current HP">
-            
-            <label for="max-hp">Maximum HP:</label>
-            <input type="number" id="max-hp" placeholder="Enter max HP">
-            
-            <label for="inspiration">Heroic Inspiration:</label>
-            <input type="checkbox" id="inspiration">
-        </section>
+            <section class="combat-details">
+                <h2>Combat Details</h2>
+                <label for="ac">Armor Class (AC):</label>
+                <input type="number" id="ac" placeholder="Enter AC">
+                
+                <label for="shield">Shield Bonus:</label>
+                <input type="number" id="shield" placeholder="Enter shield bonus">
+                
+                <label for="currentHP">Current HP:</label>
+                <input type="number" id="currentHP" placeholder="Enter current HP">
+                
+                <label for="maxHP">Maximum HP:</label>
+                <input type="number" id="maxHP" placeholder="Enter max HP">
+                
+                <label for="inspiration">Heroic Inspiration:</label>
+                <input type="checkbox" id="inspiration">
+            </section>
 
-        <section class="reference-details">
-            <h2>Reference Details</h2>
-            <label for="initiative">Initiative:</label>
-            <input type="number" id="initiative" placeholder="Enter initiative">
-            
-            <label for="speed">Speed:</label>
-            <input type="number" id="speed" placeholder="Enter speed">
-        </section>
+            <section class="reference-details">
+                <h2>Reference Details</h2>
+                <label for="initiative">Initiative:</label>
+                <input type="number" id="initiative" placeholder="Enter initiative">
+                
+                <label for="speed">Speed:</label>
+                <input type="number" id="speed" placeholder="Enter speed">
+            </section>
 
-        <section class="inventory">
-            <h2>Inventory</h2>
-            <label for="inventory-item">New Item:</label>
-            <input type="text" id="inventory-item" placeholder="Enter item name">
-            <button class="add-item-btn" onclick="addInventoryItem()">Add Item</button>
+            <section class="inventory">
+                <h2>Inventory</h2>
+                <label for="inventory-item">New Item:</label>
+                <input type="text" id="inventory-item" placeholder="Enter item name">
+                <button class="add-item-btn" onclick="addInventoryItem()">Add Item</button>
 
-            <div id="inventory"></div>
-        </section>
+                <div id="inventory"></div>
+            </section>
 
-        <button class="save-btn" onclick="saveCharacter()">Save Character</button>
+            <button class="submit" onclick="saveCharacter()">Save Character</button>
+        </form>
     </div>
 
     <script>
@@ -425,5 +428,10 @@
             }
         });
     </script>
+
+    <!-- socket.io integration -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socket.js"></script>
+
 </body>
 </html>

@@ -40,10 +40,19 @@ form.addEventListener('submit', function(event) {
   
   // Character object
   const character = {
-    name: document.getElementById('Name').value,
-    background:document.getElementById('Background').value,
-    species: document.getElementById('Species').value,
-    class: document.getElementById('Classes').value
+    name: document.getElementById('name').value,
+    background:document.getElementById('background').value,
+    species: document.getElementById('species').value,
+    class: document.getElementById('class').value,
+    subclass: document.getElementById('subclass').value,
+    level: document.getElementById('level').value,
+    xp: document.getElementById('xp').value,
+    ac: document.getElementById('ac').value,
+    shield: document.getElementById('shield').value,
+    currentHP: document.getElementById('currentHP').value,
+    maxHP: document.getElementById('maxHP').value,
+    initiative: document.getElementById('initiative').value,
+    speed: document.getElementById('speed').value
   };
 
   // emit newCharacter event with character data
