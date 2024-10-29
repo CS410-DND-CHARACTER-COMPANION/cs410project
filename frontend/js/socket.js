@@ -39,9 +39,9 @@ form.addEventListener('submit', function(event) {
   event.preventDefault();
   
   // Character object
-  const character = {
+  const characterData = {
     name: document.getElementById('name').value,
-    background:document.getElementById('background').value,
+    background: document.getElementById('background').value,
     species: document.getElementById('species').value,
     class: document.getElementById('class').value,
     subclass: document.getElementById('subclass').value,
@@ -51,9 +51,10 @@ form.addEventListener('submit', function(event) {
     shield: document.getElementById('shield').value,
     currentHP: document.getElementById('currentHP').value,
     maxHP: document.getElementById('maxHP').value,
-    initiative: document.getElementById('initiative').value,
-    speed: document.getElementById('speed').value
-  };
+    inspiration: document.getElementById('inspiration').checked,
+    speed: document.getElementById('speed').value,
+    inventory: inventory
+};
 
   // emit newCharacter event with character data
   socket.emit('newCharacter', character);
