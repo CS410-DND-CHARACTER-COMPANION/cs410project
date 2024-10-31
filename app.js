@@ -1,7 +1,7 @@
 /*
 CS410
 ******* Everyone put your name please *******
-Team 3: Nicole Strounine, 
+Team 3: Nicole Strounine, Kam Lun Cheung
 
 DND Character Sheet Webapp
 
