@@ -338,6 +338,7 @@
             </section>
 
             <button class="submit" onclick="saveCharacter()">Save Character</button>
+            <button id="characterInfo" class="submit" onclick="redirect()">Show Character Info</button>
         </form>
     </div>
 
@@ -427,6 +428,12 @@
                 addInventoryItem();
             }
         });
+
+        document.getElementById("characterInfo").onclick = function(){
+            location.href = "https://cs.umb.edu/cs410/longprojects/3-Zac/cs410project/frontend/displayCharacter.html"; 
+            //change to a different url if needed
+        };
+
     </script>
 
     <!-- socket.io integration -->
