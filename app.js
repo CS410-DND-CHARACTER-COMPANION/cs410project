@@ -16,7 +16,7 @@ const express = require("express");
 const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 // Database connection
 const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 });
 
 // socket.io connection
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   console.log("A user connected:", socket.id);
 
   // get a list of all characters
@@ -52,7 +52,8 @@ io.on('connection', (socket) => {
       // emit "charactersList" event
       socket.emit('charactersList', characters);
     } catch (e) {
-      console.error(e);
+      console.error("Error getting characters:", e);
+      socket.emit('error', 'Failed to retrieve characters');
     } finally {
       await client.close();
     }
@@ -67,11 +68,13 @@ io.on('connection', (socket) => {
       // Insert the new character into the database
       const result = await client.db("dnd_screen").collection("character_sheets").insertOne(character);
       console.log(`New character created with the following id: ${result.insertedId}`);
+      character._id = result.insertedId;
 
       // Broadcast the 'characterAdded' event to all connected clients
       io.emit('characterAdded', character);
     } catch (e) {
-        console.error(e);
+        console.error("Error creating character:", e);
+        socket.emit('error', 'Failed to create character');
     } finally {
       await client.close();
     }
@@ -106,6 +109,15 @@ io.on('connection', (socket) => {
 // Start listening on port
 server.listen(port, () => {
   console.log("DnD app listening on port " + port)
+});
+
+// Handle graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\nGracefully shutting down...');
+  server.close(() => {
+      console.log('Server closed');
+      process.exit(0);
+  });
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

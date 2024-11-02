@@ -1,38 +1,71 @@
 // connect to socket.io server
 const socket = io();
 
+// Global array for inventory (if needed later)
+let inventory = [];
+
 // Request all characters when the page loads
 socket.emit('getAllCharacters');
 
 // Listen for the 'charactersList' event and handle the received data
 socket.on('charactersList', (characters) => {
   console.log('All characters:', characters);
-  // Update the DOM with the list of characters
+  
+  // Clear and update the DOM with the list of characters
+  const characterList = document.getElementById('characterList');
+  characterList.innerHTML = ''; // Clear existing list
+  
   characters.forEach(character => {
-    // For example, append each character to a list on the page
-    const characterList = document.getElementById('characterList');
-    const characterItem = document.createElement('li');
-    characterItem.textContent = `${character.name} - ${character.class} - ${character.species}`;
-    characterList.appendChild(characterItem);
-
-    // Templates for Stats/Attributes
-    const HitPoint = document.createElement("div");
-      const HitPointText = document.createElement("label");
-      HitPointText.textContent = "HitPoint: "
-      HitPoint.appendChild(HitPointText);
-      const HitPointInput = document.createElement("input");
-      // Going to loop this or something
-      HitPoint.setAttribute('type', 'text');
-      HitPoint.setAttribute('maxlength', '4');
-      HitPoint.setAttribute('size', '4');
-      HitPoint.setAttribute('id', 'HPInput');
-      HitPoint.appendChild(HitPointInput);
-
-    characterList.appendChild(HitPoint);
-    //characterItem.appendChild(document.getElementById('HitPoint'));
+      // Create list item for each character
+      const characterItem = document.createElement('li');
+      characterItem.innerHTML = `
+          <strong>${character.name}</strong> - Level ${character.level} ${character.species} ${character.class}
+          <div>HP: ${character.currentHP}/${character.maxHP}</div>
+      `;
+      characterList.appendChild(characterItem);
   });
 });
 
+// Handle form submission
+document.addEventListener('DOMContentLoaded', () => {
+  const characterForm = document.getElementById('characterForm');
+  
+  if (characterForm) {
+      characterForm.addEventListener('submit', function(event) {
+          event.preventDefault();
+          
+          // Collect form data
+          const characterData = {
+              name: document.getElementById('name').value,
+              background: document.getElementById('background').value,
+              species: document.getElementById('species').value,
+              class: document.getElementById('class').value,
+              subclass: document.getElementById('subclass').value,
+              level: parseInt(document.getElementById('level').value) || 1,
+              xp: parseInt(document.getElementById('xp').value) || 0,
+              ac: parseInt(document.getElementById('ac').value) || 10,
+              shield: parseInt(document.getElementById('shield').value) || 0,
+              currentHP: parseInt(document.getElementById('currentHP').value),
+              maxHP: parseInt(document.getElementById('maxHP').value),
+              inspiration: document.getElementById('inspiration').checked,
+              initiative: parseInt(document.getElementById('initiative').value) || 0,
+              speed: parseInt(document.getElementById('speed').value) || 30,
+              inventory: inventory // Using global inventory array
+          };
+
+          // Emit the new character data to the server
+          socket.emit('newCharacter', characterData);
+          
+          // Reset form
+          characterForm.reset();
+          
+          // Show success message
+          alert('Character created successfully!');
+      });
+  }
+});
+
+/* Old Version
 var form = document.getElementById('characterForm');
 
 form.addEventListener('submit', function(event) {
@@ -62,19 +95,20 @@ form.addEventListener('submit', function(event) {
   // Clear form after submission
   document.getElementById('characterForm').reset();
 });
+*/
 
 // Listen for updates when new character is added
 socket.on('characterAdded', function(character) {
   console.log('New character added:', character);
-  // Append the new character to the DOM
-  const characterList = document.getElementById('characterList');
-  const characterItem = document.createElement('li');
-  characterItem.textContent = `${character.name} - ${character.class} - ${character.species}`;
-  characterList.appendChild(characterItem);
+
+  // Refresh the character list
+  socket.emit('getAllCharacters');
 });
 
 // Listen for updates when a character is updated
 socket.on('characterUpdated', function(character) {
   console.log('Character updated:', character);
   // TODO: update list of characters/displayed sheet
+  // Refresh the character list
+  socket.emit('getAllCharacters');
 });
