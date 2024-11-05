@@ -5,239 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>D&D Character Sheet V3.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Roboto+Slab:wght@300;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto Slab', serif;
-            color: #f5f5dc;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background: url('dnd_test.jpg') center center fixed;
-            background-size: cover;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.2);
-            z-index: 1;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 850px;
-            margin: 30px auto;
-            padding: 30px;
-            border-radius: 15px;
-            background: rgba(40, 40, 40, 0.6);
-            border: 2px solid rgba(175, 175, 135, 0.6);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
-            font-family: 'Uncial Antiqua', cursive;
-            color: #e0cda9;
-            position: relative;
-            z-index: 2;
-            backdrop-filter: blur(3px);
-        }
-
-        h1 {
-            font-size: 3em;
-            text-align: center;
-            color: #f0d78c;
-            text-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 5px rgba(255, 223, 127, 0.8);
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            font-size: 1.8em;
-            color: #f0d78c;
-            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8), 0 0 3px rgba(230, 194, 122, 0.6);
-            border-bottom: 1px solid rgba(230, 194, 122, 0.4);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-        }
-
-        section {
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(59, 41, 33, 0.4);
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(230, 194, 122, 0.3);
-            backdrop-filter: blur(2px);
-        }
-
-        .character-info, .combat-details, .reference-details, .inventory {
-            background: rgba(95, 60, 20, 0.45);
-            transition: background-color 0.3s ease;
-        }
-
-        section:hover {
-            background: rgba(95, 60, 20, 0.55);
-        }
-
-        label {
-            font-weight: bold;
-            color: #f4e5c1;
-            margin: 10px 0 5px;
-            font-size: 1.1em;
-            text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-            display: block;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="file"] {
-            width: calc(100% - 20px);
-            padding: 12px;
-            border: 1px solid rgba(191, 182, 139, 0.6);
-            border-radius: 8px;
-            background-color: rgba(255, 255, 255, 0.8);
-            color: #4a3b26;
-            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 15px;
-            transition: all 0.2s ease;
-        }
-
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin: 10px 0;
-        }
-
-        input[type="text"]:hover,
-        input[type="number"]:hover {
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 12px rgba(230, 194, 122, 0.6);
-            transform: scale(1.02);
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #f0d78c;
-            box-shadow: 0 0 15px rgba(230, 194, 122, 0.8);
-        }
-
-        .inventory-item {
-            margin-top: 10px;
-            padding: 12px;
-            background-color: rgba(209, 144, 55, 0.6);
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            font-size: 1.1em;
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(2px);
-        }
-
-        .add-item-btn, .delete-item-btn, .save-btn {
-            font-family: 'Uncial Antiqua', cursive;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 1em;
-            border: 1px solid rgba(191, 182, 139, 0.6);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-top: 8px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-        }
-
-        .add-item-btn {
-            background-color: rgba(96, 179, 71, 0.7);
-            color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .add-item-btn:hover {
-            background-color: rgba(124, 204, 91, 0.85);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-            transform: scale(1.05);
-        }
-
-        .delete-item-btn {
-            background-color: rgba(232, 65, 24, 0.7);
-            color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .delete-item-btn:hover {
-            background-color: rgba(231, 76, 60, 0.85);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-            transform: scale(1.05);
-        }
-
-        .save-btn {
-            background-color: rgba(52, 152, 219, 0.7);
-            color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            margin: 20px auto;
-            display: block;
-            width: 200px;
-        }
-
-        .save-btn:hover {
-            background-color: rgba(41, 128, 185, 0.85);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-            transform: scale(1.05);
-        }
-
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(230, 194, 122, 0.6);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(230, 194, 122, 0.8);
-        }
-
-        .custom-select {
-            width: calc(100% - 20px);
-            padding: 12px;
-            border: 1px solid rgba(191, 182, 139, 0.6);
-            border-radius: 8px;
-            background-color: rgba(255, 255, 255, 0.8);
-            color: #4a3b26;
-            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 15px;
-            transition: all 0.2s ease;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 1.5em;
-        }
-
-        .custom-select:hover {
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 12px rgba(230, 194, 122, 0.6);
-            transform: scale(1.02);
-        }
-
-        .custom-select:focus {
-            outline: none;
-            border-color: #f0d78c;
-            box-shadow: 0 0 15px rgba(230, 194, 122, 0.8);
-        }
-    </style>
+    <!-- Create separate CSS style sheet to keep code clean -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -248,13 +17,13 @@
             <section class="character-info">
                 <h2>Character Information</h2>
                 <label for="name">Name:</label>
-                <input type="text" id="name" placeholder="Enter character name">
+                <input type="text" id="name" placeholder="Enter character name" required>
                 
                 <label for="background">Background:</label>
                 <input type="text" id="background" placeholder="Enter character background">
                 
                 <label for="species">Species:</label>
-                <select id="species" class="custom-select">
+                <select id="species" class="custom-select" required>
                     <option value="">Select species</option>
                     <option value="Human">Human</option>
                     <option value="Elf">Elf</option>
@@ -289,31 +58,31 @@
                 </select>
                 
                 <label for="class">Class:</label>
-                <input type="text" id="class" placeholder="Enter character class">
+                <input type="text" id="class" placeholder="Enter character class" required>
                 
                 <label for="subclass">Subclass:</label>
                 <input type="text" id="subclass" placeholder="Enter character subclass">
                 
                 <label for="level">Level:</label>
-                <input type="number" id="level" placeholder="Enter character level">
+                <input type="number" id="level" placeholder="Enter character level" min="1" max="20" value="1">
                 
                 <label for="xp">Experience Points (XP):</label>
-                <input type="number" id="xp" placeholder="Enter character XP">
+                <input type="number" id="xp" placeholder="Enter character XP" min="0" value="0">
             </section>
 
             <section class="combat-details">
                 <h2>Combat Details</h2>
                 <label for="ac">Armor Class (AC):</label>
-                <input type="number" id="ac" placeholder="Enter AC">
+                <input type="number" id="ac" placeholder="Enter AC" min="0" value="10">
                 
                 <label for="shield">Shield Bonus:</label>
                 <input type="number" id="shield" placeholder="Enter shield bonus">
                 
                 <label for="currentHP">Current HP:</label>
-                <input type="number" id="currentHP" placeholder="Enter current HP">
+                <input type="number" id="currentHP" placeholder="Enter current HP" min="0" required>
                 
                 <label for="maxHP">Maximum HP:</label>
-                <input type="number" id="maxHP" placeholder="Enter max HP">
+                <input type="number" id="maxHP" placeholder="Enter max HP" min="1" required>
                 
                 <label for="inspiration">Heroic Inspiration:</label>
                 <input type="checkbox" id="inspiration">
@@ -322,12 +91,13 @@
             <section class="reference-details">
                 <h2>Reference Details</h2>
                 <label for="initiative">Initiative:</label>
-                <input type="number" id="initiative" placeholder="Enter initiative">
+                <input type="number" id="initiative" placeholder="Enter initiative" value="0">
                 
                 <label for="speed">Speed:</label>
-                <input type="number" id="speed" placeholder="Enter speed">
+                <input type="number" id="speed" placeholder="Enter speed" min="0" value="30">
             </section>
 
+            <!-- Had to comment out for now, will need to reintegrate
             <section class="inventory">
                 <h2>Inventory</h2>
                 <label for="inventory-item">New Item:</label>
@@ -336,12 +106,35 @@
 
                 <div id="inventory"></div>
             </section>
+            -->
 
-            <button class="submit" onclick="saveCharacter()">Save Character</button>
-            <button id="characterInfo" class="submit" onclick="redirect()">Show Character Info</button>
+            <button type="submit" class="save-btn">Create Character</button>
+            <button id="characterInfo" class="save-btn">Show Character Info</button>
         </form>
     </div>
 
+    <!-- List to display characters -->
+    <div class ="container">
+        <section class="character-List">
+            <h2>Current Characters</h2>
+            <ul id="characterList">
+                <!-- Characters will be dynamically added here -->
+            </ul>
+        </section>
+    </div>
+    
+    <!-- socket.io integration -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socket.js"></script>
+
+    <script>
+        document.getElementById('characterInfo').addEventListener('click', function() {
+            window.location.href = 'displayCharacter.html';
+            //replcae if url if found a way to host online instead of local host
+        });
+    </script>
+
+    <!-- Had to comment out to get the socket connection to work
     <script>
         let inventory = [];
 
@@ -435,10 +228,6 @@
         };
 
     </script>
-
-    <!-- socket.io integration -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/socket.js"></script>
-
+    -->
 </body>
 </html>
