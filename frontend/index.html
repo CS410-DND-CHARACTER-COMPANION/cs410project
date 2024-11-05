@@ -109,18 +109,11 @@
             -->
 
             <button type="submit" class="save-btn">Create Character</button>
-            <button id="characterInfo" class="save-btn">Show Character Info</button>
         </form>
-    </div>
 
-    <!-- List to display characters -->
-    <div class ="container">
-        <section class="character-List">
-            <h2>Current Characters</h2>
-            <ul id="characterList">
-                <!-- Characters will be dynamically added here -->
-            </ul>
-        </section>
+        <button id="characterInfo" class="save-btn">Show Character Info</button>
+        <!-- Button to see list of characters -->
+        <button id="listCharacters" class="save-btn">Character List</button>
     </div>
     
     <!-- socket.io integration -->
@@ -128,10 +121,15 @@
     <script src="/js/socket.js"></script>
 
     <script>
-        document.getElementById('characterInfo').addEventListener('click', function() {
+        // Clicking character info button redirects you to character sheet
+        document.getElementById('characterInfo').onlcick = function () {
             window.location.href = 'displayCharacter.html';
-            //replcae if url if found a way to host online instead of local host
-        });
+        };
+        
+        // Clicking character list button redirects you to the character list
+        document.getElementById("listCharacters").onclick = function () {
+            location.href = 'characterList.html';
+        };
     </script>
 
     <!-- Had to comment out to get the socket connection to work
