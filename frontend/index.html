@@ -111,6 +111,7 @@
             <button type="submit" class="save-btn">Create Character</button>
         </form>
 
+        <!-- Button to see character sheet -->
         <button id="characterInfo" class="save-btn">Show Character Info</button>
         <!-- Button to see list of characters -->
         <button id="listCharacters" class="save-btn">Character List</button>
@@ -122,7 +123,7 @@
 
     <script>
         // Clicking character info button redirects you to character sheet
-        document.getElementById('characterInfo').onlcick = function () {
+        document.getElementById('characterInfo').onclick = function () {
             window.location.href = 'displayCharacter.html';
         };
         
