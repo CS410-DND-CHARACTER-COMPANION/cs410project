@@ -45,7 +45,7 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 // User authentication routes/Fred Testing
 app.use("/api/users", userRoutes);
 
-/*Commented for testing porpuse
+/*Commented for testing 
 // Database connection
 const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 */
