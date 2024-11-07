@@ -1,0 +1,95 @@
+body {
+    background-color: lightgrey;
+}
+
+.charinfo {
+    background-color: white;
+    border: 2px solid black;
+    width: 500px;
+    height: auto;
+    padding: 10px;
+    margin: 5px;
+    text-align: left;
+    text-transform: uppercase;
+    display: inline-block;
+    vertical-align: top;
+
+    ul {
+        margin: 0px;
+        padding: 0px;
+        display: flex;
+        flex-wrap: wrap;
+        li {
+            list-style-type: none;
+            margin: 0px;
+            padding: 0px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+    }
+    input {
+          margin-top: 5px;
+
+    }
+}
+
+.experience {
+    background-color: white;
+    border: 2px solid black;
+    width: 90px;
+    height: auto;
+    padding: 10px;
+    margin: 5px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.armorClass {
+    background-color: white;
+    border: 2px solid black;
+    width: 90px;
+    height: auto;
+    padding: 10px;
+    margin: 5px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}
+.health {
+    background-color: white;
+    border: 2px solid black;
+    width: 250px;
+    height: auto;
+    padding: 10px;
+    margin: 0px;
+    text-align: center;
+    vertical-align: top;
+    display: inline-block;
+    justify-content: space-between;
+}
+
+.hit-dice {
+    background-color: white;
+    border: 2px solid black;
+    width: 90px;
+    height: auto;
+    padding: 10px;
+    margin: 5px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.death-saves {
+    background-color: white;
+    border: 2px solid black;
+    width: 90px;
+    height: auto;
+    padding: 10px;
+    margin: 5px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}

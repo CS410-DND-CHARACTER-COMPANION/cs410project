@@ -1,0 +1,253 @@
+<!----Jordan-->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="newccsidea_test.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/socket.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="newccsidea_style.css">
+</head>
+<body>
+    <form class="charactersheet" onload="init();">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <h1>DNDPROJ</h1>
+            <div class="charinfo">
+                <ul>
+                <li>
+                    <input type="text" id="charName" name="charName" style="width: 480px;">
+                    <label for="charName">Character Name</label>
+                </li>
+                <li>
+                    <input type="text" id="background" name="background" style="width: 230px;">
+                    <label for="background">Background</label>
+                </li>
+
+                <li>
+                    <select name="charClass" id="charClass" style="width: 230px;">
+                        <option value="Barbarian">Barbarian</option>
+                        <option value="Bard">Bard</option>
+                        <option value="Cleric">Cleric</option>
+                        <option value="Druid">Druid</option>
+                        <option value="Fighter">Fighter</option>
+                        <option value="Monk">Monk</option>
+                        <option value="Paladin">Paladin</option>
+                        <option value="Ranger">Ranger</option>
+                        <option value="Rogue">Rogue</option>
+                        <option value="Sorcerer">Sorcerer</option>
+                        <option value="Warlock">Warlock</option>
+                        <option value="Wizard">Wizard</option>
+                    </select>
+                    <label for="charClass">Class</label>
+                </li>
+
+                <li>
+                    <select name="species" id="species" style="width: 230px;">
+                        <option value="Dwarf">Dwarf</option>
+                        <option value="Elf">Elf</option>
+                        <option value="Halfling">Halfling</option>
+                        <option value="Human">Human</option>
+                        <option value="Aasimar">Aasimar</option>
+                        <option value="Dragonborn">Dragonborn</option>
+                        <option value="Gnome">Gnome</option>
+                        <option value="Goliath">Goliath</option>
+                        <option value="Orc">Orc</option>
+                        <option value="Tiefling">Tiefling</option>
+                    </select>
+                    <label for="species">Species</label>
+                </li>
+                
+                <li>
+                    <select name="subclass" id="subclass" style="width: 230px;">
+                    </select>
+                    <label for="subclass">Subclass</label>
+                </li>
+                </ul>
+            </div>
+        <div class="experience">
+            <input type="number" id="level" name="level" style="width: 50px;">
+            <label for="level">Level:</label>
+
+            <input type="number" id="xp" name="xp" style="width: 50px;">
+            <label for="xp">XP:</label>
+        </div>
+
+        <div class="armorClass" style="text-align: center;">
+                <label for="armorClass"><b>Armor Class:</b></label>
+                <input type="number" id="armorClass" name="armorClass" style="display: block; margin: auto; width: 50px;">
+
+                <label for="shield">Shield:</label>
+                <input type="checkbox" id="shield" name="shield" style="display: block; margin: auto;">
+        </div>
+
+        <div class="health">
+            <p style="text-align: center;"><b>Hit Points</b></p>
+            <label for="currhp">Current HP:</label>
+            <input type="number" id="currhp" name="currhp" style="width: 50px;">
+            <div class="right-items">
+                <label for="temphp">Temp:</label>
+                <input type="number" id="temphp" name="temphp" style="width: 50px;">
+
+                <label for="maxhp">Max HP:</label>
+                <input type="number" id="maxhp" name="maxhp" style="width: 50px;">
+            </div>
+        </div>
+
+        <div class="hit-dice" style="text-align: center;">
+            <p><b>Hit Dice</b></p>
+            <input type="number" id="dice-spent" name="dice-spent" style="width: 50px;">
+            <label for="dice-spent">Spent</label>
+
+            <input type="number" id="dice-max" name="dice-max" style="width: 50px;">
+            <label for="dice-max">Max</label>
+        </div>
+
+        <div class="death-saves" style="text-align: center;">
+            <p><b>Death Saves</b></p>
+            <p>Successes</p>
+            <input type="checkbox" id="death-save-success-1" name="death-save-success-1">
+            <input type="checkbox" id="death-save-success-2" name="death-save-success-2">
+            <input type="checkbox" id="death-save-success-3" name="death-save-success-3">
+
+            <p>Failures</p>
+            <input type="checkbox" id="death-save-failure-1" name="death-save-failure-1">
+            <input type="checkbox" id="death-save-failure-2" name="death-save-failure-2">
+            <input type="checkbox" id="death-save-failure-3" name="death-save-failure-3">
+        </div>
+
+        <div>
+            <span style="float: right;">
+                <h4>Skills</h4>
+                <section class="acrobatics">
+                    <label for="acrobatics">Acrobatics:</label>
+                    <input type="number" id="acrobatics" name="acrobatics">
+                </section>
+
+                <section class="animal-handling">
+                    <label for="animal-handling">Animal Handling:</label>
+                    <input type="number" id="animal-handling" name="animal-handling">
+                </section>
+
+                <section class="arcana">
+                    <label for="arcana">Arcana:</label>
+                    <input type="number" id="arcana" name="arcana">
+                </section>
+
+                <section class="athletics">
+                    <label for="athletics">Athletics:</label>
+                    <input type="number" id="athletics" name="athletics">
+                </section>
+
+                <section class="deception">
+                    <label for="deception">Deception:</label>
+                    <input type="number" id="deception" name="deception">
+                </section>
+
+                <section class="history">
+                    <label for="history">History:</label>
+                    <input type="number" id="history" name="history">
+                </section>
+
+                <section class="insight">
+                    <label for="insight">Insight:</label>
+                    <input type="number" id="insight" name="insight">
+                </section>
+
+                <section class="intimidation">
+                    <label for="intimidation">Intimidation:</label>
+                    <input type="number" id="intimidation" name="intimidation">
+                </section>
+
+                <section class="investigation">
+                    <label for="investigation">Investigation:</label>
+                    <input type="number" id="investigation" name="investigation">
+                </section>
+
+                <section class="medicine">
+                    <label for="medicine">Medicine:</label>
+                    <input type="number" id="medicine" name="medicine">
+                </section>
+
+                <section class="nature"></section>
+                    <label for="nature">Nature:</label>
+                    <input type="number" id="nature" name="nature">
+                </section>
+
+                <section class="perception">
+                    <label for="perception">Perception:</label>
+                    <input type="number" id="perception" name="perception">
+                </section>
+
+                <section class="performance">
+                    <label for="performance">Performance:</label>
+                    <input type="number" id="performance" name="performance">
+                </section>
+
+                <section class="persuasion">
+                    <label for="persuasion">Persuasion:</label>
+                    <input type="number" id="persuasion" name="persuasion">
+                </section>
+
+                <section class="religion">
+                    <label for="religion">Religion:</label>
+                    <input type="number" id="religion" name="religion">
+                </section>
+
+                <section class="sleight-of-hand">
+                    <label for="sleight-of-hand">Sleight of Hand:</label>
+                    <input type="number" id="sleight-of-hand" name="sleight-of-hand">
+                </section>
+
+                <section class="stealth">
+                    <label for="stealth">Stealth:</label>
+                    <input type="number" id="stealth" name="stealth">
+                </section>
+
+                <section class="survival">
+                    <label for="survival">Survival:</label>
+                    <input type="number" id="survival" name="survival">
+                </section>
+            </span>
+        </div>
+
+        <div>
+            <h4>Stats</h4>
+            <section class="strength">
+                <label for="strength">Strength:</label>
+                <input type="number" id="strength" name="strength">
+            </section>
+
+            <section class="dexterity">
+                <label for="dexterity">Dexterity:</label>
+                <input type="number" id="dexterity" name="dexterity">
+            </section>
+
+            <section class="constitution">
+                <label for="constitution">Constitution:</label>
+                <input type="number" id="constitution" name="constitution">
+            </section>
+
+            <section class="intelligence">
+                <label for="intelligence">Intelligence:</label>
+                <input type="number" id="intelligence" name="intelligence">
+            </section>
+
+            <section class="wisdom">
+                <label for="wisdom">Wisdom:</label>
+                <input type="number" id="wisdom" name="wisdom">
+            </section>
+
+            <section class="charisma">
+                <label for="charisma">Charisma:</label>
+                <input type="number" id="charisma" name="charisma">
+            </section>
+        </div>
+        
+        <div style="clear: both; text-align: center; margin-top: 20px;">
+            <button type="submit" id="char-submit" onclick="saveChar()">Submit</button>
+        </div>
+    </form>
+</body>
+
+</html>
