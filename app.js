@@ -19,7 +19,7 @@ const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");//Fred testing
 const dotenv = require("dotenv");//Fred testing
-const userRoutes = require("./backend/routes/userRoutes");// Fred testing
+const userRoutes = require('./backend/routes/userRoutes');// Fred testing
 const verifyToken = require('./backend/middleware/authMiddleware'); // Adjust path if needed
 
 
@@ -53,7 +53,7 @@ app.use(express.json()); // Allows Express to parse incoming JSON requests
 app.use(express.static(path.join(__dirname, 'frontend'))); // Serve static files like HTML, CSS, JS from 'frontend'
 
 // Route for user-related API endpoints
-app.use("/api/users", userRoutes); // Directs all /api/users requests to the userRoutes module
+app.use('/api/users', userRoutes); // Directs all /api/users requests to the userRoutes module
 
 // Protected route example (requires authentication)
 app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
