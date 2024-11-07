@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Character Sheet V3.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Roboto+Slab:wght@300;700&display=swap" rel="stylesheet">
+    <!-- Create separate CSS style sheet to keep code clean -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+     <!-- List to display characters -->
+     <div class ="container">
+        <section class="character-List">
+            <h2>Current Characters</h2>
+            <ul id="characterList">
+                <!-- Characters will be dynamically added here -->
+            </ul>
+        </section>
+    </div>
+    
+    <!-- socket.io integration -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socket.js"></script>
+</body>
+</html>
