@@ -39,12 +39,9 @@ const port = 3000;
 
 
 // Connect to MongoDB using Mongoose
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true, // Use the new URL parser (recommended for compatibility)
-  useUnifiedTopology: true, // Use the new unified topology layer for better server discovery and monitoring
-})
-.then(() => console.log("Connected to MongoDB")) // Log a success message if connected
-.catch(err => console.error("MongoDB connection error:", err)); // Log an error if the connection fails
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("MongoDB connection error:", err));
 
 // Middleware to parse JSON requests
 app.use(express.json()); // Allows Express to parse incoming JSON requests
