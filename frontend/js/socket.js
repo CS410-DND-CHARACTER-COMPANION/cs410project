@@ -1,3 +1,7 @@
+/*
+Connects to the socket.io server and handles the events for the character sheet.
+*/
+
 // connect to socket.io server
 const socket = io();
 
@@ -18,9 +22,11 @@ socket.on('charactersList', (characters) => {
   characters.forEach(character => {
       // Create list item for each character
       const characterItem = document.createElement('li');
+      // Display character information
       characterItem.innerHTML = `
-          <strong>${character.name}</strong> - Level ${character.level} ${character.species} ${character.class}
-          <div>HP: ${character.currentHP}/${character.maxHP}</div>
+        <strong>${character.name}</strong> - Level ${character.level} ${character.species} ${character.class}
+        <div>HP: ${character.currentHP}/${character.maxHP} | AC: ${character.ac + character.shield} (${character.ac} + ${character.shield}) | 
+        ${character.inspiration ? '⭐ Inspired' : ''}</div>
       `;
       characterList.appendChild(characterItem);
   });
@@ -47,11 +53,30 @@ document.addEventListener('DOMContentLoaded', () => {
               shield: parseInt(document.getElementById('shield').value) || 0,
               currentHP: parseInt(document.getElementById('currentHP').value),
               maxHP: parseInt(document.getElementById('maxHP').value),
+              tempHP: parseInt(document.getElementById('tempHP').value) || 0,
+              deathSaves: parseInt(document.getElementById('deathSaves').value) || 0,
+              proficiencyBonus: parseInt(document.getElementById('proficiencyBonus').value) || 2,
+              passivePerception: parseInt(document.getElementById('passivePerception').value) || 10,
               inspiration: document.getElementById('inspiration').checked,
               initiative: parseInt(document.getElementById('initiative').value) || 0,
               speed: parseInt(document.getElementById('speed').value) || 30,
+              strength: parseInt(document.getElementById('strength').value) || 10,
+              strengthModifier: parseInt(document.getElementById('strenghtModifier').value) || 0,
+              dexterity: parseInt(document.getElementById('dexterity').value) || 10,
+              dexterityModifier: parseInt(document.getElementById('dexterityModifier').value) || 0,
+              constitution: parseInt(document.getElementById('constitution').value) || 10,
+              constitutionModifier: parseInt(document.getElementById('constitutionModifier').value) || 0,
+              intelligence: parseInt(document.getElementById('intelligence').value) || 10,
+              intelligenceModifier: parseInt(document.getElementById('intelligenceModifier').value) || 0,
+              wisdom: parseInt(document.getElementById('wisdom').value) || 10,
+              wisdomModifier: parseInt(document.getElementById('wisdomModifier').value) || 0,
+              charisma: parseInt(document.getElementById('charisma').value) || 10,
+              charismaModifier: parseInt(document.getElementById('charismaModifier').value) || 0,
               inventory: inventory // Using global inventory array
           };
+
+          // Store the character data in local storage for the display page
+          localStorage.setItem('currentCharacter', JSON.stringify(characterData));
 
           // Emit the new character data to the server
           socket.emit('newCharacter', characterData);
@@ -61,6 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
           
           // Show success message
           alert('Character created successfully!');
+
+          // Redirect to the display page
+          window.location.href = 'displayCharacter.html';
       });
   }
 });

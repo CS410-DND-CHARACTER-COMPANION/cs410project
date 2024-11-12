@@ -46,6 +46,19 @@
             padding: 5px; /* Space inside bordered sections */
             box-shadow: 5px 5px 0 black, -5px -5px 0 black; /* 3D shadow effect */
         }
+        .back-btn {
+        margin: 20px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+    
+        .back-btn:hover {
+        background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -54,36 +67,82 @@
     <!-- Character information -->
     <div class="character-section bordered">
         <div class="section-title">Information</div>
-        <div class="attribute">Name: <span class="value" id="charName">Bob</span></div> <!-- Name -->
-        <div class="attribute">Class: <span class="value">Farmer</span></div> <!-- Class -->
-        <div class="attribute">Level: <span class="value">9</span></div> <!-- Level -->
+        <div class="attribute">Name: <span class="value" id="charName"></span></div> <!-- Name -->
+        <div class="attribute">Class: <span class="value" id="charClass"></span></div> <!-- Class -->
+        <div class="attribute">Race: <span class="value" id="charSpecies"></span></div> <!-- Race -->
+        <div class="attribute">Level: <span class="value" id="charLevel"></span></div> <!-- Level -->
     </div>
 
     <!-- Character stats -->
     <div class="character-section bordered">
         <div class="section-title">Stats</div>
-        <div class="attribute">Armor Class (AC): <span class="value">10</span></div> <!-- Armor class -->
-        <div class="attribute">Hit Points (HP): <span class="value">21</span></div> <!-- Hit points -->
-        <div class="attribute">Proficiency Bonus: <span class="value">+3</span></div> <!-- Proficiency bonus -->
+        <div class="attribute">Armor Class (AC): <span class="value" id="charAC"></span></div> <!-- Armor class -->
+        <div class="attribute">Hit Points (HP): <span class="value" id="charHP"></span></div> <!-- Hit points -->
+        <div class="attribute">Proficiency Bonus: <span class="value" id="charProfBonus"></span></div> <!-- Proficiency bonus -->
     </div>
     
     <!-- Character abilities -->
     <div class="character-section bordered">
         <div class="section-title">Abilities</div>
-        <div class="attribute">Strength: <span class="value">14</span></div> <!-- Strength -->
-        <div class="attribute">Dexterity: <span class="value">5</span></div> <!-- Dexterity -->
-        <div class="attribute">Constitution: <span class="value">11</span></div> <!-- Constitution -->
-        <div class="attribute">Intelligence: <span class="value">7</span></div> <!-- Intelligence -->
-        <div class="attribute">Wisdom: <span class="value">0</span></div> <!-- Wisdom -->
-        <div class="attribute">Charisma: <span class="value">2</span></div> <!-- Charisma -->
+        <div class="attribute">Strength: <span class="value" id="charStrength"></span></div> <!-- Strength -->
+        <div class="attribute">Strength Modifier: <span class="value" id="charStrengthModifier"></span></div> <!-- Strength modifier -->
+        <div class="attribute">Dexterity: <span class="value" id="charDexterity"></span></div> <!-- Dexterity -->
+        <div class="attribute">Dexterity Modifier: <span class="value" id="charDexterityModifier"></span></div> <!-- Dexterity modifier -->
+        <div class="attribute">Constitution: <span class="value" id="charConstitution"></span></div> <!-- Constitution -->
+        <div class="attribute">Constitution Modifier: <span class="value" id="charConstitutionModifier"></span></div> <!-- Constitution modifier -->
+        <div class="attribute">Intelligence: <span class="value" id="charIntelligence"></span></div> <!-- Intelligence -->
+        <div class="attribute">Intelligence Modifier: <span class="value" id="charIntelligenceModifier"></span></div> <!-- Intelligence modifier -->
+        <div class="attribute">Wisdom: <span class="value" id="charWisdom"></span></div> <!-- Wisdom -->
+        <div class="attribute">Wisdom Modifier: <span class="value" id="charWisdomModifier"></span></div> <!-- Wisdom modifier -->
+        <div class="attribute">Charisma: <span class="value" id="charCharisma"></span></div> <!-- Charisma -->
+        <div class="attribute">Charisma Modifier: <span class="value" id="charCharismaModifier"></span></div> <!-- Charisma modifier -->
     </div>
 
     <!-- Character equipment -->
     <div class="character-section bordered">
         <div class="section-title">Equipment</div>
-        <div class="attribute">Weapon: <span class="value">Rake</span></div> <!-- Weapon -->
-        <div class="attribute">Armor: <span class="value">Tattered Shirt</span></div> <!-- Armor -->
+        <div class="attribute">Weapon: <span class="value" id="charWeapon"></span></div> <!-- Weapon -->
+        <div class="attribute">Armor: <span class="value" id="charArmor"></span></div> <!-- Armor -->
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load character data from localStorage
+            const characterData = JSON.parse(localStorage.getItem('currentCharacter'));
+            
+            if (characterData) {
+                // Update the display with character data
+                document.getElementById('charName').textContent = characterData.name || '';
+                document.getElementById('charClass').textContent = characterData.class || '';
+                document.getElementById('charSpecies').textContent = characterData.species || '';
+                document.getElementById('charLevel').textContent = characterData.level || '';
+                
+                document.getElementById('charAC').textContent = characterData.ac || '';
+                document.getElementById('charHP').textContent = characterData.hp || '';
+                document.getElementById('charProfBonus').textContent = characterData.profBonus || '';
+                document.getElementById('charStrength').textContent = characterData.strength || '';
+                document.getElementById('charStrengthModifier').textContent = characterData.strengthModifier || '';
+                document.getElementById('charDexterity').textContent = characterData.dexterity || '';
+                document.getElementById('charDexterityModifier').textContent = characterData.dexterityModifier || '';
+                document.getElementById('charConstitution').textContent = characterData.constitution || '';
+                document.getElementById('charConstitutionModifier').textContent = characterData.constitutionModifier || '';
+                document.getElementById('charIntelligence').textContent = characterData.intelligence || '';
+                document.getElementById('charIntelligenceModifier').textContent = characterData.intelligenceModifier || '';
+                document.getElementById('charWisdom').textContent = characterData.wisdom || '';
+                document.getElementById('charWisdomModifier').textContent = characterData.wisdomModifier || '';
+                document.getElementById('charCharisma').textContent = characterData.charisma || '';
+                document.getElementById('charCharismaModifier').textContent = characterData.charismaModifier || '';
+                document.getElementById('charWeapon').textContent = characterData.weapon || '';
+                document.getElementById('charArmor').textContent = characterData.armor || '';
+            } else {
+                // Handle case where no character data exists
+                alert('No character data found!');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+
+    <button onclick="window.location.href='index.html'" class="back-btn">Back to Home</button>
 
     <!-- socket.io integration -->
     <script src="/socket.io/socket.io.js"></script>

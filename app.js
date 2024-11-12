@@ -37,9 +37,11 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 // Port setup
 const port = 3000;
 
+// Database connection
+const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // Connect to MongoDB using Mongoose
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(uri)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
 
@@ -56,11 +58,6 @@ app.use('/api/users', userRoutes); // Directs all /api/users requests to the use
 app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
   res.json({ message: 'This is a protected profile route!' }); // Send a response if the token is valid
 });
-
-/*Commented for testing 
-// Database connection
-const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-*/
 
 // Connect to frontend
 app.get('/', (req, res) => {
