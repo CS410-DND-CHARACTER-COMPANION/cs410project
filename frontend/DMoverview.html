@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+    <style>
+        table, th, td {
+          border:1px solid black;
+        }
+        .blank_row
+        {
+            height: 10px !important; /* overwrites any other rules */
+            background-color: #FFFFFF;
+        }
+        </style>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +17,92 @@
     </head>
     <body>
         <h1>All characters summary</h1>
-        <p></p>
+        <table style="width:100%">
+            <tr>
+              <th>Players</th>
+              <th>Me</th>
+              <th>You</th>
+              <th>Them</th>
+            </tr>
+            <tr>
+              <td>Species</td>
+              <td>Me species</td>
+              <td>You species</td>
+              <td>Them species</td>
+            </tr>
+            <tr>
+              <td>Class</td>
+              <td>Me class</td>
+              <td>You class</td>
+              <td>Them class</td>
+            </tr>
+            <tr>
+                <td>HP</td>
+                <td>Me HP</td>
+                <td>You HP</td>
+                <td>Them HP</td>
+              </tr>
+              <tr class="blank_row">
+                <td colspan="4"></td>
+              </tr>
+              <tr>
+                <td>STR</td>
+                <td>Me STR</td>
+                <td>You STR</td>
+                <td>Them STR</td>
+              </tr>
+              <tr>
+                <td>DEX</td>
+                <td>Me DEX</td>
+                <td>You DEX</td>
+                <td>Them DEX</td>
+              </tr>
+              <tr>
+                <td>CON</td>
+                <td>Me CON</td>
+                <td>You CON</td>
+                <td>Them INT</td>
+              </tr>
+              <tr>
+                <td>WIS</td>
+                <td>Me WIS</td>
+                <td>You WIS</td>
+                <td>Them WIS</td>
+              </tr>
+              <tr>
+                <td>CHA</td>
+                <td>Me CHA</td>
+                <td>You CHA</td>
+                <td>Them CHA</td>
+              </tr>
+              <tr class="blank_row">
+                <td colspan="4"></td>
+              </tr>
+              <tr>
+                <td>Init</td>
+                <td>Me #</td>
+                <td>You #</td>
+                <td>Them #</td>
+              </tr>
+              <tr>
+                <td>Speed</td>
+                <td>Me ft</td>
+                <td>You ft</td>
+                <td>Them ft</td>
+              </tr>
+              <tr>
+                <td>Size</td>
+                <td>Me size</td>
+                <td>You size</td>
+                <td>Them size</td>
+              </tr>
+              <tr>
+                <td>PP</td>
+                <td>Me ?</td>
+                <td>You ?</td>
+                <td>Them ?</td>
+              </tr>
+          </table>
         
         <script>
 
