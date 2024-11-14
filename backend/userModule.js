@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 // Set up Express Router
 const router = express.Router();
+const jwtSecret = process.env.JWT_SECRET;
 
 // MongoDB Schema Definition
 const userSchema = new mongoose.Schema({
