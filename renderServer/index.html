@@ -1,1 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Character Creation Sheet V3.8.1</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Roboto+Slab:wght@300;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="ccs_styles_V381.css">
+    <script src="ccs_script_V381.js" defer></script>
+</head>
+
+<body>
+    <div class="container creation-sheet" role="main">
+        <h1>D&D Forge Your Hero</h1>
+        <form id="character-form" novalidate>
+
+            <!-- Character Information Section -->
+            <section class="character-info">
+                <h2>Character Information</h2>
+
+                <!-- Character Name -->
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" data-field="character-name" aria-label="Character Name"
+                        aria-required="true" placeholder="Enter character name" required />
+                    <span class="error-message" data-error="name"></span>
+                </div>
+
+                <!-- Character Background -->
+                <div class="form-group">
+                    <label for="background">Background (BG):</label>
+                    <input type="text" id="background" name="background" data-field="character-background"
+                        aria-label="Character Background" placeholder="Choose character background" />
+                </div>
+
+                <!-- Character Race/Species -->
+                <div class="form-group">
+                    <label for="species">Race/Species (R/Sp):</label>
+                    <select id="species" name="species" class="custom-select" data-field="character-species"
+                        aria-label="Character Species" aria-required="true" required>
+                        <option value="">Select Your Lineage</option>
+                        <option value="Human">Human</option>
+                        <option value="Elf">Elf</option>
+                        <option value="Dwarf">Dwarf</option>
+                        <option value="Halfling">Halfling</option>
+                        <option value="Dragonborn">Dragonborn</option>
+                        <option value="Tiefling">Tiefling</option>
+                        <option value="Gnome">Gnome</option>
+                        <option value="Half-Elf">Half-Elf</option>
+                        <option value="Half-Orc">Half-Orc</option>
+                        <option value="Orc">Orc</option>
+                        <option value="Aasimar">Aasimar</option>
+                        <option value="Genasi">Genasi</option>
+                        <option value="Firbolg">Firbolg</option>
+                        <option value="Goliath">Goliath</option>
+                        <option value="Tabaxi">Tabaxi</option>
+                        <option value="Triton">Triton</option>
+                        <option value="Yuan-ti Pureblood">Yuan-ti Pureblood</option>
+                        <option value="Kenku">Kenku</option>
+                        <option value="Changeling">Changeling</option>
+                        <option value="Warforged">Warforged</option>
+                        <option value="Hobgoblin">Hobgoblin</option>
+                        <option value="Bugbear">Bugbear</option>
+                        <option value="Goblin">Goblin</option>
+                        <option value="Kobold">Kobold</option>
+                        <option value="Revenant">Revenant</option>
+                        <option value="Fey'ri">Fey'ri</option>
+                        <option value="Merfolk">Merfolk</option>
+                        <option value="Sahuagin">Sahuagin</option>
+                        <option value="Aarakocra">Aarakocra</option>
+                        <option value="Lizardfolk">Lizardfolk</option>
+                    </select>
+                    <span class="error-message" data-error="species"></span>
+                </div>
+
+                <!-- Character Class -->
+                <div class="form-group">
+                    <label for="class">Class (Cl):</label>
+                    <input type="text" id="class" name="class" data-field="character-class" aria-label="Character Class"
+                        aria-required="true" placeholder="Choose character class" required />
+                    <span class="error-message" data-error="class"></span>
+                </div>
+
+                <!-- Character Subclass -->
+                <div class="form-group">
+                    <label for="subclass">Subclass (Sub):</label>
+                    <input type="text" id="subclass" name="subclass" data-field="character-subclass"
+                        aria-label="Character Subclass" placeholder="Choose character subclass" />
+                </div>
+
+                <!-- Character Level -->
+                <div class="form-group">
+                    <label for="level">Level (Lv):</label>
+                    <input type="number" id="level" name="level" data-field="character-level"
+                        aria-label="Character Level" aria-required="true" min="1" max="20"
+                        placeholder="Enter character level" required oninput="updateProficiencyBonus()" />
+                    <span class="error-message" data-error="level"></span>
+                </div>
+
+                <!-- Proficiency Bonus -->
+                <div class="form-group">
+                    <label for="proficiency-bonus">Proficiency Bonus (PB):</label>
+                    <input type="number" id="proficiency-bonus" name="proficiency-bonus" data-field="proficiency-bonus"
+                        aria-label="Proficiency Bonus" readonly />
+                </div>
+
+                <!-- Experience Points -->
+                <div class="form-group">
+                    <label for="xp">Experience Points (XP):</label>
+                    <input type="number" id="xp" name="xp" data-field="character-xp" aria-label="Experience Points"
+                        min="0" placeholder="Enter character XP" />
+                </div>
+
+            </section>
+
+            <!-- Ability Scores Section -->
+            <section class="ability-scores">
+                <h2>Ability Scores</h2>
+                <div class="ability-grid">
+
+                    <!-- Strength -->
+                    <div class="ability-block" data-ability="strength">
+                        <label for="strength">Strength (Str):</label>
+                        <input type="number" id="strength" name="strength" data-field="ability-strength"
+                            aria-label="Strength Score" aria-required="true" min="1" max="30" required
+                            oninput="calculateModifier('strength')" />
+                        <label for="strength-modifier">Str Modifier:</label>
+                        <input type="number" id="strength-modifier" name="strength-modifier"
+                            data-field="ability-strength-modifier" aria-label="Strength Modifier" readonly />
+                        <span class="error-message" data-error="strength"></span>
+                    </div>
+
+                    <!-- Dexterity -->
+                    <div class="ability-block" data-ability="dexterity">
+                        <label for="dexterity">Dexterity (Dex):</label>
+                        <input type="number" id="dexterity" name="dexterity" data-field="ability-dexterity"
+                            aria-label="Dexterity Score" aria-required="true" min="1" max="30" required
+                            oninput="calculateModifier('dexterity')" />
+                        <label for="dexterity-modifier">Dex Modifier:</label>
+                        <input type="number" id="dexterity-modifier" name="dexterity-modifier"
+                            data-field="ability-dexterity-modifier" aria-label="Dexterity Modifier" readonly />
+                        <span class="error-message" data-error="dexterity"></span>
+                    </div>
+
+                    <!-- Constitution -->
+                    <div class="ability-block" data-ability="constitution">
+                        <label for="constitution">Constitution (Con):</label>
+                        <input type="number" id="constitution" name="constitution" data-field="ability-constitution"
+                            aria-label="Constitution Score" aria-required="true" min="1" max="30" required
+                            oninput="calculateModifier('constitution')" />
+                        <label for="constitution-modifier">Con Modifier:</label>
+                        <input type="number" id="constitution-modifier" name="constitution-modifier"
+                            data-field="ability-constitution-modifier" aria-label="Constitution Modifier" readonly />
+                        <span class="error-message" data-error="constitution"></span>
+                    </div>
+
+                    <!-- Intelligence -->
+                    <div class="ability-block" data-ability="intelligence">
+                        <label for="intelligence">Intelligence (Int):</label>
+                        <input type="number" id="intelligence" name="intelligence" data-field="ability-intelligence"
+                            aria-label="Intelligence Score" aria-required="true" min="1" max="30" required
+                            oninput="calculateModifier('intelligence')" />
+                        <label for="intelligence-modifier">Int Modifier:</label>
+                        <input type="number" id="intelligence-modifier" name="intelligence-modifier"
+                            data-field="ability-intelligence-modifier" aria-label="Intelligence Modifier" readonly />
+                        <span class="error-message" data-error="intelligence"></span>
+                    </div>
+
+                    <!-- Wisdom -->
+                    <div class="ability-block" data-ability="wisdom">
+                        <label for="wisdom">Wisdom (Wis):</label>
+                        <input type="number" id="wisdom" name="wisdom" data-field="ability-wisdom"
+                            aria-label="Wisdom Score" aria-required="true" min="1" max="30" required
+                            oninput="calculateModifier('wisdom')" />
+                        <label for="wisdom-modifier">Wis Modifier:</label>
+                        <input type="number" id="wisdom-modifier" name="wisdom-modifier"
+                            data-field="ability-wisdom-modifier" aria-label="Wisdom Modifier" readonly />
+                        <span class="error-message" data-error="wisdom"></span>
+                    </div>
+
+                    <!-- Charisma -->
+                    <div class="ability-block" data-ability="charisma">
+                        <label for="charisma">Charisma (Cha):</label>
+                        <input type="number" id="charisma" name="charisma" data-field="ability-charisma"
+                            aria-label="Charisma Score" aria-required="true" min="1" max="30" required
+                            oninput="calculateModifier('charisma')" />
+                        <label for="charisma-modifier">Cha Modifier:</label>
+                        <input type="number" id="charisma-modifier" name="charisma-modifier"
+                            data-field="ability-charisma-modifier" aria-label="Charisma Modifier" readonly />
+                        <span class="error-message" data-error="charisma"></span>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Combat Details Section -->
+            <section class="combat-details">
+                <h2>Combat Details</h2>
+
+                <!-- Current HP -->
+                <div class="form-group">
+                    <label for="current-hp">Current HP (HP):</label>
+                    <input type="number" id="current-hp" name="current-hp" data-field="combat-current-hp"
+                        aria-label="Current Hit Points" aria-required="true" min="0" placeholder="Enter current HP"
+                        required />
+                    <span class="error-message" data-error="current-hp"></span>
+                </div>
+
+                <!-- Maximum HP -->
+                <div class="form-group">
+                    <label for="max-hp">Maximum HP (Max HP):</label>
+                    <input type="number" id="max-hp" name="max-hp" data-field="combat-max-hp"
+                        aria-label="Maximum Hit Points" aria-required="true" min="1" placeholder="Enter max HP"
+                        required />
+                    <span class="error-message" data-error="max-hp"></span>
+                </div>
+
+                <!-- Armor Class -->
+                <div class="form-group">
+                    <label for="ac">Armor Class (AC):</label>
+                    <input type="number" id="ac" name="ac" data-field="combat-ac" aria-label="Armor Class"
+                        aria-required="true" min="1" placeholder="Enter AC" required />
+                    <span class="error-message" data-error="ac"></span>
+                </div>
+
+                <!-- Shield -->
+                <div class="form-group">
+                    <label for="shield">Shield (SHD):</label>
+                    <div class="shield-container">
+                        <span class="shield-icon" aria-hidden="true">🛡️</span>
+                        <span class="shield-text">Shield of the Hidden Lord</span>
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="shield" name="shield" data-field="combat-shield"
+                                class="shield-checkbox" aria-label="Toggle shield">
+                            <div class="toggle-slot"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Initiative -->
+                <div class="form-group">
+                    <label for="initiative">Initiative (INI):</label>
+                    <input type="number" id="initiative" name="initiative" data-field="reference-initiative"
+                        aria-label="Initiative" placeholder="Enter initiative" />
+                </div>
+
+                <!-- Speed -->
+                <div class="form-group">
+                    <label for="speed">Speed (SPD):</label>
+                    <input type="number" id="speed" name="speed" data-field="reference-speed" aria-label="Speed" min="0"
+                        placeholder="Enter speed" />
+                </div>
+
+            </section>
+
+            <!-- Equipment Section -->
+            <section class="equipment">
+                <h2>Equipment</h2>
+
+                <!-- New Equipment Item -->
+                <div class="form-group">
+                    <label for="equipment-item">New Item:</label>
+                    <input type="text" id="equipment-item" name="equipment-item" data-field="equipment-new-item"
+                        aria-label="New Equipment Item" placeholder="Enter item name" />
+                    <button type="button" class="add-item-btn" data-action="add-equipment" onclick="addEquipmentItem()"
+                        aria-label="Add equipment item">
+                        Add Item
+                    </button>
+                </div>
+
+                <!-- Equipment List -->
+                <div id="equipment" class="equipment-list" role="list" aria-label="Equipment list"></div>
+
+            </section>
+
+            <!-- Heroic Inspiration Section -->
+            <section class="heroic-inspiration">
+                <h2>Heroic Inspiration</h2>
+
+                <div class="inspiration-message" role="note">
+                    <span class="inspiration-icon" aria-hidden="true">⭐</span>
+                    <p>
+                        Through acts of valor, roleplay excellence, or moments of true heroism,
+                        you shall earn the gift of Inspiration. May your deeds be worthy of the bards' tales!
+                    </p>
+                </div>
+
+            </section>
+
+            <!-- Save Character Button -->
+            <button type="button" class="save-btn" id="save-character-btn" onclick="saveCharacter()"
+                aria-label="Save character">
+                Save Character
+            </button>
+
+        </form>
+    </div>
+</body>
+
+</html>
