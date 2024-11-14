@@ -19,9 +19,7 @@ const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");//Fred testing
 const dotenv = require("dotenv");//Fred testing
-const userRoutes = require('./backend/routes/userRoutes');// Fred testing
-const verifyToken = require('./backend/middleware/authMiddleware'); // Adjust path if needed
-
+const userModule = require("./backend/userModule");
 
 // Load environment variables/Fred testing
 dotenv.config();
@@ -37,27 +35,29 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 // Port setup
 const port = 3000;
 
-// Database connection
-const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
 // Connect to MongoDB using Mongoose
 mongoose.connect(uri)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
 
 // Middleware to parse JSON requests
-app.use(express.json()); // Allows Express to parse incoming JSON requests
+app.use(express.json());
 
 // Serve static files from the 'frontend' directory
-app.use(express.static(path.join(__dirname, 'frontend'))); // Serve static files like HTML, CSS, JS from 'frontend'
+app.use(express.static(path.join(__dirname, 'frontend')));
 
-// Route for user-related API endpoints
-app.use('/api/users', userRoutes); // Directs all /api/users requests to the userRoutes module
+// Route for user-related API endpoints from `userModule`
+app.use('/api/users', userModule.router); // Attach routes
 
 // Protected route example (requires authentication)
-app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
-  res.json({ message: 'This is a protected profile route!' }); // Send a response if the token is valid
+app.get('/api/users/profile', userModule.verifyToken, (req, res) => {
+  res.json({ message: 'This is a protected profile route!' });
 });
+
+/*
+// Database connection
+const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+*/
 
 // Connect to frontend
 app.get('/', (req, res) => {
