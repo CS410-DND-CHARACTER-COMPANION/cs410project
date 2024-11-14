@@ -1,38 +1,20 @@
-/*
-CS410
-******* Everyone put your name please *******
-Team 3: Nicole Strounine, Kam Lun Cheung
-
-DND Character Sheet Webapp
-
-This app will allow players and DMs to log in, create and store character
-sheets, as well as update them in real time. The DM will also have the ability
-to update any character sheet in real time. 
-
-*/
-
-// Required modules
 const express = require("express");
 const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
-const mongoose = require("mongoose");//Fred testing
-const dotenv = require("dotenv");//Fred testing
-const userRoutes = require('./backend/routes/userRoutes');// Fred testing
-const verifyToken = require('./backend/middleware/authMiddleware'); // Adjust path if needed
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const userRoutes = require('./backend/routes/userRoutes');
+const verifyToken = require('./backend/middleware/authMiddleware');
 
-
-// Load environment variables/Fred testing
+// Load environment variables
 dotenv.config();
 
 // Initialize Express app and HTTP server
 const app = express();
-const server = http.createServer(app);  // Create HTTP server
-const io = new Server(server);          // Attach socket.io to the server
-
-// Serve static files from the 'frontend' directory
-app.use(express.static(path.join(__dirname, 'frontend')));
+const server = http.createServer(app);
+const io = new Server(server);
 
 // Port setup
 const port = 3000;
@@ -46,22 +28,27 @@ mongoose.connect(uri)
   .catch(err => console.error("MongoDB connection error:", err));
 
 // Middleware to parse JSON requests
-app.use(express.json()); // Allows Express to parse incoming JSON requests
+app.use(express.json());
 
 // Serve static files from the 'frontend' directory
-app.use(express.static(path.join(__dirname, 'frontend'))); // Serve static files like HTML, CSS, JS from 'frontend'
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Route for user-related API endpoints
-app.use('/api/users', userRoutes); // Directs all /api/users requests to the userRoutes module
+app.use('/api/users', userRoutes);
 
-// Protected route example (requires authentication)
-app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
-  res.json({ message: 'This is a protected profile route!' }); // Send a response if the token is valid
+// Protected route example
+app.get('/api/users/profile', verifyToken, (req, res) => {
+  res.json({ message: 'This is a protected profile route!' });
 });
 
 // Connect to frontend
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
+
+// New route for character sheet page
+app.get('/character-sheet-v1.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'character-sheet-v1.html'));
 });
 
 // socket.io connection
@@ -73,10 +60,7 @@ io.on('connection', async (socket) => {
     const client = new MongoClient(uri);
     try {
       await client.connect();
-
       const characters = await client.db("dnd_screen").collection("character_sheets").find().toArray();
-
-      // emit "charactersList" event
       socket.emit('charactersList', characters);
     } catch (e) {
       console.error("Error getting characters:", e);
@@ -86,22 +70,40 @@ io.on('connection', async (socket) => {
     }
   });
 
-  // real-time event: new character created
-  socket.on('newCharacter', async (character) => {
-    console.log('New character received:', character);
+  // New handler for getting a single character
+  socket.on('getCharacter', async (characterId) => {
     const client = new MongoClient(uri);
     try {
       await client.connect();
-      // Insert the new character into the database
+      const character = await client.db("dnd_screen")
+        .collection("character_sheets")
+        .findOne({ _id: new ObjectId(characterId) });
+      
+      if (character) {
+        socket.emit('characterData', character);
+      } else {
+        socket.emit('error', 'Character not found');
+      }
+    } catch (e) {
+      console.error("Error retrieving character:", e);
+      socket.emit('error', 'Failed to retrieve character');
+    } finally {
+      await client.close();
+    }
+  });
+
+  // real-time event: new character created
+  socket.on('newCharacter', async (character) => {
+    const client = new MongoClient(uri);
+    try {
+      await client.connect();
       const result = await client.db("dnd_screen").collection("character_sheets").insertOne(character);
       console.log(`New character created with the following id: ${result.insertedId}`);
       character._id = result.insertedId;
-
-      // Broadcast the 'characterAdded' event to all connected clients
       io.emit('characterAdded', character);
     } catch (e) {
-        console.error("Error creating character:", e);
-        socket.emit('error', 'Failed to create character');
+      console.error("Error creating character:", e);
+      socket.emit('error', 'Failed to create character');
     } finally {
       await client.close();
     }
@@ -113,16 +115,14 @@ io.on('connection', async (socket) => {
     try {
       await client.connect();
       const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
-        { _id: updatedCharacter._id }, 
+        { _id: new ObjectId(updatedCharacter._id) }, 
         { $set: updatedCharacter }
       );
-
-      console.log('Character updated: ${updatedCharacter.name}');
-      
-      // Broadcast the 'characterUpdated' event to all connected clients
+      console.log(`Character updated: ${updatedCharacter.name}`);
       io.emit('characterUpdated', updatedCharacter);
     } catch (e) {
-      console.error(e);
+      console.error("Error updating character:", e);
+      socket.emit('error', 'Failed to update character');
     } finally {
       await client.close();
     }
@@ -135,17 +135,14 @@ io.on('connection', async (socket) => {
 
 // Start listening on port
 server.listen(port, () => {
-  console.log("DnD app listening on port " + port)
+  console.log("DnD app listening on port " + port);
 });
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
   console.log('\nGracefully shutting down...');
   server.close(() => {
-      console.log('Server closed');
-      process.exit(0);
+    console.log('Server closed');
+    process.exit(0);
   });
 });
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Terminate the process BEFORE closing the IDE (The server will stays on if not)
