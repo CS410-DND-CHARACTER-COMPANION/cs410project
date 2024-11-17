@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Display Sheet</title>
+    <title>Character Display</title>
     <link rel="stylesheet" href="display_styles.css">
-    <script src="display_script.js" defer></script>
 </head>
-
 <body>
-    <div class="container display-sheet" role="main">
-        <h1>Your Character</h1>
-        <div id="character-info">
-        </div>
-    </div>
+    <div id="character-display"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="display_script.js" defer></script>
 </body>
-
 </html>
