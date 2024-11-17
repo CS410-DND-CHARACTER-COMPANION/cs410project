@@ -387,7 +387,7 @@ function handleFormSubmission(event) {
             data: characterData
         });
         showSuccess('Character saved successfully!');
-        window.location.href = 'dnddemo1.html';
+        window.location.href = '/display.html?characterId=${savedCharacter._id}';
     } catch (error) {
         console.error('Error saving character:', error);
         showError('Failed to save character');
