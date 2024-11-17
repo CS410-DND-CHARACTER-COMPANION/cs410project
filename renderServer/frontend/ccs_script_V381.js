@@ -1,4 +1,4 @@
-// V3.8.1
+// V3.8.2
 
 class CharacterState {
 
@@ -387,7 +387,7 @@ function handleFormSubmission(event) {
             data: characterData
         });
         showSuccess('Character saved successfully!');
-        window.location.href = '/display.html?characterId=${savedCharacter._id}';
+        window.location.href = `/display.html?characterId=${characterState.getState().characterId}`;
     } catch (error) {
         console.error('Error saving character:', error);
         showError('Failed to save character');
