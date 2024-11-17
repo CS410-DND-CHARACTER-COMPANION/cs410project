@@ -387,7 +387,7 @@ function handleFormSubmission(event) {
             data: characterData
         });
         showSuccess('Character saved successfully!');
-        window.location.href = `/display.html?characterId=${characterState.getState().characterId}`;
+        window.location.href = `display.html`;
     } catch (error) {
         console.error('Error saving character:', error);
         showError('Failed to save character');
