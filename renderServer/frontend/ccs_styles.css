@@ -136,8 +136,9 @@ body::before {
     max-width: 1500px;
     height: auto;
     min-height: 90vh;
-    margin: 2vh auto;
+    margin: 1vh auto;
     padding: var(--spacing-md);
+    padding-top: var(--spacing-sm);
     aspect-ratio: 16 / 9;
     max-height: 90vh;
     border-radius: var(--radius-lg);
@@ -190,8 +191,9 @@ body::before {
         width: 97%;
         height: auto;
         min-height: 90vh;
-        margin: 2vh auto;
+        margin: 1vh auto;
         padding: var(--spacing-sm);
+        padding-top: var(--spacing-xs);
     }
 }
 
