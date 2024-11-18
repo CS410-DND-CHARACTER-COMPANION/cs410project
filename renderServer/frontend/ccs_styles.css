@@ -1,8 +1,12 @@
-/* V3.8.5 */
+/* V3.9.1 */
 
-/* Defines CSS variables for colors, shadows, spacing, and transitions */
+@font-face {
+    font-family: 'Uncial Antiqua';
+    src: url('UncialAntiqua.woff2') format('woff2');
+    font-display: swap;
+}
+
 :root {
-    /* Colors */
     --color-text-primary: #f5f5dc;
     --color-text-secondary: #e0cda9;
     --color-heading: #f0d78c;
@@ -25,7 +29,6 @@
     --color-spinner-border: var(--color-heading);
     --color-spinner-background: rgba(240, 215, 140, 0.2);
 
-    /* Shadows */
     --shadow-container: 0 8px 20px rgba(0, 0, 0, 0.8);
     --shadow-text: 0 0 3px rgba(0, 0, 0, 0.8);
     --shadow-heading: 0 0 15px rgba(0, 0, 0, 0.8), 
@@ -36,31 +39,33 @@
     --shadow-toggle: 0 2px 5px rgba(0, 0, 0, 0.3);
     --shadow-toggle-active: 0 0 10px #ffd700;
 
-    /* Spacing */
     --spacing-xs: 5px;
     --spacing-sm: 8px;
     --spacing-md: 15px;
     --spacing-lg: 20px;
 
-    /* Border radius */
     --radius-sm: 8px;
     --radius-md: 10px;
     --radius-lg: 15px;
 
-    /* Transitions */
     --transition-default: all 0.2s ease;
     --transition-section: all 0.3s;
     --transition-toggle: all 0.3s ease;
 }
 
-/* Base styles */
 html,
 body {
-    overscroll-behavior: none; /* Changed from overscroll-behavior-y: contain */
-    height: 100%;
+    margin: 0;
+    padding: 0;
     width: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    height: 100vh;
+    overflow: hidden;
+    position: fixed;
+}
+
+.text-content {
+    color: var(--color-text-primary);
+    color: color-contrast(var(--color-background-primary));
 }
 
 html {
@@ -85,23 +90,21 @@ body {
     backface-visibility: hidden;
 }
 
-/* Primary background layer */
 body::after {
     content: '';
     position: fixed;
     inset: 0;
-    background: url('ccs_background.jpg') center center;
-    background-size: cover;
+    background: url('ccs_background.jpg') center center no-repeat;
+    background-size: contain;
+    max-width: 1920px;
+    max-height: 1080px;
+    margin: auto;
     z-index: 0;
     pointer-events: none;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
-    will-change: transform;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
 }
 
-/* Overlay layer */
 body::before {
     content: '';
     position: fixed;
@@ -111,11 +114,11 @@ body::before {
     pointer-events: none;
 }
 
-/* Container Styles */
 .container {
     width: 95%;
     max-width: 850px;
-    margin: var(--spacing-md) auto;
+    height: 90vh;
+    margin: 5vh auto;
     padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     background: var(--color-background-primary);
@@ -127,17 +130,13 @@ body::before {
     z-index: 2;
     backdrop-filter: blur(3px);
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    height: calc(100vh - 40px);
-    padding-bottom: 50px;
     transform: translate3d(0, 0, 0);
-    -webkit-transform: translate3d(0, 0, 0);
     will-change: scroll-position;
     scroll-behavior: smooth;
-    touch-action: pan-y pinch-zoom;
 }
 
-/* Typography */
 h1,
 h2 {
     color: var(--color-heading);
@@ -158,7 +157,6 @@ h2 {
     margin-bottom: var(--spacing-md);
 }
 
-/* Section Styles */
 section {
     margin: var(--spacing-lg) 0;
     padding: var(--spacing-lg);
@@ -192,7 +190,6 @@ section::before {
     }
 }
 
-/* Form Elements */
 label {
     font-weight: bold;
     color: var(--color-label);
@@ -237,7 +234,6 @@ input[type="radio"] {
     padding-right: 2.5em;
 }
 
-/* Focus States */
 input:focus,
 select:focus,
 button:focus {
@@ -246,7 +242,6 @@ button:focus {
     box-shadow: 0 0 0 4px rgba(240, 215, 140, 0.2);
 }
 
-/* Button Styles */
 .add-item-btn,
 .delete-item-btn,
 .save-btn {
@@ -286,7 +281,6 @@ button:focus {
     transform: translateY(-1px);
 }
 
-/* Message and Shield Containers */
 .inspiration-message,
 .shield-container {
     display: flex;
@@ -312,7 +306,6 @@ button:focus {
     font-size: 1.1em;
 }
 
-/* Shield Toggle */
 .toggle-wrapper {
     margin-left: auto;
     position: relative;
@@ -370,7 +363,6 @@ button:focus {
     filter: brightness(1.2);
 }
 
-/* Equipment List */
 .equipment-list {
     margin-top: var(--spacing-md);
 }
@@ -385,7 +377,6 @@ button:focus {
     border-radius: var(--radius-sm);
 }
 
-/* Icons */
 .inspiration-icon,
 .shield-icon {
     font-size: 1.8em;
@@ -394,12 +385,10 @@ button:focus {
     margin-right: var(--spacing-xs);
 }
 
-/* Form Groups */
 .form-group {
     margin-bottom: var(--spacing-md);
 }
 
-/* Error Messages */
 .error-message {
     color: #ff6b6b;
     font-size: 0.9em;
@@ -407,7 +396,6 @@ button:focus {
     display: block;
 }
 
-/* Ability Grid */
 .ability-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -421,7 +409,6 @@ button:focus {
     margin-bottom: var(--spacing-sm);
 }
 
-/* Scrollbar Styles */
 ::-webkit-scrollbar {
     width: 12px;
 }
@@ -446,7 +433,6 @@ button:focus {
     background-clip: padding-box;
 }
 
-/* Print Styles */
 @media print {
     body {
         background: none;
@@ -494,7 +480,6 @@ button:focus {
     }
 }
 
-/* Responsive styles for smaller screens */
 @media screen and (max-width: 768px) {
     body {
         overflow-y: auto;
@@ -511,13 +496,13 @@ button:focus {
 
     .container {
         width: 90%;
-        height: calc(100vh - 20px);
-        margin: var(--spacing-sm) auto;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y pinch-zoom;
-        position: relative;
-        z-index: 2;
+        height: 85vh;
+        margin: 7.5vh auto;
+        padding: var(--spacing-sm);
+    }
+
+    body::after {
+        background-size: cover;
     }
 
     ::-webkit-scrollbar {
@@ -604,35 +589,41 @@ button:focus {
     }
 }
 
-/* High refresh rate optimizations */
+section {
+    overflow: visible;
+}
+
+.ability-grid,
+.equipment-list,
+.form-group {
+    overflow: visible;
+    margin-bottom: var(--spacing-md);
+    width: 100%;
+}
+
 @media (pointer: fine) {
     .container {
         scroll-behavior: smooth;
     }
 }
 
-/* Inertia scrolling support */
 @supports (-webkit-overflow-scrolling: touch) {
     .container {
         -webkit-overflow-scrolling: touch;
     }
 }
 
-/* Scroll chaining prevention */
 * {
     overscroll-behavior: contain;
 }
 
-/* Updated High-DPI Screen Optimizations */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     body::after {
-        background-size: cover;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
+        background-size: contain;
+        background-position: center;
     }
 }
 
-/* Connection Status Styles */
 .connection-status {
     position: fixed;
     bottom: var(--spacing-lg);
@@ -669,7 +660,6 @@ button:focus {
     box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
 }
 
-/* Loading Indicator Styles */
 .loading-indicator {
     display: none;
     position: fixed;
@@ -711,7 +701,6 @@ button:focus {
     }
 }
 
-/* Responsive styles for connection status and loading indicator */
 @media screen and (max-width: 768px) {
     .connection-status {
         bottom: var(--spacing-sm);
@@ -725,5 +714,24 @@ button:focus {
         max-width: 300px;
         padding: var(--spacing-md);
         font-size: 0.9em;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .shield-checkbox:checked + .toggle-slot::before {
+        transform: translateX(30px);
+    }
+    
+    section:hover {
+        transform: none;
+    }
+    
+    .spinner {
+        border: 3px solid var(--color-spinner-border);
     }
 }
