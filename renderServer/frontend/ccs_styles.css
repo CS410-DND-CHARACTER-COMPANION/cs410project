@@ -132,14 +132,14 @@ body::before {
 }
 
 .container {
-    width: 95%;
-    max-width: 1400px;
+    width: 97%;
+    max-width: 1500px;
     height: auto;
-    min-height: 85vh;
-    margin: 2.5vh auto;
+    min-height: 90vh;
+    margin: 2vh auto;
     padding: var(--spacing-md);
     aspect-ratio: 16 / 9;
-    max-height: 95vh;
+    max-height: 98vh;
     border-radius: var(--radius-lg);
     background: var(--color-background-primary);
     border: 2px solid var(--color-border);
@@ -169,23 +169,23 @@ body::before {
 
 @media screen and (max-width: 1920px) {
     .container {
-        width: 90%;
-        max-width: 1300px;
+        width: 95%;
+        max-width: 1400px;
     }
 }
 
 @media screen and (max-width: 1280px) {
     .container {
-        width: 95%;
-        max-width: 1200px;
+        width: 96%;
+        max-width: 1350px;
     }
 }
 
 @media screen and (max-width: 768px) {
     .container {
-        width: 95%;
+        width: 97%;
         height: auto;
-        min-height: 85vh;
+        min-height: 90vh;
         margin: 2vh auto;
         padding: var(--spacing-sm);
     }
