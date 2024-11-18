@@ -61,6 +61,8 @@ body {
     overflow: hidden;
     position: fixed;
     overscroll-behavior: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 body {
@@ -68,6 +70,11 @@ body {
     overflow-x: hidden;
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
+}
+
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+    display: none;
 }
 
 .text-content {
@@ -152,6 +159,8 @@ body::before {
     scroll-behavior: smooth;
     overflow-x: hidden;
     overscroll-behavior-x: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .container::-webkit-scrollbar {
