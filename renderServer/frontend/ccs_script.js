@@ -1,4 +1,4 @@
-// V3.8.2
+// V3.8.3
 
 class CharacterState {
 
@@ -52,25 +52,10 @@ class CharacterState {
     getState() {
         return this.state;
     }
-
-    // Load character data from local storage
-    loadFromLocalStorage() {
-        const data = JSON.parse(localStorage.getItem('characterData'));
-        if (data) {
-            this.state = data;
-            this.notify();
-        }
-    }
-
-    // Save character data to local storage
-    saveToLocalStorage() {
-        localStorage.setItem('characterData', JSON.stringify(this.state));
-    }
 }
 
-// Creates a new CharacterState instance and load data from local storage
+// Creates a new CharacterState instance
 const characterState = new CharacterState();
-characterState.loadFromLocalStorage();
 
 // Socket connection with error handling and reconnection logic
 class SocketManager {
