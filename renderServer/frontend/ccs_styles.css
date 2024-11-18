@@ -1,4 +1,4 @@
-/* V3.9.6 */
+/* V3.9.8 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -543,12 +543,22 @@ button:focus {
     margin-bottom: var(--spacing-sm);
 }
 
+* {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
 ::-webkit-scrollbar {
     width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--color-scrollbar-track);
+    background: transparent;
     border-radius: var(--spacing-xs);
     margin: 4px 0;
 }
@@ -565,6 +575,12 @@ button:focus {
     background: rgba(230, 194, 122, 0.8);
     border: 2px solid transparent;
     background-clip: padding-box;
+}
+
+@media screen and (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
 }
 
 @media print {
