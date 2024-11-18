@@ -139,7 +139,7 @@ body::before {
     margin: 2vh auto;
     padding: var(--spacing-md);
     aspect-ratio: 16 / 9;
-    max-height: 98vh;
+    max-height: 90vh;
     border-radius: var(--radius-lg);
     background: var(--color-background-primary);
     border: 2px solid var(--color-border);
@@ -171,6 +171,8 @@ body::before {
     .container {
         width: 95%;
         max-width: 1400px;
+        min-height: 90vh;
+        max-height: 90vh;
     }
 }
 
@@ -178,6 +180,8 @@ body::before {
     .container {
         width: 96%;
         max-width: 1350px;
+        min-height: 90vh;
+        max-height: 90vh;
     }
 }
 
