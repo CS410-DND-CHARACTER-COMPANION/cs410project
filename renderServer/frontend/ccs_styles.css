@@ -1,4 +1,4 @@
-/* V3.9.4 */
+/* V3.9.5 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -182,28 +182,53 @@ body::before {
     }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (min-width: 769px) {
     body::after {
-        background-image: url('ccs_p_background.jpg');
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: url('ccs_background.jpg') center center no-repeat;
         background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        min-width: 100%;
+        min-height: 100%;
         max-width: none;
         max-height: none;
+        margin: 0;
+        z-index: 0;
+        pointer-events: none;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: url('ccs_pbackground.jpg') center center no-repeat;
+        background-size: cover;
+        min-width: 100%;
+        min-height: 100%;
+        max-width: none;
+        max-height: none;
+        margin: 0;
+        z-index: 0;
+        pointer-events: none;
     }
 }
 
 @media screen and (max-width: 768px) and (orientation: portrait) {
     body::after {
-        background-image: url('ccs_p_background.jpg');
+        background: url('ccs_pbackground.jpg') center center no-repeat;
+        background-size: cover;
     }
 }
 
 @media screen and (max-width: 768px) and (orientation: landscape) {
     body::after {
-        background-image: url('ccs_p_background.jpg');
+        background: url('ccs_pbackground.jpg') center center no-repeat;
         background-size: cover;
-        background-position: center;
     }
 }
 
