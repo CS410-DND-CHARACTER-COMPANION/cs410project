@@ -136,7 +136,7 @@ body::before {
     max-width: 1500px;
     height: auto;
     min-height: 90vh;
-    margin: 2.5vh auto;
+    margin: 3vh auto;
     padding: var(--spacing-md);
     padding-top: var(--spacing-sm);
     aspect-ratio: 16 / 9;
@@ -191,7 +191,7 @@ body::before {
         width: 97%;
         height: auto;
         min-height: 90vh;
-        margin: 2.5vh auto;
+        margin: 3vh auto;
         padding: var(--spacing-sm);
     }
 }
