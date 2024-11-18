@@ -206,7 +206,7 @@ body::before {
         content: '';
         position: fixed;
         inset: 0;
-        background: url('ccs_pbackground.jpg') center center no-repeat;
+        background: url('ccs_background.jpg') center center no-repeat;
         background-size: cover;
         min-width: 100%;
         min-height: 100%;
@@ -220,14 +220,14 @@ body::before {
 
 @media screen and (max-width: 768px) and (orientation: portrait) {
     body::after {
-        background: url('ccs_pbackground.jpg') center center no-repeat;
+        background: url('ccs_background.jpg') center center no-repeat;
         background-size: cover;
     }
 }
 
 @media screen and (max-width: 768px) and (orientation: landscape) {
     body::after {
-        background: url('ccs_pbackground.jpg') center center no-repeat;
+        background: url('ccs_background.jpg') center center no-repeat;
         background-size: cover;
     }
 }
