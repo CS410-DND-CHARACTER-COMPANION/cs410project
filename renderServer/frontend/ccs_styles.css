@@ -1,4 +1,4 @@
-/* V3.9.5 */
+/* V3.9.6 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -69,25 +69,28 @@ body {
 }
 
 html {
+    position: fixed;
+    height: 100%;
     overflow: hidden;
     scroll-behavior: smooth;
 }
 
 body {
-    font-family: 'Roboto Slab', serif;
-    color: var(--color-text-primary);
+    position: fixed;
+    height: 100%;
+    min-height: 100vh;
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    position: relative;
-    scroll-behavior: smooth;
+    font-family: 'Roboto Slab', serif;
+    color: var(--color-text-primary);
     will-change: scroll-position;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     backface-visibility: hidden;
+    scroll-behavior: smooth;
 }
 
 body::after {
@@ -202,19 +205,30 @@ body::before {
 }
 
 @media screen and (max-width: 768px) {
+    body {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        overflow: hidden;
+    }
     body::after {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background: url('ccs_background.jpg') center center no-repeat;
         background-size: cover;
-        min-width: 100%;
-        min-height: 100%;
         max-width: none;
         max-height: none;
+        width: 100%;
+        height: 100%;
         margin: 0;
-        z-index: 0;
-        pointer-events: none;
+        object-fit: cover;
+        transform: translate3d(0,0,0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    .container {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
     }
 }
 
@@ -222,6 +236,15 @@ body::before {
     body::after {
         background: url('ccs_background.jpg') center center no-repeat;
         background-size: cover;
+        width: 100vw;
+        height: 100vh;
+        height: -webkit-fill-available;
+        transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
     }
 }
 
@@ -229,6 +252,13 @@ body::before {
     body::after {
         background: url('ccs_background.jpg') center center no-repeat;
         background-size: cover;
+        width: 100vw;
+        height: 100vh;
+        transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        min-height: 100vh;
     }
 }
 
@@ -816,5 +846,20 @@ section {
         max-width: 300px;
         padding: var(--spacing-md);
         font-size: 0.9em;
+    }
+}
+
+@supports (padding: max(0px)) {
+    .container {
+        padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+        padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+        padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+        padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+    }
+}
+
+@supports (-webkit-touch-callout: none) {
+    .container {
+        height: -webkit-fill-available;
     }
 }
