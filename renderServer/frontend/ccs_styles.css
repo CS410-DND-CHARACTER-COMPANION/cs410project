@@ -1,4 +1,4 @@
-/* V3.9.1 */
+/* V3.9.2 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -115,11 +115,14 @@ body::before {
 }
 
 .container {
-    width: 95%;
-    max-width: 850px;
-    height: 90vh;
-    margin: 5vh auto;
+    width: 90%;
+    max-width: 1200px;
+    height: auto;
+    min-height: 80vh;
+    margin: 2.5vh auto;
     padding: var(--spacing-md);
+    aspect-ratio: 16 / 9;
+    max-height: 90vh;
     border-radius: var(--radius-lg);
     background: var(--color-background-primary);
     border: 2px solid var(--color-border);
@@ -135,6 +138,60 @@ body::before {
     transform: translate3d(0, 0, 0);
     will-change: scroll-position;
     scroll-behavior: smooth;
+}
+
+@media screen and (max-width: 1920px) {
+    .container {
+        width: 85%;
+        max-width: 1100px;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    .container {
+        width: 90%;
+        max-width: 950px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        width: 95%;
+        height: auto;
+        min-height: 85vh;
+        margin: 2vh auto;
+        padding: var(--spacing-sm);
+    }
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .container {
+        width: 98%;
+        margin: 1vh auto;
+        padding: var(--spacing-xs);
+    }
+}
+
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .container {
+        width: 95%;
+        height: 90vh;
+        margin: 5vh auto;
+    }
+}
+
+body::after {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        width: 99%;
+        padding: var(--spacing-xs);
+        margin: 0.5vh auto;
+    }
 }
 
 h1,
@@ -714,24 +771,5 @@ section {
         max-width: 300px;
         padding: var(--spacing-md);
         font-size: 0.9em;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation: none !important;
-        transition: none !important;
-    }
-    
-    .shield-checkbox:checked + .toggle-slot::before {
-        transform: translateX(30px);
-    }
-    
-    section:hover {
-        transform: none;
-    }
-    
-    .spinner {
-        border: 3px solid var(--color-spinner-border);
     }
 }
