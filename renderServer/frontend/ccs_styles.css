@@ -1,4 +1,4 @@
-/* V3.9.1 */
+/* V3.9.2 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -134,12 +134,18 @@ body::before {
     position: relative;
     z-index: 2;
     backdrop-filter: blur(3px);
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
     transform: translate3d(0, 0, 0);
     will-change: scroll-position;
     scroll-behavior: smooth;
+}
+
+.container::-webkit-scrollbar {
+    display: none;
 }
 
 @media screen and (max-width: 1920px) {
