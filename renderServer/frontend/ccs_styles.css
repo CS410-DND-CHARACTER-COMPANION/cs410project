@@ -1,4 +1,4 @@
-/* V3.8.4 */
+/* V3.8.5 */
 
 /* Defines CSS variables for colors, shadows, spacing, and transitions */
 :root {
@@ -56,13 +56,16 @@
 /* Base styles */
 html,
 body {
-    overscroll-behavior-y: contain;
+    overscroll-behavior: none; /* Changed from overscroll-behavior-y: contain */
     height: 100%;
     width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 html {
     overflow: hidden;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -72,8 +75,14 @@ body {
     padding: 0;
     min-height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     position: relative;
+    scroll-behavior: smooth;
+    will-change: scroll-position;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 /* Primary background layer */
@@ -119,8 +128,13 @@ body::before {
     backdrop-filter: blur(3px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    height: 100%;
+    height: calc(100vh - 40px);
     padding-bottom: 50px;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    will-change: scroll-position;
+    scroll-behavior: smooth;
+    touch-action: pan-y pinch-zoom;
 }
 
 /* Typography */
@@ -409,21 +423,27 @@ button:focus {
 
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
 }
 
 ::-webkit-scrollbar-track {
     background: var(--color-scrollbar-track);
     border-radius: var(--spacing-xs);
+    margin: 4px 0;
 }
 
 ::-webkit-scrollbar-thumb {
     background: var(--color-scrollbar-thumb);
     border-radius: var(--spacing-xs);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    min-height: 40px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(230, 194, 122, 0.8);
+    border: 2px solid transparent;
+    background-clip: padding-box;
 }
 
 /* Print Styles */
@@ -476,6 +496,14 @@ button:focus {
 
 /* Responsive styles for smaller screens */
 @media screen and (max-width: 768px) {
+    body {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
     body::after {
         background-attachment: scroll;
         background-position: center;
@@ -483,7 +511,21 @@ button:focus {
 
     .container {
         width: 90%;
+        height: calc(100vh - 20px);
         margin: var(--spacing-sm) auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y pinch-zoom;
+        position: relative;
+        z-index: 2;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border: 2px solid transparent;
     }
 
     .shield-container {
@@ -523,15 +565,12 @@ button:focus {
         gap: var(--spacing-sm);
     }
 
-    .shield-container,
-    .inspiration-message {
-        flex-direction: column;
-        text-align: center;
-        padding: var(--spacing-sm);
-    }
-
-    .shield-text {
-        margin: var(--spacing-xs) 0;
+    button, 
+    input, 
+    select, 
+    .shield-checkbox + .toggle-slot {
+        padding: var(--spacing-md);
+        min-height: 44px;
     }
 
     .add-item-btn,
@@ -549,6 +588,39 @@ button:focus {
         font-size: 16px;
         padding: var(--spacing-md);
     }
+
+    .connection-status {
+        bottom: var(--spacing-sm);
+        right: var(--spacing-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.9em;
+    }
+    
+    .loading-indicator {
+        width: 80%;
+        max-width: 300px;
+        padding: var(--spacing-md);
+        font-size: 0.9em;
+    }
+}
+
+/* High refresh rate optimizations */
+@media (pointer: fine) {
+    .container {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Inertia scrolling support */
+@supports (-webkit-overflow-scrolling: touch) {
+    .container {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Scroll chaining prevention */
+* {
+    overscroll-behavior: contain;
 }
 
 /* Updated High-DPI Screen Optimizations */
