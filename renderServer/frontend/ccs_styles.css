@@ -1,4 +1,4 @@
-/* V3.9.2 */
+/* V3.9.3 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -167,16 +167,18 @@ body::before {
 @media screen and (max-width: 768px) and (orientation: portrait) {
     .container {
         width: 98%;
-        margin: 1vh auto;
-        padding: var(--spacing-xs);
+        height: auto;
+        min-height: 95vh;
+        margin: 2vh auto;
     }
 }
 
 @media screen and (max-width: 768px) and (orientation: landscape) {
     .container {
         width: 95%;
-        height: 90vh;
-        margin: 5vh auto;
+        height: auto;
+        min-height: 90vh;
+        margin: 2vh auto;
     }
 }
 
@@ -549,17 +551,16 @@ button:focus {
     body::after {
         background-attachment: scroll;
         background-position: center;
+        background-size: cover;
     }
 
     .container {
-        width: 90%;
-        height: 85vh;
-        margin: 7.5vh auto;
-        padding: var(--spacing-sm);
-    }
-
-    body::after {
-        background-size: cover;
+        width: 95%;
+        height: auto;
+        min-height: 90vh;
+        max-height: none;
+        margin: 2vh auto;
+        aspect-ratio: auto;
     }
 
     ::-webkit-scrollbar {
