@@ -1,4 +1,4 @@
-/* V3.9.3 */
+/* V3.9.4 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -182,10 +182,29 @@ body::before {
     }
 }
 
-body::after {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+@media screen and (max-width: 768px) {
+    body::after {
+        background-image: url('ccs_p_background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        max-width: none;
+        max-height: none;
+    }
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    body::after {
+        background-image: url('ccs_p_background.jpg');
+    }
+}
+
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    body::after {
+        background-image: url('ccs_p_background.jpg');
+        background-size: cover;
+        background-position: center;
+    }
 }
 
 @media screen and (max-width: 480px) {
