@@ -1,4 +1,4 @@
-/* V3.9.3 */
+/* V3.9.4 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -60,6 +60,14 @@ body {
     height: 100vh;
     overflow: hidden;
     position: fixed;
+    overscroll-behavior: none;
+}
+
+body {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
 }
 
 .text-content {
@@ -142,6 +150,8 @@ body::before {
     transform: translate3d(0, 0, 0);
     will-change: scroll-position;
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
 }
 
 .container::-webkit-scrollbar {
