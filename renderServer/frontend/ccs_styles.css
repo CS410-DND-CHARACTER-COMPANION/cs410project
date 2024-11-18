@@ -1,4 +1,4 @@
-/* V3.9.8 */
+/* V3.9.1 */
 
 @font-face {
     font-family: 'Uncial Antiqua';
@@ -544,26 +544,19 @@ button:focus {
 }
 
 * {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
 }
 
 *::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-}
-
-::-webkit-scrollbar {
     width: 12px;
 }
 
-::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
     background: transparent;
-    border-radius: var(--spacing-xs);
-    margin: 4px 0;
 }
 
-::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
     background: var(--color-scrollbar-thumb);
     border-radius: var(--spacing-xs);
     border: 3px solid transparent;
@@ -571,14 +564,14 @@ button:focus {
     min-height: 40px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+*::-webkit-scrollbar-thumb:hover {
     background: rgba(230, 194, 122, 0.8);
     border: 2px solid transparent;
     background-clip: padding-box;
 }
 
 @media screen and (max-width: 768px) {
-    ::-webkit-scrollbar {
+    *::-webkit-scrollbar {
         width: 6px;
     }
 }
