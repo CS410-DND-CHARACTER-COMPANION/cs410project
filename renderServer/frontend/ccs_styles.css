@@ -701,6 +701,11 @@ section {
     margin: var(--spacing-lg) 0;
 }
 
+.sparkle-button .spark,
+.sparkle-button .spark:before {
+    display: none;
+}
+
 /* Sparkle Button and Animation Styles */
 .sparkle-button {
     --active: 0;
