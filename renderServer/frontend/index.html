@@ -290,9 +290,24 @@
 
             </section>
 
-            <button type="button" class="save-btn" id="save-character-btn" onclick="handleFormSubmission(event)"
-                aria-label="Save character">
-                Save Character
+            <button type="button" class="save-btn sparkle-button" id="save-character-btn"
+                onclick="handleFormSubmission(event)" aria-label="Save character">
+                <span class="text">Save Character</span>
+                <div class="spark"></div>
+                <div class="backdrop"></div>
+                <svg class="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <div class="particle-pen">
+                    <div class="particle">
+                        <svg viewBox="0 0 16 16">
+                            <path
+                                d="M8 0L10.2192 5.7918H16L11.6459 9.4164L13.5744 15L8 11.6459L2.42562 15L4.35406 9.4164L0 5.7918H5.7808L8 0Z" />
+                        </svg>
+                    </div>
+                </div>
             </button>
 
         </form>
