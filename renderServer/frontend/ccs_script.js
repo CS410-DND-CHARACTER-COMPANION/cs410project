@@ -437,28 +437,52 @@ document.addEventListener('DOMContentLoaded', () => {
         cursor.classList.add('custom-cursor');
         document.body.appendChild(cursor);
 
-        // Cursor movement with requestAnimationFrame for better performance
+        // Advanced cursor movement with high-performance tracking
         const moveCursor = (e) => {
+            // Use transform for sub-pixel rendering and hardware acceleration
             requestAnimationFrame(() => {
-                cursor.style.left = `${e.clientX}px`;
-                cursor.style.top = `${e.clientY}px`;
+                cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
             });
         };
 
-        document.addEventListener('mousemove', moveCursor);
+        // Use pointer events for more precise tracking
+        document.addEventListener('pointermove', moveCursor, { passive: true });
 
-        // Hovering effects
+        // Smooth hover and interaction effects
         const interactiveElements = document.querySelectorAll(
             'a, button, input, select, .toggle-slot, .custom-select, .equipment-item'
         );
 
         interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+            el.addEventListener('pointerenter', () => {
+                cursor.classList.add('hovering');
+                cursor.style.transform += ' scale(1.2)';
+            });
+            el.addEventListener('pointerleave', () => {
+                cursor.classList.remove('hovering');
+                cursor.style.transform = cursor.style.transform.replace(' scale(1.2)', '');
+            });
         });
 
-        // Clicking effects
-        document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
-        document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+        // Advanced clicking animation with DnD-style effect
+        let clickTimeout;
+        document.addEventListener('pointerdown', (e) => {
+            cursor.classList.add('clicking');
+
+            // Subtle rotation and scale for a more dynamic feel
+            cursor.style.transform += ' rotate(10deg) scale(0.9)';
+
+            // Clean up animation after click
+            clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(() => {
+                cursor.classList.remove('clicking');
+                cursor.style.transform = cursor.style.transform
+                    .replace(' rotate(10deg)', '')
+                    .replace(' scale(0.9)', '');
+            }, 150);
+        });
+
+        // Prevent default cursor
+        document.body.style.cursor = 'none';
     }
 });
