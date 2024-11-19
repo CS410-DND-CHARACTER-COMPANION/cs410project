@@ -73,10 +73,8 @@ body {
 }
 
 body {
-    overflow-y: scroll;
-    overflow-x: hidden;
-    overscroll-behavior-x: none;
-    overscroll-behavior-y: none;
+    overflow: hidden scroll;
+    overscroll-behavior: none;
 }
 
 body::-webkit-scrollbar,
@@ -108,7 +106,6 @@ body {
     font-family: 'Roboto Slab', serif;
     color: var(--color-text-primary);
     will-change: scroll-position;
-    -webkit-transform: translateZ(0);
     transform: translateZ(0);
     backface-visibility: hidden;
     scroll-behavior: smooth;
@@ -118,8 +115,7 @@ body::after {
     content: '';
     position: fixed;
     inset: 0;
-    background: url('ccs_background.jpg') center center no-repeat;
-    background-size: contain;
+    background: url('ccs_background.jpg') center/contain no-repeat;
     max-width: 1920px;
     max-height: 1080px;
     margin: auto;
