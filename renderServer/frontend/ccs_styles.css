@@ -985,3 +985,28 @@ section {
         background-position: center;
     }
 }
+
+/* Custom Cursor Styles */
+* {
+    cursor: none;
+}
+
+body {
+    cursor: none;
+}
+
+.custom-cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    width: 40px;
+    height: 40px;
+    background: url('ccs_dnd_cursor.jpg') no-repeat;
+    background-size: contain;
+    transform: translate(-50%, -50%);
+    transition: all 0.1s ease-out;
+}
+
+.custom-cursor.hovering {
+    transform: translate(-50%, -50%) scale(1.1);
+}
