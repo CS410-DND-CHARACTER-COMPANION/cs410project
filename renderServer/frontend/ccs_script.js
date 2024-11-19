@@ -431,6 +431,10 @@ window.onload = function () {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Hide default cursor globally
+    document.body.style.cursor = 'none';
+    document.documentElement.style.cursor = 'none';
+
     const cursor = document.createElement('div');
     cursor.style.position = 'fixed';
     cursor.style.width = '40px';
@@ -440,6 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cursor.style.backgroundRepeat = 'no-repeat';
     cursor.style.pointerEvents = 'none';
     cursor.style.zIndex = '9999';
+    cursor.style.transform = 'translate(-50%, -50%)'; // Center the cursor
     document.body.appendChild(cursor);
 
     const moveCursor = (e) => {
@@ -448,4 +453,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.addEventListener('mousemove', moveCursor);
+
+    // Optional: Add click and hover effects
+    document.addEventListener('mousedown', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    });
+
+    document.addEventListener('mouseup', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
 });
+
+// Additional CSS to ensure no default cursor
+* {
+    cursor: none!important;
+}
