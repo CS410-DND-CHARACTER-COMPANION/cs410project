@@ -1,4 +1,4 @@
-// V3.9.1
+// V3.9.5
 
 class CharacterState {
 
@@ -429,3 +429,37 @@ window.onload = function () {
         showError('Failed to initialize character sheet');
     }
 };
+
+// Custom Cursor Implementation
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if device supports custom cursor
+    if (window.matchMedia("(pointer: fine)").matches) {
+        const cursor = document.createElement('div');
+        cursor.classList.add('custom-cursor');
+        document.body.appendChild(cursor);
+
+        // Cursor movement with requestAnimationFrame for better performance
+        const moveCursor = (e) => {
+            requestAnimationFrame(() => {
+                cursor.style.left = `${e.clientX}px`;
+                cursor.style.top = `${e.clientY}px`;
+            });
+        };
+
+        document.addEventListener('mousemove', moveCursor);
+
+        // Hovering effects
+        const interactiveElements = document.querySelectorAll(
+            'a, button, input, select, .toggle-slot, .custom-select, .equipment-item'
+        );
+
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+        });
+
+        // Clicking effects
+        document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+    }
+});
