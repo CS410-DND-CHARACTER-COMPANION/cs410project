@@ -368,27 +368,22 @@ input[type="text"],
 input[type="number"],
 input[type="file"],
 .custom-select {
+    position: relative;
     width: calc(100% - 20px);
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: 16px;
-    border: 1px solid var(--color-input-border);
-    border-radius: var(--radius-sm);
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #4a3b26;
-    box-shadow: var(--shadow-input);
-    margin-bottom: var(--spacing-md);
-    transition: var(--transition-default);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    position: relative;
-    background: var(--color-secondary);
     border: 4px solid var(--color-shield-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-secondary);
+    color: #4a3b26;
+    box-shadow: 
+        10px 10px 0 var(--color-shield-border),
+        inset 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: var(--spacing-md);
     transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
     transform-style: preserve-3d;
-    transform: rotateX(10deg) rotateY(-10deg);
+    transform: rotateX(10deg) rotateY(-10deg) translateZ(-10px);
     perspective: 1000px;
-    box-shadow: 10px 10px 0 var(--color-shield-border);
     z-index: 2;
 }
 
@@ -396,8 +391,30 @@ input[type="text"]:hover,
 input[type="number"]:hover,
 input[type="file"]:hover,
 .custom-select:hover {
-    transform: rotateX(5deg) rotateY(1deg) scale(1.05);
-    box-shadow: 25px 25px 0 -5px var(--color-heading), 25px 25px 0 0 var(--color-shield-border);
+    transform: rotateX(5deg) rotateY(1deg) scale(1.02) translateZ(-5px);
+    box-shadow: 
+        25px 25px 0 -5px var(--color-heading), 
+        25px 25px 0 0 var(--color-shield-border),
+        inset 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="file"]:focus,
+.custom-select:focus {
+    outline: none;
+    box-shadow: 
+        15px 15px 0 -3px var(--color-heading), 
+        15px 15px 0 0 var(--color-shield-border),
+        0 0 0 3px rgba(240, 215, 140, 0.5);
+}
+
+input[type="text"]:focus + label::before,
+input[type="number"]:focus + label::before,
+input[type="file"]:focus + label::before,
+.custom-select:focus + label::before {
+    opacity: 1;
+    transform: translateZ(40px);
 }
 
 input[type="text"]::before,
@@ -420,21 +437,32 @@ input[type="file"]::before,
 
 label {
     position: relative;
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: bold;
+    color: var(--color-label);
+    text-shadow: var(--shadow-text);
+    font-size: 1.1em;
+    z-index: 1;
 }
 
 label::before {
     content: attr(data-label);
     position: absolute;
-    top: -15px;
-    left: 20px;
+    top: -20px;
+    left: 10px;
     background: var(--color-heading);
     color: var(--color-shield-toggle-bg);
     font-weight: bold;
-    padding: 5px 10px;
-    font-size: 14px;
-    transform: translateZ(50px);
-    z-index: 4;
+    padding: 3px 8px;
+    font-size: 12px;
+    transform: translateZ(20px);
+    z-index: 3;
     border: 2px solid var(--color-shield-border);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 input[type="checkbox"],
@@ -604,7 +632,8 @@ button:focus {
 }
 
 .form-group {
-    margin-bottom: var(--spacing-md);
+    position: relative;
+    margin-bottom: var(--spacing-lg);
 }
 
 .error-message {
