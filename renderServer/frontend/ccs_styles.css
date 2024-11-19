@@ -1002,11 +1002,12 @@ body {
     width: 40px;
     height: 40px;
     background: url('ccs_dnd_cursor.png') no-repeat;
-    background-size: contain;
+    background-position: 0 0;
+    background-size: auto 100%;
     transform: translate(-50%, -50%);
     transition: all 0.1s ease-out;
 }
 
-.custom-cursor.hovering {
-    transform: translate(-50%, -50%) scale(1.1);
+.custom-cursor.clicking {
+    background-position: -40px 0;
 }
