@@ -1003,11 +1003,18 @@ body {
     height: 40px;
     background: url('ccs_dnd_cursor.png') no-repeat;
     background-position: 0 0;
-    background-size: auto 100%;
+    background-size: contain;
+    will-change: transform;
     transform: translate(-50%, -50%);
-    transition: all 0.1s ease-out;
+    transition: transform 0.05s ease-out;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
 .custom-cursor.clicking {
     background-position: -40px 0;
+}
+
+.custom-cursor.hovering {
+    opacity: 0.8;
 }
