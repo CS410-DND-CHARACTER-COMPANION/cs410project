@@ -701,6 +701,10 @@ section {
     margin: var(--spacing-lg) 0;
 }
 
+.spark {
+    display: none !important;
+}
+
 /* Sparkle Button and Animation Styles */
 .sparkle-button {
     --active: 0;
