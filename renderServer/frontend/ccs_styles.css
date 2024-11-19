@@ -701,11 +701,6 @@ section {
     margin: var(--spacing-lg) 0;
 }
 
-.sparkle-button .spark,
-.sparkle-button .spark:before {
-    display: none;
-}
-
 /* Sparkle Button and Animation Styles */
 .sparkle-button {
     --active: 0;
@@ -873,6 +868,10 @@ section {
 .sparkle-button svg {
     inline-size: 1.25em;
     translate: -25% -5%;
+}
+
+.spark {
+    display: none !important;
 }
 
 .bodydrop {
