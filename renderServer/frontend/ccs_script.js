@@ -430,7 +430,6 @@ window.onload = function () {
     }
 };
 
-// Custom Cursor Implementation
 document.addEventListener('DOMContentLoaded', () => {
     // Check if device supports custom cursor
     if (window.matchMedia("(pointer: fine)").matches) {
