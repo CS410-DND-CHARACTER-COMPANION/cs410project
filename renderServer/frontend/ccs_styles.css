@@ -1001,7 +1001,7 @@ body {
     z-index: 9999;
     width: 40px;
     height: 40px;
-    background: url('ccs_dnd_cursor.jpg') no-repeat;
+    background: url('ccs_dnd_cursor.png') no-repeat;
     background-size: contain;
     transform: translate(-50%, -50%);
     transition: all 0.1s ease-out;
