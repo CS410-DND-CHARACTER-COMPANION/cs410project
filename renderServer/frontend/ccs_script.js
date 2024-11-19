@@ -1,4 +1,4 @@
-// V3.8.3
+// V3.9.1
 
 class CharacterState {
 
@@ -408,7 +408,7 @@ function setupFormListeners() {
 // Event listener for the "Save Character" button
 function setupSaveButtonListener() {
     try {
-        const saveButton = document.querySelector('[data-action="save-character"]');
+        const saveButton = document.getElementById('save-character-btn');
         saveButton.addEventListener('click', handleFormSubmission);
     } catch (error) {
         console.error('Error setting up save button listener:', error);
