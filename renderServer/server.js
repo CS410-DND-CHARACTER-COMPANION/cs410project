@@ -109,6 +109,31 @@ io.on('connection', async (socket) => {
     }
   });
 
+  // Save character
+  socket.on('saveCharacter', async (characterData) => {
+    const client = new MongoClient(uri);
+    try {
+      await client.connect();
+      const result = await client.db("dnd_screen")
+        .collection("character_sheets")
+        .insertOne(characterData);
+      
+      console.log(`Character saved with ID: ${result.insertedId}`);
+      socket.emit('characterSaved', { 
+        success: true, 
+        characterId: result.insertedId 
+      });
+    } catch (e) {
+      console.error("Error saving character:", e);
+      socket.emit('characterSaved', { 
+        success: false, 
+        error: 'Failed to save character' 
+      });
+    } finally {
+      await client.close();
+    }
+  });
+
   // real-time event: character sheet updated
   socket.on('updateCharacter', async (updatedCharacter) => {
     const client = new MongoClient(uri);

@@ -372,22 +372,43 @@ function handleFormSubmission(event) {
     if (!validateForm()) {
         return;
     }
+
     try {
         const form = document.getElementById('character-form');
         const formData = new FormData(form);
         const characterData = {};
+
+        // Convert form data to object
         for (const [key, value] of formData.entries()) {
-            characterData[key] = value;
+            if (key == 'shield') {
+                characterData[key] = value === 'on';
+            } else {
+                characterData[key] = value;
+            }
         }
-        characterState.update(characterData);
-        characterState.saveToLocalStorage();
-        socketManager.emit('saveCharacter', {
-            userId: socketManager.getUserId(),
-            characterId: characterState.getState().characterId,
-            data: characterData
+
+        // Add equipment array from state
+        characterData.equipment = characterState.getState().equipment || [];
+
+        // Emit the save event
+        socketManager.socket.emit('saveCharacter', characterData);
+
+        // Listen for the response
+        socketManager.socket.once('characterSaved', (response) => {
+            if (response.success) {
+                characterState.update({ 
+                    ...characterData, 
+                    characterId: response.characterId 
+                });
+                characterState.saveToLocalStorage();
+                showSuccess('Character saved successfully!');
+                // Optional: Redirect after successful save
+                // window.location.href = 'character-sheet-v1.html';
+            } else {
+                showError(response.error || 'Failed to save character');
+            }
         });
-        showSuccess('Character saved successfully!');
-        window.location.href = 'dnddemo1.html';
+
     } catch (error) {
         console.error('Error saving character:', error);
         showError('Failed to save character');
@@ -423,8 +444,12 @@ function setupFormListeners() {
 // Event listener for the "Save Character" button
 function setupSaveButtonListener() {
     try {
-        const saveButton = document.querySelector('[data-action="save-character"]');
-        saveButton.addEventListener('click', handleFormSubmission);
+        const saveButton = document.getElementById('save-character-btn');
+        if (saveButton) {
+            saveButton.addEventListener('click', handleFormSubmission);
+        } else {
+            throw new Error('Save button not found');
+        }
     } catch (error) {
         console.error('Error setting up save button listener:', error);
         showError('Failed to initialize save button');
