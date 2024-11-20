@@ -1020,6 +1020,6 @@ body {
 }
 
 /* Ensure custom cursor is used on all interactive elements */
-button, .shield-toggle, .add-item, .delete-item {
-    cursor: none;
+button, a, input[type="button"], input[type="submit"], .shield-toggle, .add-item, .delete-item {
+    cursor: none !important;
 }
