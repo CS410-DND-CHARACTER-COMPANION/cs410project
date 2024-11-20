@@ -999,10 +999,10 @@ body {
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    width: 326px; /* Match half of the actual width */
-    height: 326px; /* Match the height */
+    width: 50px; /* Adjust to make it similar to default cursor size */
+    height: 50px;
     background: url('ccs_dnd_cursor.png') no-repeat;
-    background-size: 651px 326px; /* Specify full image size for clarity */
+    background-size: 100px 50px; /* Scale down proportionally to fit the smaller cursor */
     will-change: transform;
     transform: translate(-50%, -50%);
     transition: transform 0.05s ease-out;
