@@ -1005,12 +1005,13 @@ body {
     background-size: 100px 50px; /* Scale down proportionally to fit the smaller cursor */
     will-change: transform;
     transform: translate(-50%, -50%);
-    transition: transform 0.05s ease-out;
+    transition: transform 0.1s ease, background-position 0.1s ease;
     image-rendering: crisp-edges;
 }
 
 .custom-cursor.clicking {
     background-position: -40px 0; /* Adjust based on your sprite layout */
+    transform: translate(-50%, -50%) scale(0.9) rotate(10deg); /* Scale down and rotate */
 }
 
 .custom-cursor.hovering {
