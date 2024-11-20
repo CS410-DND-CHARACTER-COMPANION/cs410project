@@ -1,4 +1,4 @@
-/* V3.9.5 */
+/* V3.9.1 */
 
 /* Font Import */
 @font-face {
@@ -1001,7 +1001,7 @@ body {
     z-index: 9999;
     width: 50px;
     height: 50px;
-    background: url('ccs_dnd_cursor.png') no-repeat;
+    background: url('ccs_cursor.png') no-repeat;
     background-size: 100px 50px;
     will-change: transform;
     transform: translate(-50%, -50%);
