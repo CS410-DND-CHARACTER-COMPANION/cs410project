@@ -997,16 +997,16 @@ body {
 
 .custom-cursor {
     position: fixed;
-    pointer-events: none; /* Prevent cursor from blocking clicks */
+    pointer-events: none;
     z-index: 9999;
-    width: 100px; /* Set this to the actual width of your cursor image */
-    height: 100px; /* Set this to the actual height of your cursor image */
-    background: url('ccs_dnd_cursor.png') no-repeat; /* Ensure the path is correct */
-    background-size: contain; /* Adjust to fit the cursor image */
+    width: 326px; /* Match half of the actual width */
+    height: 326px; /* Match the height */
+    background: url('ccs_dnd_cursor.png') no-repeat;
+    background-size: 651px 326px; /* Specify full image size for clarity */
     will-change: transform;
-    transform: translate(-50%, -50%); /* Center the cursor */
+    transform: translate(-50%, -50%);
     transition: transform 0.05s ease-out;
-    image-rendering: crisp-edges; /* Improve image rendering */
+    image-rendering: crisp-edges;
 }
 
 .custom-cursor.clicking {
