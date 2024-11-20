@@ -16,19 +16,19 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 // Port setup
-const port = 3000;
+const port = process.env.PORT || 3000;  // Use environment port for Render
 
 // Database connection with mongoose
 const uri = process.env.MONGO_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(uri)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
-  
+
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // Serve static files from the 'frontend' directory
-app.use(express.static(path.join(__dirname, 'frontend')));
+app.use(express.static(path.join(__dirname, '../frontend')));  // Adjust path for correct directory structure
 
 // Route for user-related API endpoints
 app.use('/api/users', userRoutes);
@@ -40,12 +40,12 @@ app.get('/api/users/profile', verifyToken, (req, res) => {
 
 // Connect to frontend
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend', 'index.html'));  // Corrected path
 });
 
 // New route for character sheet page
 app.get('/character-sheet-v1.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'character-sheet-v1.html'));
+  res.sendFile(path.join(__dirname, '../frontend', 'character-sheet-v1.html'));  // Corrected path
 });
 
 // socket.io connection
