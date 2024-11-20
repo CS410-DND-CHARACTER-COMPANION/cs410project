@@ -1019,16 +1019,7 @@ body {
     opacity: 0.8;
 }
 
-/* Hide default cursor for non-interactive elements */
+/* Ensure custom cursor is used on all interactive elements */
 button, a, input[type="button"], input[type="submit"], .shield-toggle, .add-item, .delete-item {
     cursor: none !important;
-}
-
-/* For input fields, dropdowns, and other elements, show default browser cursor */
-input, select, textarea {
-    cursor: text !important;
-}
-
-button, a, input[type="button"], input[type="submit"] {
-    cursor: pointer !important;
 }
