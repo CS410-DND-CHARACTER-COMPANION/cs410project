@@ -988,37 +988,31 @@ section {
 
 /* Custom Cursor Styles */
 * {
-    cursor: none;
+    cursor: none; /* Hide default cursor */
 }
 
 body {
-    cursor: none;
+    cursor: none; /* Hide default cursor */
 }
 
 .custom-cursor {
     position: fixed;
-    pointer-events: none;
+    pointer-events: none; /* Prevent cursor from blocking clicks */
     z-index: 9999;
-    width: 40px;
-    /* Adjust based on your desired cursor size */
-    height: 40px;
-    /* Adjust based on your desired cursor size */
-    background: url('ccs_dnd_cursor.png') no-repeat;
-    background-position: 0 0;
-    background-size: 1300px 326px;
-    /* Full sprite width, original height */
+    width: 40px; /* Adjust based on your desired cursor size */
+    height: 40px; /* Adjust based on your desired cursor size */
+    background: url('ccs_dnd_cursor.png') no-repeat; /* Ensure the path is correct */
+    background-size: 651px 326px; /* Full sprite size */
     will-change: transform;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); /* Center the cursor */
     transition: transform 0.05s ease-out;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
+    image-rendering: crisp-edges; /* Improve image rendering */
 }
 
 .custom-cursor.clicking {
-    background-position: -40px 0;
-    /* Adjust based on your sprite layout */
+    background-position: -40px 0; /* Adjust based on your sprite layout */
 }
 
 .custom-cursor.hovering {
-    opacity: 0.8;
+    opacity: 0.8; /* Optional hover effect */
 }
