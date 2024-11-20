@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
-const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const userRoutes = require('./routes/userRoutes');
@@ -19,10 +18,8 @@ const io = new Server(server);
 // Port setup
 const port = 3000;
 
-// Database connection
-const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
-// Connect to MongoDB using Mongoose
+// Database connection with mongoose
+const uri = process.env.MONGO_URI;
 mongoose.connect(uri)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
@@ -52,33 +49,24 @@ app.get('/character-sheet-v1.html', (req, res) => {
 });
 
 // socket.io connection
-io.on('connection', async (socket) => {
+io.on('connection', (socket) => {
   console.log("A user connected:", socket.id);
 
   // get a list of all characters
   socket.on('getAllCharacters', async () => {
-    const client = new MongoClient(uri);
     try {
-      await client.connect();
-      const characters = await client.db("dnd_screen").collection("character_sheets").find().toArray();
+      const characters = await mongoose.model("CharacterSheet").find();
       socket.emit('charactersList', characters);
     } catch (e) {
       console.error("Error getting characters:", e);
       socket.emit('error', 'Failed to retrieve characters');
-    } finally {
-      await client.close();
     }
   });
 
   // New handler for getting a single character
   socket.on('getCharacter', async (characterId) => {
-    const client = new MongoClient(uri);
     try {
-      await client.connect();
-      const character = await client.db("dnd_screen")
-        .collection("character_sheets")
-        .findOne({ _id: new ObjectId(characterId) });
-      
+      const character = await mongoose.model("CharacterSheet").findById(characterId);
       if (character) {
         socket.emit('characterData', character);
       } else {
@@ -87,69 +75,45 @@ io.on('connection', async (socket) => {
     } catch (e) {
       console.error("Error retrieving character:", e);
       socket.emit('error', 'Failed to retrieve character');
-    } finally {
-      await client.close();
     }
   });
 
   // real-time event: new character created
   socket.on('newCharacter', async (character) => {
-    const client = new MongoClient(uri);
     try {
-      await client.connect();
-      const result = await client.db("dnd_screen").collection("character_sheets").insertOne(character);
-      console.log(`New character created with the following id: ${result.insertedId}`);
-      character._id = result.insertedId;
-      io.emit('characterAdded', character);
+      const newCharacter = new (mongoose.model("CharacterSheet"))(character);
+      await newCharacter.save();
+      io.emit('characterAdded', newCharacter);
     } catch (e) {
       console.error("Error creating character:", e);
       socket.emit('error', 'Failed to create character');
-    } finally {
-      await client.close();
     }
   });
 
   // Save character
   socket.on('saveCharacter', async (characterData) => {
-    const client = new MongoClient(uri);
     try {
-      await client.connect();
-      const result = await client.db("dnd_screen")
-        .collection("character_sheets")
-        .insertOne(characterData);
-      
-      console.log(`Character saved with ID: ${result.insertedId}`);
-      socket.emit('characterSaved', { 
-        success: true, 
-        characterId: result.insertedId 
-      });
+      const newCharacter = new (mongoose.model("CharacterSheet"))(characterData);
+      const result = await newCharacter.save();
+      socket.emit('characterSaved', { success: true, characterId: result._id });
     } catch (e) {
       console.error("Error saving character:", e);
-      socket.emit('characterSaved', { 
-        success: false, 
-        error: 'Failed to save character' 
-      });
-    } finally {
-      await client.close();
+      socket.emit('characterSaved', { success: false, error: 'Failed to save character' });
     }
   });
 
   // real-time event: character sheet updated
   socket.on('updateCharacter', async (updatedCharacter) => {
-    const client = new MongoClient(uri);
     try {
-      await client.connect();
-      const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
-        { _id: new ObjectId(updatedCharacter._id) }, 
-        { $set: updatedCharacter }
+      const character = await mongoose.model("CharacterSheet").findByIdAndUpdate(
+        updatedCharacter._id,
+        updatedCharacter,
+        { new: true }
       );
-      console.log(`Character updated: ${updatedCharacter.name}`);
-      io.emit('characterUpdated', updatedCharacter);
+      io.emit('characterUpdated', character);
     } catch (e) {
       console.error("Error updating character:", e);
       socket.emit('error', 'Failed to update character');
-    } finally {
-      await client.close();
     }
   });
 
@@ -166,6 +130,7 @@ server.listen(port, () => {
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
   console.log('\nGracefully shutting down...');
+  await mongoose.connection.close();
   server.close(() => {
     console.log('Server closed');
     process.exit(0);
