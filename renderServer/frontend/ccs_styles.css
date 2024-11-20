@@ -1018,3 +1018,8 @@ body {
 .custom-cursor.hovering {
     opacity: 0.8;
 }
+
+/* Ensure custom cursor is used on all interactive elements */
+button, .shield-toggle, .add-item, .delete-item {
+    cursor: none;
+}
