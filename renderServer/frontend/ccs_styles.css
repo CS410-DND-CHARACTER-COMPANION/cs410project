@@ -988,21 +988,21 @@ section {
 
 /* Custom Cursor Styles */
 * {
-    cursor: none; /* Hide default cursor */
+    cursor: none;
 }
 
 body {
-    cursor: none; /* Hide default cursor */
+    cursor: none;
 }
 
 .custom-cursor {
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    width: 50px; /* Adjust to make it similar to default cursor size */
+    width: 50px;
     height: 50px;
     background: url('ccs_dnd_cursor.png') no-repeat;
-    background-size: 100px 50px; /* Scale down proportionally to fit the smaller cursor */
+    background-size: 100px 50px;
     will-change: transform;
     transform: translate(-50%, -50%);
     transition: transform 0.1s ease, background-position 0.1s ease;
@@ -1010,10 +1010,11 @@ body {
 }
 
 .custom-cursor.clicking {
-    background-position: -40px 0; /* Adjust based on your sprite layout */
-    transform: translate(-50%, -50%) scale(0.9) rotate(10deg); /* Scale down and rotate */
+    background-position: -50px 0;
+    transform: translate(-50%, -50%) scale(1.1) rotate(-20deg);
+    opacity: 1;
 }
 
 .custom-cursor.hovering {
-    opacity: 0.8; /* Optional hover effect */
+    opacity: 0.8;
 }
