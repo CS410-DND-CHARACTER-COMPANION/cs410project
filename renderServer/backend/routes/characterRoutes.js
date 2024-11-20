@@ -1,17 +1,14 @@
-// backend/routes/characterRoutes.js
 const express = require('express');
-const Character = require('../models/characterModel');
 const router = express.Router();
+const characterController = require('../controllers/characterController');
 
-// POST route to save character data
-router.post('/create', async (req, res) => {
-    try {
-        const character = new Character(req.body);
-        await character.save();
-        res.status(201).redirect('/display'); // Redirect to CDS after saving
-    } catch (error) {
-        res.status(400).send('Error saving character: ' + error.message);
-    }
-});
+// Route for creating a character
+router.post('/create', characterController.createCharacter);
+
+// Route for getting all characters
+router.get('/', characterController.getAllCharacters);
+
+// Route for getting a character by ID
+router.get('/:id', characterController.getCharacterById);
 
 module.exports = router;
