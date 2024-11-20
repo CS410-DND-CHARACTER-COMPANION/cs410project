@@ -366,15 +366,14 @@ function handleFormSubmission(event) {
         characterState.update(characterData);
         characterState.saveToLocalStorage();
 
-        // Emit the saveCharacter event
-        socketManager.emit('saveCharacter', {
-            userId: socketManager.getUserId(), // Corrected method name
-            characterId: characterState.getState().characterId,
-            data: characterData
-        });
+        // Save character data to local storage
+        localStorage.setItem('characterData', JSON.stringify(characterData));
 
-        // Show a success message immediately after emitting
-        showSuccess('Saving character...');
+        // Show a success message immediately after saving
+        showSuccess('Character saved to local storage!');
+
+        // Redirect to displayCharacter.html
+        window.location.href = 'displayCharacter.html';
 
     } catch (error) {
         console.error('Error saving character:', error);
