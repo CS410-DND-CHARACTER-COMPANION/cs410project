@@ -210,7 +210,6 @@ function updateFormFields(data) {
 
 // Debounced character update
 const debouncedUpdate = debounce((updates) => {
-
     // Emits an updateCharacter event to the server
     socketManager.emit('updateCharacter', {
         userId: socketManager.getUserId(),
@@ -364,16 +363,16 @@ function handleFormSubmission(event) {
             characterData[key] = value;
         }
         characterState.update(characterData);
-        characterState.saveToLocalStorage();
 
-        // Save character data to local storage
-        localStorage.setItem('characterData', JSON.stringify(characterData));
+        // Emit the saveCharacter event
+        socketManager.emit('saveCharacter', {
+            userId: socketManager.getUserId(), // Corrected method name
+            characterId: characterState.getState().characterId,
+            data: characterData
+        });
 
-        // Show a success message immediately after saving
-        showSuccess('Character saved to local storage!');
-
-        // Redirect to displayCharacter.html
-        window.location.href = 'displayCharacter.html';
+        // Show a success message immediately after emitting
+        showSuccess('Saving character...');
 
     } catch (error) {
         console.error('Error saving character:', error);
