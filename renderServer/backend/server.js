@@ -5,8 +5,8 @@ const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const userRoutes = require("./routes/userRoutes");
-const verifyToken = require('./authMiddleware');
+const userRoutes = require('./routes/userRoutes');
+const verifyToken = require('./middleware/authMiddleware');
 
 // Load environment variables
 dotenv.config();
