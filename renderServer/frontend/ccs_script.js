@@ -364,20 +364,18 @@ function handleFormSubmission(event) {
             characterData[key] = value;
         }
         characterState.update(characterData);
-        characterState.saveToLocalStorage();
-
-        // Emit the saveCharacter event
+        
+        // Emit the save character event
         socketManager.emit('saveCharacter', {
             userId: socketManager.getUser Id(),
-            characterId: characterState.getState().characterId,
             data: characterData
         });
 
-        // Listen for the characterSaved event
+        // Listen for the response from the server
         socketManager.socket.on('characterSaved', (response) => {
             if (response.success) {
-                showSuccess('Character saved successfully!');
-                window.location.href = 'displayCharacter.html'; // Redirect after successful save
+                // Redirect to displayCharacter.html with the character ID
+                window.location.href = `displayCharacter.html?id=${response.characterId}`;
             } else {
                 showError('Failed to save character');
             }
