@@ -431,58 +431,25 @@ window.onload = function () {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if device supports custom cursor
-    if (window.matchMedia("(pointer: fine)").matches) {
-        const cursor = document.createElement('div');
-        cursor.classList.add('custom-cursor');
-        document.body.appendChild(cursor);
+    const cursor = document.createElement('div');
+    cursor.className = 'custom-cursor'; // Use the class for styling
+    document.body.appendChild(cursor);
 
-        // Advanced cursor movement with high-performance tracking
-        const moveCursor = (e) => {
-            // Use transform for sub-pixel rendering and hardware acceleration
-            requestAnimationFrame(() => {
-                cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-            });
-        };
+    const moveCursor = (e) => {
+        cursor.style.left = `${e.clientX}px`;
+        cursor.style.top = `${e.clientY}px`;
+    };
 
-        // Use pointer events for more precise tracking
-        document.addEventListener('pointermove', moveCursor, { passive: true });
+    document.addEventListener('mousemove', moveCursor);
 
-        // Smooth hover and interaction effects
-        const interactiveElements = document.querySelectorAll(
-            'a, button, input, select, .toggle-slot, .custom-select, .equipment-item'
-        );
+    document.addEventListener('mousedown', () => {
+        cursor.classList.add('clicking'); // Add clicking class
+    });
 
-        interactiveElements.forEach(el => {
-            el.addEventListener('pointerenter', () => {
-                cursor.classList.add('hovering');
-                cursor.style.transform += ' scale(1.2)';
-            });
-            el.addEventListener('pointerleave', () => {
-                cursor.classList.remove('hovering');
-                cursor.style.transform = cursor.style.transform.replace(' scale(1.2)', '');
-            });
-        });
+    document.addEventListener('mouseup', () => {
+        cursor.classList.remove('clicking'); // Remove clicking class
+    });
 
-        // Advanced clicking animation with DnD-style effect
-        let clickTimeout;
-        document.addEventListener('pointerdown', (e) => {
-            cursor.classList.add('clicking');
-
-            // Subtle rotation and scale for a more dynamic feel
-            cursor.style.transform += ' rotate(10deg) scale(0.9)';
-
-            // Clean up animation after click
-            clearTimeout(clickTimeout);
-            clickTimeout = setTimeout(() => {
-                cursor.classList.remove('clicking');
-                cursor.style.transform = cursor.style.transform
-                    .replace(' rotate(10deg)', '')
-                    .replace(' scale(0.9)', '');
-            }, 150);
-        });
-
-        // Prevent default cursor
-        document.body.style.cursor = 'none';
-    }
+    // Hide default cursor
+    document.body.style.cursor = 'none';
 });
