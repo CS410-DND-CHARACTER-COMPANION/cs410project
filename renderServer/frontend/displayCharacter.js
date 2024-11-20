@@ -2,7 +2,13 @@ window.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
     const characterId = params.get('id');
 
-    if (characterId) {
+    // Check local storage first
+    const localCharacterData = localStorage.getItem('characterData');
+    if (localCharacterData) {
+        const character = JSON.parse(localCharacterData);
+        displayCharacter(character);
+    } else if (characterId) {
+        // If no local data, fetch from the server
         fetch(`/api/characters/${characterId}`)
             .then(response => {
                 if (!response.ok) {
@@ -55,6 +61,9 @@ function saveChar(event) {
         currhp: document.getElementById('currhp').value,
         // Add other fields as needed
     };
+
+    // Save character data to local storage
+    localStorage.setItem('characterData', JSON.stringify(characterData));
 
     // Send character data to the server
     fetch('/api/characters/create', {
