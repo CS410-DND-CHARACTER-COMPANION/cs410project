@@ -351,6 +351,7 @@ function validateForm() {
 
 // Handles the character form submission
 function handleFormSubmission(event) {
+
     // Prevent the form from submitting normally and changing the URL
     event.preventDefault();
     if (!validateForm()) {
@@ -364,23 +365,14 @@ function handleFormSubmission(event) {
             characterData[key] = value;
         }
         characterState.update(characterData);
-        
-        // Emit the save character event
+        characterState.saveToLocalStorage();
         socketManager.emit('saveCharacter', {
-            userId: socketManager.getUser Id(),
+            userId: socketManager.getUserId(),
+            characterId: characterState.getState().characterId,
             data: characterData
         });
-
-        // Listen for the response from the server
-        socketManager.socket.on('characterSaved', (response) => {
-            if (response.success) {
-                // Redirect to displayCharacter.html with the character ID
-                window.location.href = `displayCharacter.html?id=${response.characterId}`;
-            } else {
-                showError('Failed to save character');
-            }
-        });
-
+        showSuccess('Character saved successfully!');
+        window.location.href = `displayCharacter.html`;
     } catch (error) {
         console.error('Error saving character:', error);
         showError('Failed to save character');
