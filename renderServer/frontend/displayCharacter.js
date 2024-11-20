@@ -1,35 +1,42 @@
 window.addEventListener('DOMContentLoaded', function() {
-    const subclasses = {
-        Barbarian: ["Ancestral Guardian", "Battle Rager"],
-        Bard: ["Creation", "Eloquence"],
-        Cleric: ["Arcana", "Death"],
-        Druid: ["Dreams", "Land"],
-        Fighter: ["Arcane Archer", "Battle Master"],
-        Monk: ["Ascendent Dragon", "Astral Self"], 
-        Paladin: ["Conquest", "Devotion"], 
-        Ranger: ["Beast Master", "Drakewarden"], 
-        Rogue: ["Arcane Trickster", "Assassin"], 
-        Sorcerer: ["Aberrant Mind", "Clockwork Soul"], 
-        Warlock: ["Archfey Patron", "Celestial"], 
-        Wizard: ["Bladesinging", "Chronurgy"]
-    };
-    
-    function populate() {
-        const charClass = this.value;
-        const subclassSelect = document.getElementById('subclass');
-        subclassSelect.innerHTML = '';
+    const params = new URLSearchParams(window.location.search);
+    const characterId = params.get('id');
 
-        if (subclasses[charClass]) {
-            subclasses[charClass].forEach(subclass => {
-                const option = document.createElement('option');
-                option.value = subclass;
-                option.textContent = subclass;
-                subclassSelect.appendChild(option);
+    if (characterId) {
+        fetch(`/api/characters/${characterId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Character not found');
+                }
+                return response.json();
+            })
+            .then(character => {
+                displayCharacter(character);
+            })
+            .catch(error => {
+                console.error('Error fetching character:', error);
+                document.getElementById('character-details').innerText = 'Error loading character details.';
             });
-        };
-    };
-    document.getElementById('charClass').addEventListener('change', populate);
+    } else {
+        document.getElementById('character-details').innerText = 'No character ID provided.';
+    }
 });
+
+function displayCharacter(character) {
+    const detailsDiv = document.getElementById('character-details');
+    detailsDiv.innerHTML = `
+        <h2>${character.charName}</h2>
+        <p>Species: ${character.species}</p>
+        <p>Class: ${character.charClass}</p>
+        <p>Subclass: ${character.subclass}</p>
+        <p>Level: ${character.level}</p>
+        <p>Armor Class: ${character.armorClass}</p>
+        <p>Current HP: ${character.currhp} / Max HP: ${character.maxhp}</p>
+        <p>Background: ${character.background}</p>
+        <p>Shield: ${character.shield ? 'Yes' : 'No'}</p>
+        <!-- Add other fields as needed -->
+    `;
+}
 
 function saveChar(event) {
     event.preventDefault(); // Prevent the default form submission
