@@ -432,7 +432,7 @@ window.onload = function () {
 
 document.addEventListener('DOMContentLoaded', () => {
     const cursor = document.createElement('div');
-    cursor.className = 'custom-cursor'; // Use the class for styling
+    cursor.className = 'custom-cursor';
     document.body.appendChild(cursor);
 
     const moveCursor = (e) => {
@@ -442,12 +442,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('mousemove', moveCursor);
 
+    // Clicking effect with smooth animation
     document.addEventListener('mousedown', () => {
-        cursor.classList.add('clicking'); // Add clicking class
+        cursor.classList.add('clicking');
+        cursor.style.transition = 'transform 0.05s ease';
     });
 
     document.addEventListener('mouseup', () => {
-        cursor.classList.remove('clicking'); // Remove clicking class
+        cursor.classList.remove('clicking');
+        cursor.style.transition = 'transform 0.1s ease';
     });
 
     // Hide default cursor
