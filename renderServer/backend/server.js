@@ -1,111 +1,111 @@
-
-const express = require("express");
-const path = require("path");
-const http = require("http");
-const { Server } = require("socket.io");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const userRoutes = require('./routes/userRoutes');
-const verifyToken = require('./middleware/authMiddleware');
+const express = require("express"); // Import the Express framework
+const path = require("path"); // Import path module for file path handling
+const http = require("http"); // Import HTTP module to create a server
+const { Server } = require("socket.io"); // Import Socket.IO for real-time communication
+const mongoose = require("mongoose"); // Import Mongoose for MongoDB interactions
+const dotenv = require("dotenv"); // Import dotenv to manage environment variables
+const userRoutes = require('./routes/userRoutes'); // Import user-related routes
+const verifyToken = require('./middleware/authMiddleware'); // Import middleware for token verification
 const Character = require('./models/characterModel'); // Import the Character model
 
-// Load environment variables
+// Load environment variables from .env file
 dotenv.config();
 
 // Initialize Express app and HTTP server
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server); // Initialize Socket.IO server
 
-// Port setup
-const port = process.env.PORT || 3000;  // Use environment port for Render
+// Port setup: use environment variable or default to 3000
+const port = process.env.PORT || 3000;
 
-// Database connection with mongoose
-const uri = process.env.MONGO_URI;
+// Database connection with Mongoose
+const uri = process.env.MONGO_URI; // Get MongoDB URI from environment variables
 if (!uri) {
-    console.error("MONGO_URI is not defined in the environment variables.");
+    console.error("MONGO_URI is not defined in the environment variables."); // Log error if URI is missing
     process.exit(1); // Exit if MONGO_URI is not defined
 }
 
+// Connect to MongoDB and handle connection success or error
 mongoose.connect(uri)
-    .then(() => console.log("Connected to MongoDB"))
-    .catch(err => console.error("MongoDB connection error:", err));
+    .then(() => console.log("Connected to MongoDB")) // Log success message
+    .catch(err => console.error("MongoDB connection error:", err)); // Log connection error
 
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // Serve static files from the 'frontend' directory
-app.use(express.static(path.join(__dirname, '../frontend')));  // Adjust path for correct directory structure
+app.use(express.static(path.join(__dirname, '../frontend'))); // Adjust path for correct directory structure
 
 // Route for user-related API endpoints
 app.use('/api/users', userRoutes);
 
-// Protected route example
+// Protected route example: requires token verification
 app.get('/api/users/profile', verifyToken, (req, res) => {
-    res.json({ message: 'This is a protected profile route!' });
+    res.json({ message: 'This is a protected profile route!' }); // Respond with a message
 });
 
-// Connect to frontend
+// Connect to frontend: serve the main HTML file
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend', 'index.html'));  // Corrected path
+    res.sendFile(path.join(__dirname, '../frontend', 'index.html')); // Serve index.html
 });
 
 // New route for character sheet page
 app.get('/character-sheet-v1.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend', 'character-sheet-v1.html'));  // Corrected path
+    res.sendFile(path.join(__dirname, '../frontend', 'character-sheet-v1.html')); // Serve character sheet HTML
 });
 
-// socket.io connection
+// Socket.IO connection event
 io.on('connection', (socket) => {
-    console.log("A user connected:", socket.id);
+    console.log("A user connected:", socket.id); // Log when a user connects
 
     // Get a list of all characters
     socket.on('getAllCharacters', async () => {
         try {
-            const characters = await Character.find();
-            socket.emit('charactersList', characters);
+            const characters = await Character.find(); // Fetch all characters from the database
+            socket.emit('charactersList', characters); // Emit the list of characters to the client
         } catch (e) {
-            console.error("Error getting characters:", e);
-            socket.emit('error', 'Failed to retrieve characters');
+            console.error("Error getting characters:", e); // Log error
+            socket.emit('error', 'Failed to retrieve characters'); // Emit error message
         }
     });
 
-    // New handler for getting a single character
+    // New handler for getting a single character by ID
     socket.on('getCharacter', async (characterId) => {
         try {
-            const character = await Character.findById(characterId);
+            const character = await Character.findById(characterId); // Fetch character by ID
             if (character) {
-                socket.emit('characterData', character);
+                socket.emit('characterData', character); // Emit character data if found
             } else {
-                socket.emit('error', 'Character not found');
+                socket.emit('error', 'Character not found'); // Emit error if not found
             }
         } catch (e) {
-            console.error("Error retrieving character:", e);
-            socket.emit('error', 'Failed to retrieve character');
+            console.error("Error retrieving character:", e); // Log error
+            socket.emit('error', 'Failed to retrieve character'); // Emit error message
         }
     });
 
     // Real-time event: new character created
     socket.on('newCharacter', async (character) => {
         try {
-            const newCharacter = new Character(character); // Simplified instantiation
-            await newCharacter.save();
-            io.emit('characterAdded', newCharacter);
+            const newCharacter = new Character(character); // Create a new character instance
+            await newCharacter.save(); // Save the new character to the database
+            io.emit('characterAdded', newCharacter); // Emit event to all clients
         } catch (e) {
-            console.error("Error creating character:", e);
-            socket.emit('error', 'Failed to create character');
+            console.error("Error creating character:", e); // Log error
+            socket.emit('error', 'Failed to create character'); // Emit error message
         }
     });
 
-    // Save character
+    // Save character event
     socket.on('saveCharacter', async (characterData) => {
         try {
-            const newCharacter = new Character(characterData); // Simplified instantiation
-            const result = await newCharacter.save();
-            socket.emit('characterSaved', { success: true, characterId: result._id });
+            const newCharacter = new Character(characterData); // Create a new character instance
+            const result = await newCharacter.save(); // Save the character
+            socket.emit('characterSaved', { success: true, characterId: result._id }); // Emit success message
         } catch (e) {
-            console.error("Error saving character:", e);
-            socket.emit('characterSaved', { success: false, error: 'Failed to save character' });
+            console.error("Error saving character:", e); // Log error
+            socket.emit('characterSaved', { success: false, error: 'Failed to save character' }); // Emit failure message
         }
     });
 
@@ -113,33 +113,34 @@ io.on('connection', (socket) => {
     socket.on('updateCharacter', async (updatedCharacter) => {
         try {
             const character = await Character.findByIdAndUpdate(
-                updatedCharacter._id,
-                updatedCharacter,
-                { new: true }
+                updatedCharacter._id, // Find character by ID
+                updatedCharacter, // Update with new data
+                { new: true } // Return the updated document
             );
-            io.emit('characterUpdated', character);
+            io.emit('characterUpdated', character); // Emit updated character to all clients
         } catch (e) {
-            console.error("Error updating character:", e);
-            socket.emit('error', 'Failed to update character');
+            console.error("Error updating character:", e); // Log error
+            socket.emit('error', 'Failed to update character'); // Emit error message
         }
     });
 
+    // Handle user disconnection
     socket.on("disconnect", () => {
-        console.log("User  disconnected:", socket.id);
+        console.log("User  disconnected:", socket.id); // Log when a user disconnects
     });
 });
 
 // Start listening on the defined port
 server.listen(port, () => {
-    console.log("DnD app listening on port " + port);
+    console.log("DnD app listening on port " + port); // Log server start message
 });
 
-// Handle graceful shutdown
+// Handle graceful shutdown on SIGINT (Ctrl+C)
 process.on('SIGINT', async () => {
-    console.log('\nGracefully shutting down...');
-    await mongoose.connection.close();
+    console.log('\nGracefully shutting down...'); // Log shutdown message
+    await mongoose.connection.close(); // Close MongoDB connection
     server.close(() => {
-        console.log('Server closed');
-        process.exit(0);
+        console.log('Server closed'); // Log server closure
+        process.exit(0); // Exit the process
     });
 });
