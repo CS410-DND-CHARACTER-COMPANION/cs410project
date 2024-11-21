@@ -78,6 +78,7 @@ io.on('connection', async (socket) => {
 
       // emit "charactersList" event
       socket.emit('charactersList', characters);
+      socket.emit('DMOverviewcharactersList', characters);
     } catch (e) {
       console.error("Error getting characters:", e);
       socket.emit('error', 'Failed to retrieve characters');

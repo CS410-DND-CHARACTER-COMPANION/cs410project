@@ -32,6 +32,43 @@ socket.on('charactersList', (characters) => {
   });
 });
 
+// For DM Overview
+socket.on('DMOverviewcharactersList', (characters) => {
+  console.log('All characters:', characters);
+  
+  // Clear and update the DOM with the list of characters
+  const characterList = document.getElementById('characterList');
+  characterList.innerHTML = ''; // Clear existing list
+  
+  characters.forEach(character => {
+      // Create list item for each character
+      const characterItem = document.createElement('table');
+      // Display character information
+      characterItem.innerHTML =
+      //`
+      //   <strong>${character.name}</strong> - Level ${character.level} ${character.species} ${character.class}
+      //   <div>HP: ${character.currentHP}/${character.maxHP} | AC: ${character.ac + character.shield} (${character.ac} + ${character.shield}) | 
+      //   ${character.inspiration ? '⭐ Inspired' : ''}</div>
+      // `;
+
+      `
+      <tr>
+        <th>${character.name}</th>
+      </tr>
+      <tr class="blank_row">
+          <td colspan="4"></td>
+      </tr>
+      <tr>
+        <th>${character.species}</th>
+        <th>${character.class}</th>
+        <th>[${character.currentHP} / ${character.maxHP}]</th>
+      </tr>
+      
+      `;
+      characterList.appendChild(characterItem);
+  });
+});
+
 // Handle form submission
 document.addEventListener('DOMContentLoaded', () => {
   const characterForm = document.getElementById('characterForm');
