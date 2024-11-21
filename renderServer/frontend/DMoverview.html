@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" type="text/css" href="DMOverview.css"> -->    
+    <title>Dungeon Master Overview</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /*tr child color*/
+        }
+
+        tr:hover {
+            background-color: #e0e0e0; /*tr color*/
+        }
+
+        .blank_row {
+            height: 10px !important;
+            background-color: #FFFFFF; /*create blank row*/
+        }
+
+        /*General styles for body*/
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f4f4f9; /*background contrast*/
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Characters Summary</h1>
+    <!-- <table>
+        <tr>
+            <th>Players</th>
+            <th>Me</th>
+            <th>You</th>
+            <th>Them</th>
+        </tr>
+        <tr>
+            <td>Species</td>
+            <td>Me species</td>
+            <td>You species</td>
+            <td>Them species</td>
+        </tr>
+        <tr>
+            <td>Class</td>
+            <td>Me class</td>
+            <td>You class</td>
+            <td>Them class</td>
+        </tr>
+        <tr>
+            <td>HP</td>
+            <td>Me HP</td>
+            <td>You HP</td>
+            <td>Them HP</td>
+        </tr>
+        <tr class="blank_row">
+            <td colspan="4"></td>
+        </tr>
+        <tr>
+            <td>STR</td>
+            <td>Me STR</td>
+            <td>You STR</td>
+            <td>Them STR</td>
+        </tr>
+        <tr>
+            <td>DEX</td>
+            <td>Me DEX</td>
+            <td>You DEX</td>
+            <td>Them DEX</td>
+        </tr>
+        <tr>
+            <td>CON</td>
+            <td>Me CON</td>
+            <td>You CON</td>
+            <td>Them CON</td>
+        </tr>
+        <tr>
+            <td>WIS</td>
+            <td>Me WIS</td>
+            <td>You WIS</td>
+            <td>Them WIS</td>
+        </tr>
+        <tr>
+            <td>CHA</td>
+            <td>Me CHA</td>
+            <td>You CHA</td>
+            <td>Them CHA</td>
+        </tr>
+        <tr class="blank_row">
+            <td colspan="4"></td>
+        </tr>
+        <tr>
+            <td>Init</td>
+            <td>Me #</td>
+            <td>You #</td>
+            <td>Them #</td>
+        </tr>
+        <tr>
+            <td>Speed</td>
+            <td>Me ft</td>
+            <td>You ft</td>
+            <td>Them ft</td>
+        </tr>
+        <tr>
+            <td>Size</td>
+            <td>Me size</td>
+            <td>You size</td>
+            <td>Them size</td>
+        </tr>
+        <tr>
+            <td>PP</td>
+            <td>Me ?</td>
+            <td>You ?</td>
+            <td>Them ?</td>
+        </tr>
+    </table> -->
+    <div class ="container">
+        <section class="character-List">
+            <ul id="characterList">
+                <!-- Characters will be dynamically added here -->
+            </ul>
+        </section>
+    </div>
+
+    <!-- socket.io integration -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socket.js"></script>
+</body>
+</html>
