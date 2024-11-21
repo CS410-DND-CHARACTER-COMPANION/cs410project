@@ -57,8 +57,7 @@ socket.on('DMOverviewcharactersList', (characters) => {
           onclick="addEquipmentItem()"
           style="background: linear-gradient(to right, rgba(0, 255, 0, 0.5) ${character.currentHP / character.maxHP * 100}%, rgba(255, 0, 0, 0.5) ${character.currentHP / character.maxHP * 100}%);">
           [${character.currentHP} / ${character.maxHP}]
-          </td>
-        
+        </td>
       </tr>
       <tr class="blank_column" style="width:10%" style="height:10%">
           <th rowspan="4" style="width:10%" style="height:10%">Attributes</th>
