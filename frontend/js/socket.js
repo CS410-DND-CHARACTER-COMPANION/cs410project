@@ -55,7 +55,7 @@ socket.on('DMOverviewcharactersList', (characters) => {
         <th>${character.class}</th>
         <td
           onclick="addEquipmentItem()"
-          style="background: linear-gradient(to right, green ${character.currentHP / character.maxHP * 100}%, red ${character.currentHP / character.maxHP * 100}%);">
+          style="background: linear-gradient(to right, #90ee90 ${character.currentHP / character.maxHP * 100}%, red ${character.currentHP / character.maxHP * 100}%);">
           [${character.currentHP} / ${character.maxHP}]
           </td>
         
