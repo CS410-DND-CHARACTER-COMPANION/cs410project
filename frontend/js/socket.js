@@ -45,12 +45,6 @@ socket.on('DMOverviewcharactersList', (characters) => {
       const characterItem = document.createElement('table');
       // Display character information
       characterItem.innerHTML =
-      //`
-      //   <strong>${character.name}</strong> - Level ${character.level} ${character.species} ${character.class}
-      //   <div>HP: ${character.currentHP}/${character.maxHP} | AC: ${character.ac + character.shield} (${character.ac} + ${character.shield}) | 
-      //   ${character.inspiration ? '⭐ Inspired' : ''}</div>
-      // `;
-
       `
       <tr>
         <th>${character.name}</th>
@@ -61,9 +55,27 @@ socket.on('DMOverviewcharactersList', (characters) => {
       <tr>
         <th>${character.species}</th>
         <th>${character.class}</th>
-        <th>[${character.currentHP} / ${character.maxHP}]</th>
+        <td>[${character.currentHP} / ${character.maxHP}]</td>
       </tr>
-      
+      <tr class="blank_column">
+          <th rowspan="4">Attributes</th>
+      </tr>
+      <tr>
+        <th>STR</th>
+        <th>DEX</th>
+        <th>CON</th>
+        <th>INT</th>
+        <th>WIS</th>
+        <th>CHA</th>
+      </tr>
+      <tr>
+        <td>${character.strength}</td>
+        <td>${character.dexterity}</td>
+        <td>${character.constitution}</td>
+        <td>${character.intelligence}</td>
+        <td>${character.wisdom}</td>
+        <td>${character.charisma}</td>
+      </tr>
       `;
       characterList.appendChild(characterItem);
   });
