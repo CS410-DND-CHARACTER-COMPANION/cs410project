@@ -53,7 +53,12 @@ socket.on('DMOverviewcharactersList', (characters) => {
       <tr>
         <th>${character.species}</th>
         <th>${character.class}</th>
-        <td onclick="addEquipmentItem()">[${character.currentHP} / ${character.maxHP}]</td>
+        <td
+          onclick="addEquipmentItem()"
+          style="background: linear-gradient(to right, green ${character.currentHP / character.maxHP * 100}%, red ${character.currentHP / character.maxHP * 100}%);">
+          [${character.currentHP} / ${character.maxHP}]
+          </td>
+        
       </tr>
       <tr class="blank_column" style="width:10%" style="height:10%">
           <th rowspan="4" style="width:10%" style="height:10%">Attributes</th>
