@@ -49,7 +49,7 @@ socket.on('DMOverviewcharactersList', (characters) => {
       <tr>
         <th>${character.name}</th>
       </tr>
-      <td colspan="4"></td>
+      
       <tr>
         <th>${character.species}</th>
         <th>${character.class}</th>
