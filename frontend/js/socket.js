@@ -49,16 +49,14 @@ socket.on('DMOverviewcharactersList', (characters) => {
       <tr>
         <th>${character.name}</th>
       </tr>
-      <tr class="blank_row">
-          <td colspan="4"></td>
-      </tr>
+      <td colspan="4"></td>
       <tr>
         <th>${character.species}</th>
         <th>${character.class}</th>
-        <td>[${character.currentHP} / ${character.maxHP}]</td>
+        <td onclick="addEquipmentItem()">[${character.currentHP} / ${character.maxHP}]</td>
       </tr>
-      <tr class="blank_column">
-          <th rowspan="4">Attributes</th>
+      <tr class="blank_column" style="width:10%" style="height:10%">
+          <th rowspan="4" style="width:10%" style="height:10%">Attributes</th>
       </tr>
       <tr>
         <th>STR</th>
