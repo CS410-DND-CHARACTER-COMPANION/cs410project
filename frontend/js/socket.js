@@ -79,6 +79,30 @@ socket.on('DMOverviewcharactersList', (characters) => {
   });
 });
 
+socket.on('DMUpdateCharacterData', async (chraracterId) =>
+{
+  const client = new MongoClient("mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
+  try {
+    await client.connect();
+
+    // Attempts to find the one edited character with IDs
+    const characters = await client.db("dnd_screen").collection("character_sheets").findOne({_id: chraracterId});
+    
+    // Update the selected character into the database
+    const result = await client.db("dnd_screen").collection("character_sheets").insertOne(character);
+    console.log(`New character created with the following id: ${result.insertedId}`);
+    character._id = result.insertedId;
+
+    // emit "charactersList" event(optional)
+    
+  } catch (e) {
+    console.error("Error updating characters:", e);
+    socket.emit('error', 'Failed to update characters');
+  } finally {
+    await client.close();
+  }
+});
+
 // Handle form submission
 document.addEventListener('DOMContentLoaded', () => {
   const characterForm = document.getElementById('characterForm');
