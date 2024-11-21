@@ -347,7 +347,8 @@ function validateForm() {
 
 // Handles the character form submission
 function handleFormSubmission(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
+    // Prevent the form from submitting normally and changing the URL
+    event.preventDefault();
     if (!validateForm()) {
         return; // Stop if validation fails
     }
@@ -439,50 +440,33 @@ window.onload = function () {
 
 // Custom cursor functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const cursor = document.createElement('div'); // Create custom cursor element
-    cursor.className = 'custom-cursor'; // Set class for styling
-    document.body.appendChild(cursor); // Append cursor to body
+    // Create a custom cursor element
+    const cursor = document.createElement('div');
+    cursor.className = 'custom-cursor'; // Assign class for styling
+    document.body.appendChild(cursor); // Append cursor to the body
 
+    // Function to move the cursor based on mouse position
     const moveCursor = (e) => {
-        cursor.style.left = `${e.clientX}px`; // Update cursor position on mouse move
-        cursor.style.top = `${e.clientY}px`; // Update cursor position on mouse move
+        cursor.style.left = `${e.clientX}px`; // Update cursor's horizontal position
+        cursor.style.top = `${e.clientY}px`; // Update cursor's vertical position
     };
 
-    document.addEventListener('mousemove', moveCursor); // Add mousemove event listener
+    document.addEventListener('mousemove', moveCursor); // Track mouse movement
 
-    // Hide the default cursor
-    document.body.style.cursor = 'none'; // Hide the default cursor
-
-    // Optional: Add hover effects for interactive elements
-    const interactiveElements = document.querySelectorAll('button, input, select'); // Select interactive elements
-    interactiveElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            cursor.classList.add('hover'); // Add hover class on mouse enter
-        });
-        element.addEventListener('mouseleave', () => {
-            cursor.classList.remove('hover'); // Remove hover class on mouse leave
-        });
+    // Clicking effect with smooth animation
+    document.addEventListener('mousedown', () => {
+        cursor.classList.add('clicking'); // Add class for clicking effect
+        cursor.style.transition = 'transform 0.05s ease'; // Set quick transition for effect
     });
-});
 
-// CSS for the custom cursor (to be included in a <style> tag or CSS file)
-const style = document.createElement('style');
-style.textContent = `
-    .custom-cursor {
-        position: fixed;
-        width: 20px; /* Width of the custom cursor */
-        height: 20px; /* Height of the custom cursor */
-        background-color: rgba(46, 204, 113, 0.8); /* Color of the custom cursor */
-        border-radius: 50%; /* Make it circular */
-        pointer-events: none; /* Prevent it from interfering with mouse events */
-        transition: transform 0.1s ease; /* Smooth transition for movement */
-        z-index: 9999; /* Ensure it appears above other elements */
-    }
-    .custom-cursor.hover {
-        transform: scale(1.5); /* Scale up on hover */
-    }
-`;
-document.head.appendChild(style); // Append the style to the document head
+    document.addEventListener('mouseup', () => {
+        cursor.classList.remove('clicking'); // Remove clicking effect class
+        cursor.style.transition = 'transform 0.1s ease'; // Reset transition duration
+    });
+
+    // Hide default cursor
+    document.body.style.cursor = 'none'; // Disable the default cursor visibility
+});
 
 // Final cleanup and initialization
 console.log('All components initialized successfully'); // Log successful initialization
