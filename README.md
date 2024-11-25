@@ -30,6 +30,6 @@ SSH: `git clone git@github.com:CS410-DND-CHARACTER-COMPANION/cs410project.git`
 
 2. Install dependencies: `npm install`
 
-3. Start the server: `node app.js`
+3. Start the server: `node renderServer/backend/server.js`
 
 4. Access the app in your browser at `http://localhost:3000`
