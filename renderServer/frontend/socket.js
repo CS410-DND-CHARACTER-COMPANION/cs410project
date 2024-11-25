@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           // Collect form data
           const characterData = {
+              username: document.getElementById('username').value,
               name: document.getElementById('name').value,
               background: document.getElementById('background').value,
               species: document.getElementById('species').value,

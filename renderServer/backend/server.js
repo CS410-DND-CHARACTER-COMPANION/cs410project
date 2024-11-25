@@ -98,14 +98,39 @@ io.on('connection', (socket) => {
     });
 
     // Save character event
-    socket.on('saveCharacter', async (characterData) => {
+    socket.on('saveCharacter', async ({ data }) => {
         try {
-            const newCharacter = new Character(characterData); // Create a new character instance
-            const result = await newCharacter.save(); // Save the character
-            socket.emit('characterSaved', { success: true, characterId: result._id }); // Emit success message
+            // Format the data to match the schema
+            const characterData = {
+                username: data.username,
+                name: data.name,
+                species: data.species,
+                class: data.class,
+                level: parseInt(data.level),
+                background: data.background,
+                subclass: data.subclass,
+                xp: parseInt(data.xp) || 0,
+                strength: parseInt(data.strength),
+                dexterity: parseInt(data.dexterity),
+                constitution: parseInt(data.constitution),
+                intelligence: parseInt(data.intelligence),
+                wisdom: parseInt(data.wisdom),
+                charisma: parseInt(data.charisma),
+                ac: parseInt(data.ac),
+                currentHp: parseInt(data['current-hp']), // Note the different field name
+                maxHp: parseInt(data['max-hp']), // Note the different field name
+                initiative: parseInt(data.initiative),
+                speed: parseInt(data.speed),
+                hasShield: Boolean(data.shield),
+                inventory: Array.isArray(data.equipment) ? data.equipment : []
+            };
+
+            const newCharacter = new Character(characterData);
+            const result = await newCharacter.save();
+            socket.emit('characterSaved', { success: true, characterId: result._id });
         } catch (e) {
-            console.error("Error saving character:", e); // Log error
-            socket.emit('characterSaved', { success: false, error: 'Failed to save character' }); // Emit failure message
+            console.error("Error saving character:", e);
+            socket.emit('characterSaved', { success: false, error: 'Failed to save character' });
         }
     });
 

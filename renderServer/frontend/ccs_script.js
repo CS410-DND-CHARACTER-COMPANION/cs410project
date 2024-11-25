@@ -3,6 +3,7 @@ class CharacterState {
     constructor() {
         this.listeners = new Set(); // Set to hold listener functions
         this.state = { // Initial character state with default values
+            username: '',
             name: '',
             background: '',
             species: '',
@@ -14,11 +15,17 @@ class CharacterState {
             characterId: null,
             equipment: [],
             strength: 10,
+            strengthModifier: 0,
             dexterity: 10,
+            dexterityModifier: 0,
             constitution: 10,
+            constitutionModifier: 0,
             intelligence: 10,
+            intelligenceModifier: 0,
             wisdom: 10,
+            wisdomModifier: 0,
             charisma: 10,
+            charismaModifier: 0,
             ac: 10,
             currentHp: 0,
             maxHp: 0,
@@ -100,9 +107,21 @@ class SocketManager {
     // Validates incoming data based on a schema
     validateData(data) {
         const schema = { // Define validation schema
+            username: value => typeof value === 'string' && value.length > 0,
             name: value => typeof value === 'string',
-            level: value => Number.isInteger(value) && value > 0 && value <= 20,
-            xp: value => Number.isInteger(value) && value >= 0,
+            background: value => typeof value === 'string',
+            species: value => typeof value === 'string',
+            class: value => typeof value === 'string',
+            subclass: value => typeof value === 'string',
+            level: value => {
+                const level = parseInt(value);
+                return !isNaN(level) && level >= 1 && level <= 20;
+            },
+            xp: value => {
+                // Convert string to number and handle empty/undefined values
+                const xpValue = value === '' || value === undefined ? 0 : Number(value);
+                return !isNaN(xpValue) && xpValue >= 0;
+            },
             equipment: value => Array.isArray(value),
             strength: value => Number.isInteger(value) && value >= 1 && value <= 30,
             dexterity: value => Number.isInteger(value) && value >= 1 && value <= 30,
@@ -328,7 +347,7 @@ function escapeHtml(unsafe) {
 
 // Validates the character form before submission
 function validateForm() {
-    const requiredFields = ['name', 'species', 'class', 'level']; // Required fields for validation
+    const requiredFields = ['username', 'name', 'species', 'class', 'level']; // Required fields for validation
     const errors = []; // Array to hold error messages
 
     requiredFields.forEach(field => {
@@ -347,33 +366,39 @@ function validateForm() {
 
 // Handles the character form submission
 function handleFormSubmission(event) {
-    // Prevent the form from submitting normally and changing the URL
     event.preventDefault();
     if (!validateForm()) {
-        return; // Stop if validation fails
+        return;
     }
     try {
-        const form = document.getElementById('character-form'); // Get the character form
-        const formData = new FormData(form); // Create FormData object from the form
-        const characterData = {}; // Object to hold character data
+        const form = document.getElementById('character-form');
+        const formData = new FormData(form);
+        const characterData = {};
+        
+        // Convert FormData to a plain object
         for (const [key, value] of formData.entries()) {
-            characterData[key] = value; // Populate character data from form entries
+            // Convert numeric values
+            if (!isNaN(value) && value !== '') {
+                characterData[key] = Number(value);
+            } else {
+                characterData[key] = value;
+            }
         }
-        characterState.update(characterData); // Update character state with form data
 
-        // Emit the saveCharacter event
+        // Add equipment array
+        characterData.equipment = characterState.getState().equipment || [];
+
+        // Emit the saveCharacter event with properly structured data
         socketManager.emit('saveCharacter', {
-            userId: socketManager.getUserId(), // Get user ID
-            characterId: characterState.getState().characterId, // Get character ID
-            data: characterData // Send character data
+            userId: socketManager.getUserId(),
+            characterId: characterState.getState().characterId,
+            data: characterData
         });
 
-        // Show a success message immediately after emitting
-        showSuccess('Saving character...'); // Show saving message
-
+        showSuccess('Saving character...');
     } catch (error) {
-        console.error('Error saving character:', error); // Log error
-        showError('Failed to save character'); // Show error message
+        console.error('Error saving character:', error);
+        showError('Failed to save character');
     }
 }
 
