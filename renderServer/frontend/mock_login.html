@@ -28,12 +28,20 @@
         // Populate dropdown when character list is received
         socket.on('charactersList', (characters) => {
             const select = document.getElementById('username');
-            characters.forEach(char => {
-                const option = document.createElement('option');
-                option.value = char.username;
-                option.textContent = `${char.name} (${char.username})`;
-                select.appendChild(option);
-            });
+            // Clear existing options except the default one
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Add new options, sorted by name
+            characters
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .forEach(char => {
+                    const option = document.createElement('option');
+                    option.value = char.username;
+                    option.textContent = `${char.name} (${char.username})`;
+                    select.appendChild(option);
+                });
         });
 
         // Handle form submission

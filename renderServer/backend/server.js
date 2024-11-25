@@ -57,16 +57,35 @@ app.get('/character-sheet-v1.html', (req, res) => {
 
 // Socket.IO connection event
 io.on('connection', (socket) => {
-    console.log("A user connected:", socket.id); // Log when a user connects
-
-    // Get a list of all characters
+    console.log("A user connected:", socket.id);
+    // Get all characters for dropdown
     socket.on('getAllCharacters', async () => {
         try {
-            const characters = await Character.find({}, 'username name'); // Fetch all characters from the database
-            socket.emit('charactersList', characters); // Emit the list of characters to the client
+            // Use distinct to get unique usernames
+            const characters = await Character.aggregate([
+                {
+                    $group: {
+                        _id: "$username",  // Group by username to ensure uniqueness
+                        name: { $first: "$name" },  // Take the first name for each username
+                        username: { $first: "$username" }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,  // Exclude _id from results
+                        name: 1,
+                        username: 1
+                    }
+                },
+                {
+                    $sort: { name: 1 }  // Sort by name
+                }
+            ]);
+            
+            socket.emit('charactersList', characters);
         } catch (e) {
-            console.error("Error getting characters:", e); // Log error
-            socket.emit('error', 'Failed to retrieve characters'); // Emit error message
+            console.error("Error getting characters:", e);
+            socket.emit('error', 'Failed to retrieve characters');
         }
     });
 
@@ -101,6 +120,16 @@ io.on('connection', (socket) => {
     // Save character event
     socket.on('saveCharacter', async ({ data }) => {
         try {
+            // Check if username already exists
+            const existingCharacter = await Character.findOne({ username: data.username });
+            if (existingCharacter) {
+                socket.emit('characterSaved', { 
+                    success: false, 
+                    error: 'Username already exists. Please choose a different username.'
+                });
+                return;
+            }
+
             // Format the data to match the schema
             const characterData = {
                 username: data.username,
@@ -128,10 +157,17 @@ io.on('connection', (socket) => {
 
             const newCharacter = new Character(characterData);
             const result = await newCharacter.save();
-            socket.emit('characterSaved', { success: true, characterId: result._id });
+            socket.emit('characterSaved', { 
+                success: true, 
+                characterId: result._id,
+                username: result.username
+            });
         } catch (e) {
             console.error("Error saving character:", e);
-            socket.emit('characterSaved', { success: false, error: 'Failed to save character' });
+            socket.emit('characterSaved', { 
+                success: false, 
+                error: e.code === 11000 ? 'Username already exists' : 'Failed to save character'
+            });
         }
     });
 
@@ -153,17 +189,6 @@ io.on('connection', (socket) => {
     // Handle user disconnection
     socket.on("disconnect", () => {
         console.log("User  disconnected:", socket.id); // Log when a user disconnects
-    });
-
-    // Get all characters for dropdown
-    socket.on('getAllCharacters', async () => {
-        try {
-            const characters = await Character.find({}, 'username name');
-            socket.emit('charactersList', characters);
-        } catch (e) {
-            console.error("Error getting characters:", e);
-            socket.emit('error', 'Failed to retrieve characters');
-        }
     });
 });
 

@@ -2,7 +2,11 @@ const mongoose = require('mongoose'); // Import the mongoose library for MongoDB
 
 // Define the character schema with relevant fields
 const characterSchema = new mongoose.Schema({
-    username: { type: String, required: true },
+    username: { 
+        type: String, 
+        required: true,
+        unique: true
+    },
     name: { type: String, required: true },
     species: { type: String, required: true },
     class: { type: String, required: true },

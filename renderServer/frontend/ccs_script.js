@@ -294,19 +294,32 @@ function removeEquipmentItem(index) {
 // Calculates the ability modifier for a given ability
 function calculateModifier(abilityType) {
     try {
-        const abilityScore = parseInt(document.getElementById(abilityType).value) || 10; // Get ability score
-
-        if (abilityScore < 1 || abilityScore > 30) {
-            throw new Error('Invalid ability score'); // Validate ability score
+        const abilityScore = parseInt(document.getElementById(abilityType).value);
+        
+        // Check if it's a valid number
+        if (isNaN(abilityScore)) {
+            throw new Error('Please enter a valid number');
         }
 
-        const modifier = Math.floor((abilityScore - 10) / 2); // Calculate modifier
-        document.getElementById(`${abilityType}-modifier`).value = modifier; // Update modifier field
+        // Validate range (1-30)
+        if (abilityScore < 1 || abilityScore > 30) {
+            throw new Error('Ability score must be between 1 and 20');
+        }
 
-        debouncedUpdate({ [`${abilityType}Modifier`]: modifier }); // Emit debounced update for modifier
+        const modifier = Math.floor((abilityScore - 10) / 2);
+        document.getElementById(`${abilityType}-modifier`).value = modifier;
+
+        // Update character state and emit update
+        const update = {
+            [abilityType]: abilityScore,
+            [`${abilityType}Modifier`]: modifier
+        };
+        
+        characterState.update(update);
+        debouncedUpdate(update);
     } catch (error) {
-        console.error(`Error calculating ${abilityType} modifier:`, error); // Log error
-        showError(`Failed to calculate ${abilityType} modifier`); // Show error message
+        console.error(`Error calculating ${abilityType} modifier:`, error);
+        showError(error.message);
     }
 }
 
@@ -405,10 +418,18 @@ function handleFormSubmission(event) {
 // Set up the socket listener for characterSaved event
 socketManager.socket.on('characterSaved', (response) => {
     if (response.success) {
-        showSuccess('Character saved successfully!'); // Show success message
-        window.location.href = 'displayCharacter.html'; // Redirect after successful save
+        showSuccess('Character saved successfully!');
+        // Redirect to displayCharacter.html with the username
+        const username = document.getElementById('username').value;
+        window.location.href = `displayCharacter.html?username=${encodeURIComponent(username)}`;
     } else {
-        showError('Failed to save character'); // Show error if save failed
+        showError(response.error || 'Failed to save character');
+        // If username exists, focus the username field for the user to change it
+        if (response.error && response.error.includes('Username already exists')) {
+            const usernameField = document.getElementById('username');
+            usernameField.focus();
+            usernameField.select();
+        }
     }
 });
 
