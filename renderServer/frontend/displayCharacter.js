@@ -1,90 +1,65 @@
+const socket = io();
+
 window.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
-    const characterId = params.get('id');
+    const username = params.get('username');
 
-    // Check local storage first
-    const localCharacterData = localStorage.getItem('characterData');
-    if (localCharacterData) {
-        const character = JSON.parse(localCharacterData);
-        displayCharacter(character);
-    } else if (characterId) {
-        // If no local data, fetch from the server
-        fetch(`/api/characters/${characterId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Character not found');
-                }
-                return response.json();
-            })
-            .then(character => {
-                displayCharacter(character);
-            })
-            .catch(error => {
-                console.error('Error fetching character:', error);
-                document.getElementById('character-details').innerText = 'Error loading character details.';
-            });
+    if (username) {
+        // Request character data from server using username
+        socket.emit('getCharacter', username);
     } else {
-        document.getElementById('character-details').innerText = 'No character ID provided.';
+        console.error('No username provided');
     }
+
+    // Listen for character data from server
+    socket.on('characterData', (character) => {
+        // Populate form fields with character data
+        document.getElementById('charName').value = character.name || '';
+        document.getElementById('background').value = character.background || '';
+        document.getElementById('charClass').value = character.class || '';
+        document.getElementById('species').value = character.species || '';
+        document.getElementById('subclass').value = character.subclass || '';
+        document.getElementById('level').value = character.level || '';
+        document.getElementById('xp').value = character.xp || '';
+        document.getElementById('armorClass').value = character.ac || '';
+        document.getElementById('shield').checked = character.hasShield || false;
+        document.getElementById('currhp').value = character.currentHp || '';
+        document.getElementById('maxhp').value = character.maxHp || '';
+        
+        // Stats
+        document.getElementById('strength').value = character.strength || '';
+        document.getElementById('dexterity').value = character.dexterity || '';
+        document.getElementById('constitution').value = character.constitution || '';
+        document.getElementById('intelligence').value = character.intelligence || '';
+        document.getElementById('wisdom').value = character.wisdom || '';
+        document.getElementById('charisma').value = character.charisma || '';
+
+        // Make all form fields readonly since this is display mode
+        const formElements = document.querySelectorAll('input, select');
+        formElements.forEach(element => {
+            element.readOnly = true;
+            if (element.tagName === 'SELECT') {
+                element.disabled = true;
+            }
+        });
+
+        // Hide the submit button since we're in display mode
+        const submitButton = document.getElementById('char-submit');
+        if (submitButton) {
+            submitButton.style.display = 'none';
+        }
+    });
+
+    // Handle errors
+    socket.on('error', (errorMessage) => {
+        console.error('Error:', errorMessage);
+        alert('Error loading character: ' + errorMessage);
+    });
 });
 
-function displayCharacter(character) {
-    const detailsDiv = document.getElementById('character-details');
-    detailsDiv.innerHTML = `
-        <h2>${character.charName}</h2>
-        <p>Species: ${character.species}</p>
-        <p>Class: ${character.charClass}</p>
-        <p>Subclass: ${character.subclass}</p>
-        <p>Level: ${character.level}</p>
-        <p>Armor Class: ${character.armorClass}</p>
-        <p>Current HP: ${character.currhp} / Max HP: ${character.maxhp}</p>
-        <p>Background: ${character.background}</p>
-        <p>Shield: ${character.shield ? 'Yes' : 'No'}</p>
-        <!-- Add other fields as needed -->
-    `;
-}
-
-function saveChar(event) {
-    event.preventDefault(); // Prevent the default form submission
-
-    const characterData = {
-        charName: document.getElementById('charName').value,
-        background: document.getElementById('background').value,
-        charClass: document.getElementById('charClass').value,
-        species: document.getElementById('species').value,
-        subclass: document.getElementById('subclass').value,
-        level: document.getElementById('level').value,
-        armorClass: document.getElementById('armorClass').value,
-        shield: document.getElementById('shield').checked, // Use checked for boolean
-        temphp: document.getElementById('temphp').value,
-        maxhp: document.getElementById('maxhp').value,
-        currhp: document.getElementById('currhp').value,
-        // Add other fields as needed
-    };
-
-    // Save character data to local storage
-    localStorage.setItem('characterData', JSON.stringify(characterData));
-
-    // Send character data to the server
-    fetch('/api/characters/create', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(characterData),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Redirect to displayCharacter.html with the character ID
-        window.location.href = `displayCharacter.html?id=${data._id}`;
-    })
-    .catch(error => {
-        console.error('Error saving character:', error);
-        alert('Failed to save character. Please try again.');
-    });
-}
+// Add a home button to the page
+const homeButton = document.createElement('a');
+homeButton.href = 'index.html';
+homeButton.className = 'home-button';
+homeButton.textContent = 'Back to Home';
+document.querySelector('.container').appendChild(homeButton);

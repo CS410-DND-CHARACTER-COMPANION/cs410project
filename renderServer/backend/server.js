@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
     // Get a list of all characters
     socket.on('getAllCharacters', async () => {
         try {
-            const characters = await Character.find(); // Fetch all characters from the database
+            const characters = await Character.find({}, 'username name'); // Fetch all characters from the database
             socket.emit('charactersList', characters); // Emit the list of characters to the client
         } catch (e) {
             console.error("Error getting characters:", e); // Log error
@@ -71,9 +71,10 @@ io.on('connection', (socket) => {
     });
 
     // New handler for getting a single character by ID
-    socket.on('getCharacter', async (characterId) => {
+    socket.on('getCharacter', async (username) => {
         try {
-            const character = await Character.findById(characterId); // Fetch character by ID
+            // Fetch character by username
+            const character = await Character.findOne({ username: username });
             if (character) {
                 socket.emit('characterData', character); // Emit character data if found
             } else {
@@ -152,6 +153,17 @@ io.on('connection', (socket) => {
     // Handle user disconnection
     socket.on("disconnect", () => {
         console.log("User  disconnected:", socket.id); // Log when a user disconnects
+    });
+
+    // Get all characters for dropdown
+    socket.on('getAllCharacters', async () => {
+        try {
+            const characters = await Character.find({}, 'username name');
+            socket.emit('charactersList', characters);
+        } catch (e) {
+            console.error("Error getting characters:", e);
+            socket.emit('error', 'Failed to retrieve characters');
+        }
     });
 });
 
