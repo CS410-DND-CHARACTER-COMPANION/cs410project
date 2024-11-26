@@ -80,11 +80,24 @@ async function EditAttributeMenu(CharID) // Once clicked:
       {
         if (ExistingFormChildren[i].tagName == "INPUT")
         {
+          var InputValue
           if (ExistingFormChildren[i].value == "")
           {
-            newCharData[ExistingFormChildren[i].id] = ExistingFormChildren[i].placeholder
+            // console.log(isNaN(ReturnData[Attribute])) // False means its an int
+
+            if (isNaN(ExistingFormChildren[i].placeholder) == false)
+            {
+              InputValue = Number(ExistingFormChildren[i].placeholder)
+            } else {InputValue = ExistingFormChildren[i].placeholder}
           }
-          else { newCharData[ExistingFormChildren[i].id] = ExistingFormChildren[i].value }
+          else
+          { 
+            if (isNaN(ExistingFormChildren[i].value) == false)
+            {
+              InputValue = Number(ExistingFormChildren[i].value)
+            } else (InputValue = ExistingFormChildren[i].value )
+          }
+          newCharData[ExistingFormChildren[i].id] = InputValue
         }
       }
       
