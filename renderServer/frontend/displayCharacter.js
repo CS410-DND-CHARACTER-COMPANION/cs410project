@@ -1,10 +1,13 @@
+
 const socket = io();
 
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function () {
     const params = new URLSearchParams(window.location.search);
     const username = params.get('username');
 
     if (username) {
+        // Log the username being requested
+        console.log('Requesting character for username:', username);
         // Request character data from server using username
         socket.emit('getCharacter', username);
     } else {
@@ -25,7 +28,7 @@ window.addEventListener('DOMContentLoaded', function() {
         document.getElementById('shield').checked = character.hasShield || false;
         document.getElementById('currhp').value = character.currentHp || '';
         document.getElementById('maxhp').value = character.maxHp || '';
-        
+
         // Stats
         document.getElementById('strength').value = character.strength || '';
         document.getElementById('dexterity').value = character.dexterity || '';
