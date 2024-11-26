@@ -57,43 +57,23 @@ app.get('/character-sheet-v1.html', (req, res) => {
 
 // Socket.IO connection event
 io.on('connection', (socket) => {
-    console.log("A user connected:", socket.id);
-    // Get all characters for dropdown
+    console.log("A user connected:", socket.id); // Log when a user connects
+
+    // Get a list of all characters
     socket.on('getAllCharacters', async () => {
         try {
-            // Use distinct to get unique usernames
-            const characters = await Character.aggregate([
-                {
-                    $group: {
-                        _id: "$username",  // Group by username to ensure uniqueness
-                        name: { $first: "$name" },  // Take the first name for each username
-                        username: { $first: "$username" }
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0,  // Exclude _id from results
-                        name: 1,
-                        username: 1
-                    }
-                },
-                {
-                    $sort: { name: 1 }  // Sort by name
-                }
-            ]);
-            
-            socket.emit('charactersList', characters);
+            const characters = await Character.find(); // Fetch all characters from the database
+            socket.emit('charactersList', characters); // Emit the list of characters to the client
         } catch (e) {
-            console.error("Error getting characters:", e);
-            socket.emit('error', 'Failed to retrieve characters');
+            console.error("Error getting characters:", e); // Log error
+            socket.emit('error', 'Failed to retrieve characters'); // Emit error message
         }
     });
 
     // New handler for getting a single character by ID
-    socket.on('getCharacter', async (username) => {
+    socket.on('getCharacter', async (characterId) => {
         try {
-            // Fetch character by username
-            const character = await Character.findOne({ username: username });
+            const character = await Character.findById(characterId); // Fetch character by ID
             if (character) {
                 socket.emit('characterData', character); // Emit character data if found
             } else {
@@ -118,13 +98,13 @@ io.on('connection', (socket) => {
     });
 
     // Save character event
-    socket.on('saveCharacter', async ({ data }) => {
+    socket.on('saveCharacter', async ({ userId, characterId, data }) => {
         try {
             // Check if username already exists
             const existingCharacter = await Character.findOne({ username: data.username });
             if (existingCharacter) {
-                socket.emit('characterSaved', { 
-                    success: false, 
+                socket.emit('characterSaved', {
+                    success: false,
                     error: 'Username already exists. Please choose a different username.'
                 });
                 return;
@@ -157,15 +137,15 @@ io.on('connection', (socket) => {
 
             const newCharacter = new Character(characterData);
             const result = await newCharacter.save();
-            socket.emit('characterSaved', { 
-                success: true, 
+            socket.emit('characterSaved', {
+                success: true,
                 characterId: result._id,
                 username: result.username
             });
         } catch (e) {
             console.error("Error saving character:", e);
-            socket.emit('characterSaved', { 
-                success: false, 
+            socket.emit('characterSaved', {
+                success: false,
                 error: e.code === 11000 ? 'Username already exists' : 'Failed to save character'
             });
         }
