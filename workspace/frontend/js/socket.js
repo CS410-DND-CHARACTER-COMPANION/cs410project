@@ -42,22 +42,27 @@ async function EditAttributeMenu(CharID) // Once clicked:
 {
   // alert(typeof(CharID)); // String
   // Get Data
-  console.log("Sending");
   socket.emit('getCharacterByID', CharID, (ReturnData) => {
     //console.log(ReturnData); // Got the data now
 
-    const Test = document.createElement("div")
-    Test.setAttribute("id", "AttChangeForm")
-    //Test.setAttribute("style", "border-radius: 150px")
+    const ExistingForm = document.getElementById("FormToChangeAtt")
+    if (ExistingForm)
+    {
+      ExistingForm.remove()
+    }
+
+    const FormToChangeAtt = document.createElement("div")
+    FormToChangeAtt.setAttribute("id", "FormToChangeAtt")
+
     for (Attribute in ReturnData)
       {
         //console.log(Attribute.value)
         if (Attribute != "_id" && Attribute != "__v")
         {
-          Test.innerHTML = Test.innerHTML +
+          FormToChangeAtt.innerHTML = FormToChangeAtt.innerHTML +
           `
             <label for="${Attribute}">${Attribute}:</label>
-            <input id="${Attribute}"/>
+            <input id="${Attribute}" placeholder="${ReturnData[Attribute]}"/>
           `;
         }
       }
@@ -72,9 +77,8 @@ async function EditAttributeMenu(CharID) // Once clicked:
       alert("submitted");
       location.reload();
     };
-    Test.appendChild(ApplyChangeButton)
-    document.body.appendChild(Test)
-    // const Test = document.createElement
+    FormToChangeAtt.appendChild(ApplyChangeButton)
+    document.body.appendChild(FormToChangeAtt)
   });
 
 }
