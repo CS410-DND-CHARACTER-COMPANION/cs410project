@@ -1,3 +1,4 @@
+
 const express = require("express"); // Import the Express framework
 const path = require("path"); // Import path module for file path handling
 const http = require("http"); // Import HTTP module to create a server
@@ -71,9 +72,9 @@ io.on('connection', (socket) => {
     });
 
     // New handler for getting a single character by ID
-    socket.on('getCharacter', async (characterId) => {
+    socket.on('getCharacter', async (username) => {
         try {
-            const character = await Character.findById(characterId); // Fetch character by ID
+            const character = await Character.findOne({ username: username }); // Search by username
             if (character) {
                 socket.emit('characterData', character); // Emit character data if found
             } else {
