@@ -50,21 +50,22 @@ async function EditAttributeMenu(CharID) // Once clicked:
     {
       ExistingForm.remove()
     }
+    //changed testing
+    const FormToChangeAtt = document.createElement("table")
+    
+    FormToChangeAtt.innerHTML =
+     `
+      <tr>
+        <th style="border: solid">${ReturnData[name]}
+        <input id="${ReturnData[name]}" placeholder="${ReturnData[name]}"/></th>
+      </tr>
+      <tr>
+        <th>${ReturnData[species]}:
+        <input id="${ReturnData[species]}" placeholder="${ReturnData[species]}"/></th>
+      </tr>
+      `
+      ;
 
-    const FormToChangeAtt = document.createElement("div")
-    FormToChangeAtt.setAttribute("id", "FormToChangeAtt")
-
-    for (Attribute in ReturnData)
-      {
-        if (Attribute != "_id" && Attribute != "__v")
-        {
-          FormToChangeAtt.innerHTML = FormToChangeAtt.innerHTML +
-          `
-            <label for="${Attribute}">${Attribute}:</label>
-            <input id="${Attribute}" placeholder="${ReturnData[Attribute]}"/>
-          `;
-        }
-      }
     const ApplyChangeButton = document.createElement('button');
     ApplyChangeButton.innerHTML = "Apply Changes";
     ApplyChangeButton.setAttribute("id", CharID);
@@ -110,7 +111,7 @@ socket.on('DMOverviewcharactersList', (characters) => {
       // Create list item for each character
       const characterItem = document.createElement('table');
       // Display character information
-      characterItem.innerHTML =
+      characterItem.innerHTML = //character hp gradient failed after someone changed it
       `
       <tr>
         <th style="border: solid">${character.name}</th>
