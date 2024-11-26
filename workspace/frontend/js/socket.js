@@ -56,11 +56,11 @@ async function EditAttributeMenu(CharID) // Once clicked:
     FormToChangeAtt.innerHTML =
      `
       <tr>
-        <th style="border: solid">${"Name:"}
+        <th style="border: solid">${"name:"}
         <input id="${ReturnData["name"]}" placeholder="${ReturnData["name"]}"/></th>
       </tr>
       <tr>
-        <th>${"Species"}:
+        <th>${"species"}:
         <input id="${ReturnData["species"]}" placeholder="${ReturnData["species"]}"/></th>
       </tr>
       <tr>
@@ -127,9 +127,13 @@ async function EditAttributeMenu(CharID) // Once clicked:
         <th>${"inventory"}:
         <input id="${ReturnData["inventory"]}" placeholder="${ReturnData["inventory"]}"/></th>
       </tr>
-      `
-      ;
-
+      `;
+      ReturnData["strengthModifier"] = Math.floor((ReturnData["strength"]-10)/2);
+      ReturnData["dexterityModifier"] = Math.floor((ReturnData["dexterity"]-10)/2);
+      ReturnData["constitutionModifier"] = Math.floor((ReturnData["constitution"]-10)/2);
+      ReturnData["intelligenceModifier"] = Math.floor((ReturnData["intelligence"]-10)/2);
+      ReturnData["wisdomModifier"] = Math.floor((ReturnData["wisdom"]-10)/2);
+      ReturnData["charismaModifier"] = Math.floor((ReturnData["charisma"]-10)/2);
     const ApplyChangeButton = document.createElement('button');
     ApplyChangeButton.innerHTML = "Apply Changes";
     ApplyChangeButton.setAttribute("id", CharID);
@@ -197,14 +201,10 @@ socket.on('DMOverviewcharactersList', (characters) => {
       <tr>
         <th>${character.species}</th>
         <th>${character.class}</th>
-        <td
-          onclick="addEquipmentItem()"
-          style="background: linear-gradient(to right, rgba(0, 255, 0, 0.5) ${character.currentHP / character.maxHP * 100}%, rgba(255, 0, 0, 0.5) ${character.currentHP / character.maxHP * 100}%);">
-          [${character.currentHP} / ${character.maxHP}]
-        </td>
+        <th> ${character.currentHp}</th>
       </tr>
       <tr class="blank_column" style="width:10%" style="height:10%">
-          <th rowspan="4" style="width:10%" style="height:10%">Attributes</th>
+          <th rowspan="3" style="width:10%" style="height:10%">Attributes</th>
       </tr>
       <tr>
         <th>STR</th>
@@ -221,6 +221,17 @@ socket.on('DMOverviewcharactersList', (characters) => {
         <td>${character.intelligence}</td>
         <td>${character.wisdom}</td>
         <td>${character.charisma}</td>
+      </tr>
+      <tr class="blank_column" style="width:10%" style="height:10%">
+          <th rowspan="2" style="width:10%" style="height:10%">Attributes Modifier</th>
+      </tr>
+      <tr>
+        <td onclick=>${character.strengthModifier}</td>
+        <td>${character.dexterityModifier}</td>
+        <td>${character.constitutionModifier}</td>
+        <td>${character.intelligenceModifier}</td>
+        <td>${character.wisdomModifier}</td>
+        <td>${character.charismaModifier}</td>
       </tr>
       `;
       const EditButton = document.createElement('button');
