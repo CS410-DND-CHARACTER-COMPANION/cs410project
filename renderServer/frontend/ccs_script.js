@@ -3,7 +3,6 @@ class CharacterState {
     constructor() {
         this.listeners = new Set(); // Set to hold listener functions
         this.state = { // Initial character state with default values
-            username: '',
             name: '',
             background: '',
             species: '',
@@ -15,17 +14,11 @@ class CharacterState {
             characterId: null,
             equipment: [],
             strength: 10,
-            strengthModifier: 0,
             dexterity: 10,
-            dexterityModifier: 0,
             constitution: 10,
-            constitutionModifier: 0,
             intelligence: 10,
-            intelligenceModifier: 0,
             wisdom: 10,
-            wisdomModifier: 0,
             charisma: 10,
-            charismaModifier: 0,
             ac: 10,
             currentHp: 0,
             maxHp: 0,
@@ -107,21 +100,9 @@ class SocketManager {
     // Validates incoming data based on a schema
     validateData(data) {
         const schema = { // Define validation schema
-            username: value => typeof value === 'string' && value.length > 0,
             name: value => typeof value === 'string',
-            background: value => typeof value === 'string',
-            species: value => typeof value === 'string',
-            class: value => typeof value === 'string',
-            subclass: value => typeof value === 'string',
-            level: value => {
-                const level = parseInt(value);
-                return !isNaN(level) && level >= 1 && level <= 20;
-            },
-            xp: value => {
-                // Convert string to number and handle empty/undefined values
-                const xpValue = value === '' || value === undefined ? 0 : Number(value);
-                return !isNaN(xpValue) && xpValue >= 0;
-            },
+            level: value => Number.isInteger(value) && value > 0 && value <= 20,
+            xp: value => Number.isInteger(value) && value >= 0,
             equipment: value => Array.isArray(value),
             strength: value => Number.isInteger(value) && value >= 1 && value <= 30,
             dexterity: value => Number.isInteger(value) && value >= 1 && value <= 30,
@@ -294,32 +275,19 @@ function removeEquipmentItem(index) {
 // Calculates the ability modifier for a given ability
 function calculateModifier(abilityType) {
     try {
-        const abilityScore = parseInt(document.getElementById(abilityType).value);
-        
-        // Check if it's a valid number
-        if (isNaN(abilityScore)) {
-            throw new Error('Please enter a valid number');
-        }
+        const abilityScore = parseInt(document.getElementById(abilityType).value) || 10; // Get ability score
 
-        // Validate range (1-30)
         if (abilityScore < 1 || abilityScore > 30) {
-            throw new Error('Ability score must be between 1 and 20');
+            throw new Error('Invalid ability score'); // Validate ability score
         }
 
-        const modifier = Math.floor((abilityScore - 10) / 2);
-        document.getElementById(`${abilityType}-modifier`).value = modifier;
+        const modifier = Math.floor((abilityScore - 10) / 2); // Calculate modifier
+        document.getElementById(`${abilityType}-modifier`).value = modifier; // Update modifier field
 
-        // Update character state and emit update
-        const update = {
-            [abilityType]: abilityScore,
-            [`${abilityType}Modifier`]: modifier
-        };
-        
-        characterState.update(update);
-        debouncedUpdate(update);
+        debouncedUpdate({ [`${abilityType}Modifier`]: modifier }); // Emit debounced update for modifier
     } catch (error) {
-        console.error(`Error calculating ${abilityType} modifier:`, error);
-        showError(error.message);
+        console.error(`Error calculating ${abilityType} modifier:`, error); // Log error
+        showError(`Failed to calculate ${abilityType} modifier`); // Show error message
     }
 }
 
@@ -370,6 +338,16 @@ function validateForm() {
         }
     });
 
+    // Additional validation for numeric fields
+    const numericFields = ['level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'current-hp', 'max-hp', 'ac', 'initiative', 'speed'];
+    numericFields.forEach(field => {
+        const element = document.getElementById(field);
+        const value = parseInt(element.value);
+        if (isNaN(value) || value < 1) {
+            errors.push(`${field.charAt(0).toUpperCase() + field.slice(1).replace('-', ' ')} must be a valid positive number`);
+        }
+    });
+
     if (errors.length > 0) {
         showError(errors.join(', ')); // Show all error messages
         return false; // Return false if there are validation errors
@@ -379,15 +357,15 @@ function validateForm() {
 
 // Handles the character form submission
 function handleFormSubmission(event) {
-    event.preventDefault();
+    event.preventDefault(); // Prevent default form submission
     if (!validateForm()) {
-        return;
+        return; // Stop execution if validation fails
     }
     try {
         const form = document.getElementById('character-form');
         const formData = new FormData(form);
         const characterData = {};
-        
+
         // Convert FormData to a plain object
         for (const [key, value] of formData.entries()) {
             // Convert numeric values
@@ -408,7 +386,27 @@ function handleFormSubmission(event) {
             data: characterData
         });
 
+        // Show success message
         showSuccess('Saving character...');
+
+        // Listen for the characterSaved event to redirect
+        socketManager.socket.on('characterSaved', (response) => {
+            if (response.success) {
+                showSuccess('Character saved successfully!');
+                // Redirect to displayCharacter.html with the username
+                const username = document.getElementById('username').value;
+                window.location.href = `displayCharacter.html?username=${encodeURIComponent(username)}`;
+            } else {
+                showError(response.error || 'Failed to save character');
+                // If username exists, focus the username field for the user to change it
+                if (response.error && response.error.includes('Username already exists')) {
+                    const usernameField = document.getElementById('username');
+                    usernameField.focus();
+                    usernameField.select();
+                }
+            }
+        });
+
     } catch (error) {
         console.error('Error saving character:', error);
         showError('Failed to save character');
@@ -418,18 +416,10 @@ function handleFormSubmission(event) {
 // Set up the socket listener for characterSaved event
 socketManager.socket.on('characterSaved', (response) => {
     if (response.success) {
-        showSuccess('Character saved successfully!');
-        // Redirect to displayCharacter.html with the username
-        const username = document.getElementById('username').value;
-        window.location.href = `displayCharacter.html?username=${encodeURIComponent(username)}`;
+        showSuccess('Character saved successfully!'); // Show success message
+        window.location.href = 'displayCharacter.html'; // Redirect after successful save
     } else {
-        showError(response.error || 'Failed to save character');
-        // If username exists, focus the username field for the user to change it
-        if (response.error && response.error.includes('Username already exists')) {
-            const usernameField = document.getElementById('username');
-            usernameField.focus();
-            usernameField.select();
-        }
+        showError('Failed to save character'); // Show error if save failed
     }
 });
 
