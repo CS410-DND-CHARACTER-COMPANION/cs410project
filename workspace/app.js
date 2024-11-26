@@ -143,7 +143,7 @@ io.on('connection', async (socket) => {
       );
       if (result) 
       {
-        console.log("updated");
+        //console.log("updated");
       }
       else { console.log(result); }
     } catch (e) {
@@ -171,7 +171,7 @@ io.on('connection', async (socket) => {
     //     await client.close();
     //   }
     // }
-    console.log("Hope")
+    //console.log("Hope")
   });
 
   // // real-time event: character sheet updated

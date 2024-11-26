@@ -52,6 +52,7 @@ async function EditAttributeMenu(CharID) // Once clicked:
     }
     //changed testing
     const FormToChangeAtt = document.createElement("table")
+    FormToChangeAtt.setAttribute("id", "FormToChangeAtt")
     
     FormToChangeAtt.innerHTML =
      `
