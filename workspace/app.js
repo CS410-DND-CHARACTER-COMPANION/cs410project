@@ -130,26 +130,70 @@ io.on('connection', async (socket) => {
     }
   });
 
-  // real-time event: character sheet updated
-  socket.on('updateCharacter', async (updatedCharacter) => {
+  // Test -j
+  socket.on('updateCharacter', async (updatedCharacterData) => {
     const client = new MongoClient(uri);
     try {
       await client.connect();
+      CharID = updatedCharacterData._id
+      delete updatedCharacterData._id
       const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
-        { _id: updatedCharacter._id }, 
-        { $set: updatedCharacter }
+        { _id: new ObjectId(CharID) }, 
+        { $set: updatedCharacterData}
       );
-
-      console.log('Character updated: ${updatedCharacter.name}');
-      
-      // Broadcast the 'characterUpdated' event to all connected clients
-      io.emit('characterUpdated', updatedCharacter);
+      if (result) 
+      {
+        console.log("updated");
+      }
+      else { console.log(result); }
     } catch (e) {
       console.error(e);
     } finally {
       await client.close();
     }
+
+    // for (UpdAttribute in updatedCharacterData)
+    // {
+    //   try {
+    //     await client.connect();
+    //     const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
+    //       { _id: updatedCharacterData._id }, 
+    //       { $set: {UpdAttribute: updatedCharacterData[UpdAttribute]}}
+    //     );
+    //     if (result) 
+    //     {
+    //       console.log("updated");
+    //     }
+    //     else { console.log(result); }
+    //   } catch (e) {
+    //     console.error(e);
+    //   } finally {
+    //     await client.close();
+    //   }
+    // }
+    console.log("Hope")
   });
+
+  // // real-time event: character sheet updated
+  // socket.on('updateCharacter', async (updatedCharacter) => {
+  //   const client = new MongoClient(uri);
+  //   try {
+  //     await client.connect();
+  //     const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
+  //       { _id: updatedCharacter._id }, 
+  //       { $set: updatedCharacter }
+  //     );
+
+  //     console.log('Character updated: ${updatedCharacter.name}');
+      
+  //     // Broadcast the 'characterUpdated' event to all connected clients
+  //     io.emit('characterUpdated', updatedCharacter);
+  //   } catch (e) {
+  //     console.error(e);
+  //   } finally {
+  //     await client.close();
+  //   }
+  // });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);

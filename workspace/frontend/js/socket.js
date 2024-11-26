@@ -44,7 +44,7 @@ async function EditAttributeMenu(CharID) // Once clicked:
   // Get Data
   socket.emit('getCharacterByID', CharID, (ReturnData) => {
     //console.log(ReturnData); // Got the data now
-
+    
     const ExistingForm = document.getElementById("FormToChangeAtt")
     if (ExistingForm)
     {
@@ -56,7 +56,6 @@ async function EditAttributeMenu(CharID) // Once clicked:
 
     for (Attribute in ReturnData)
       {
-        //console.log(Attribute.value)
         if (Attribute != "_id" && Attribute != "__v")
         {
           FormToChangeAtt.innerHTML = FormToChangeAtt.innerHTML +
@@ -72,9 +71,25 @@ async function EditAttributeMenu(CharID) // Once clicked:
     ApplyChangeButton.onclick = 
     function()
     {
+      const ExistingFormChildren = document.getElementById("FormToChangeAtt").children
+      //console.log(ExistingFormChildren)
+      //console.log(ExistingFormChildren.length)
+      const newCharData = {_id: ApplyChangeButton.id}
+      for (var i = 0; i < ExistingFormChildren.length; i++)
+      {
+        if (ExistingFormChildren[i].tagName == "INPUT")
+        {
+          if (ExistingFormChildren[i].value == "")
+          {
+            newCharData[ExistingFormChildren[i].id] = ExistingFormChildren[i].placeholder
+          }
+          else { newCharData[ExistingFormChildren[i].id] = ExistingFormChildren[i].value }
+        }
+      }
       
-      //alert(document.getElementById('name').value)
-      alert("submitted");
+      // Update
+      socket.emit('updateCharacter', newCharData)
+      alert("Attributes Changed!");
       location.reload();
     };
     FormToChangeAtt.appendChild(ApplyChangeButton)
