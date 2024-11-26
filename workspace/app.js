@@ -19,8 +19,8 @@ const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");//Fred testing
 const dotenv = require("dotenv");//Fred testing
-const userRoutes = require('./backend/routes/userRoutes');// Fred testing
-const verifyToken = require('./backend/middleware/authMiddleware'); // Adjust path if needed
+// const userRoutes = require('./backend/routes/userRoutes');// Fred testing
+// const verifyToken = require('./backend/middleware/authMiddleware'); // Adjust path if needed
 
 
 // Load environment variables/Fred testing
@@ -51,13 +51,13 @@ app.use(express.json()); // Allows Express to parse incoming JSON requests
 // Serve static files from the 'frontend' directory
 app.use(express.static(path.join(__dirname, 'frontend'))); // Serve static files like HTML, CSS, JS from 'frontend'
 
-// Route for user-related API endpoints
-app.use('/api/users', userRoutes); // Directs all /api/users requests to the userRoutes module
+// // Route for user-related API endpoints
+// app.use('/api/users', userRoutes); // Directs all /api/users requests to the userRoutes module
 
-// Protected route example (requires authentication)
-app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
-  res.json({ message: 'This is a protected profile route!' }); // Send a response if the token is valid
-});
+// // Protected route example (requires authentication)
+// app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
+//   res.json({ message: 'This is a protected profile route!' }); // Send a response if the token is valid
+// });
 
 // Connect to frontend
 app.get('/', (req, res) => {

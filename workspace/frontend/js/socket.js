@@ -32,6 +32,12 @@ socket.on('charactersList', (characters) => {
   });
 });
 
+function EditAttributeMenu(CharID)
+{
+  // alert(typeof(CharID)); // String
+  
+}
+
 // For DM Overview
 socket.on('DMOverviewcharactersList', (characters) => {
   console.log('All characters:', characters);
@@ -47,7 +53,7 @@ socket.on('DMOverviewcharactersList', (characters) => {
       characterItem.innerHTML =
       `
       <tr>
-        <th>${character.name}</th>
+        <th style="border: solid">${character.name}</th>
       </tr>
       
       <tr>
@@ -71,7 +77,7 @@ socket.on('DMOverviewcharactersList', (characters) => {
         <th>CHA</th>
       </tr>
       <tr>
-        <td>${character.strength}</td>
+        <td onclick=>${character.strength}</td>
         <td>${character.dexterity}</td>
         <td>${character.constitution}</td>
         <td>${character.intelligence}</td>
@@ -79,7 +85,19 @@ socket.on('DMOverviewcharactersList', (characters) => {
         <td>${character.charisma}</td>
       </tr>
       `;
+      const EditButton = document.createElement('button');
+      EditButton.innerHTML = "Edit";
+      EditButton.setAttribute("id", character._id);
+      EditButton.onclick = 
+      function()
+      {
+        EditAttributeMenu(EditButton.id);
+      };
+      // EditButton.setAttribute("onclick", "EditAttributeMenu(hey)")
+      characterItem.appendChild(EditButton)
+
       characterList.appendChild(characterItem);
+      // <button id=character._id onclick="EditAttributeMenu()">Edit</button>
   });
 });
 
