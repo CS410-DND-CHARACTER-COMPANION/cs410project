@@ -53,12 +53,13 @@ async function EditAttributeMenu(CharID) // Once clicked:
     //changed testing
     const FormToChangeAtt = document.createElement("table")
     FormToChangeAtt.setAttribute("id", "FormToChangeAtt")
-    
+    //width and margin is not setting it to be centered. 
     FormToChangeAtt.innerHTML =
      `
       <tr>
-        <th style="border: solid">${"name:"}
+        <th style="width: 10px;">${"name:"}
         <input id="${ReturnData["name"]}" placeholder="${ReturnData["name"]}"/></th>
+        
       </tr>
       <tr>
         <th>${"species"}:
@@ -135,6 +136,9 @@ async function EditAttributeMenu(CharID) // Once clicked:
       ReturnData["intelligenceModifier"] = Math.floor((ReturnData["intelligence"]-10)/2);
       ReturnData["wisdomModifier"] = Math.floor((ReturnData["wisdom"]-10)/2);
       ReturnData["charismaModifier"] = Math.floor((ReturnData["charisma"]-10)/2);
+    
+    //setting the edit form to center? not working
+    
     const ApplyChangeButton = document.createElement('button');
     ApplyChangeButton.innerHTML = "Apply Changes";
     ApplyChangeButton.setAttribute("id", CharID);
