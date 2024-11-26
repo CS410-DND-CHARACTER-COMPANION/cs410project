@@ -1,5 +1,6 @@
 /*
 Connects to the socket.io server and handles the events for the character sheet.
+
 */
 
 // connect to socket.io server
@@ -32,10 +33,50 @@ socket.on('charactersList', (characters) => {
   });
 });
 
-function EditAttributeMenu(CharID)
+// socket.on('ReturnCharByID', () => {
+//   console.log("Returned");
+//   //console.log(charData);
+// });
+
+async function EditAttributeMenu(CharID) // Once clicked:
 {
   // alert(typeof(CharID)); // String
-  
+  // Get Data
+  console.log("Sending");
+  socket.emit('getCharacterByID', CharID, (ReturnData) => {
+    //console.log(ReturnData); // Got the data now
+
+    const Test = document.createElement("div")
+    Test.setAttribute("id", "AttChangeForm")
+    //Test.setAttribute("style", "border-radius: 150px")
+    for (Attribute in ReturnData)
+      {
+        //console.log(Attribute.value)
+        if (Attribute != "_id" && Attribute != "__v")
+        {
+          Test.innerHTML = Test.innerHTML +
+          `
+            <label for="${Attribute}">${Attribute}:</label>
+            <input id="${Attribute}"/>
+          `;
+        }
+      }
+    const ApplyChangeButton = document.createElement('button');
+    ApplyChangeButton.innerHTML = "Apply Changes";
+    ApplyChangeButton.setAttribute("id", CharID);
+    ApplyChangeButton.onclick = 
+    function()
+    {
+      
+      //alert(document.getElementById('name').value)
+      alert("submitted");
+      location.reload();
+    };
+    Test.appendChild(ApplyChangeButton)
+    document.body.appendChild(Test)
+    // const Test = document.createElement
+  });
+
 }
 
 // For DM Overview
@@ -99,30 +140,6 @@ socket.on('DMOverviewcharactersList', (characters) => {
       characterList.appendChild(characterItem);
       // <button id=character._id onclick="EditAttributeMenu()">Edit</button>
   });
-});
-
-socket.on('DMUpdateCharacterData', async (chraracterId) =>
-{
-  const client = new MongoClient("mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
-  try {
-    await client.connect();
-
-    // Attempts to find the one edited character with IDs
-    const characters = await client.db("dnd_screen").collection("character_sheets").findOne({_id: chraracterId});
-    
-    // Update the selected character into the database
-    const result = await client.db("dnd_screen").collection("character_sheets").insertOne(character);
-    console.log(`New character created with the following id: ${result.insertedId}`);
-    character._id = result.insertedId;
-
-    // emit "charactersList" event(optional)
-    
-  } catch (e) {
-    console.error("Error updating characters:", e);
-    socket.emit('error', 'Failed to update characters');
-  } finally {
-    await client.close();
-  }
 });
 
 // Handle form submission

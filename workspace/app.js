@@ -86,6 +86,28 @@ io.on('connection', async (socket) => {
       await client.close();
     }
   });
+  
+  socket.on('getCharacterByID', async (CharID, callback) => {
+    const client = new MongoClient(uri);
+    callback = typeof callback == "function" ? callback : () => {};
+    try {
+      await client.connect();
+
+      // Attempts to find the one edited character with IDs
+      const FoundCharacter = await client.db("dnd_screen").collection("character_sheets").findOne({"_id": new ObjectId(CharID)});
+      callback(FoundCharacter) // Return back
+    }
+    catch (e)
+    {
+        console.error("Error updating characters:", e);
+        socket.emit('error', 'Failed to update characters');
+        callback({error:e.message});
+      } finally
+      {
+        await client.close();
+      }
+    //socket.emit('ReturnCharByID') // Log when a user disconnects
+  });
 
   // real-time event: new character created
   socket.on('newCharacter', async (character) => {
