@@ -528,9 +528,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let mouseX = 0;
   let mouseY = 0;
+  let targetX = 0;
+  let targetY = 0;
+  const speed = 0.1; // Adjust this value to control the smoothness
 
   // Function to update the cursor position
   const updateCursor = () => {
+    targetX = mouseX;
+    targetY = mouseY;
+    mouseX += (targetX - mouseX) * speed;
+    mouseY += (targetY - mouseY) * speed;
     cursor.style.left = `${mouseX}px`;
     cursor.style.top = `${mouseY}px`;
     requestAnimationFrame(updateCursor); // Continue the animation
