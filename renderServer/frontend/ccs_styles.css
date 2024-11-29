@@ -1025,14 +1025,15 @@ body {
   width: 50px; /* Adjust size as needed */
   height: 50px; /* Adjust size as needed */
   background: url("ccs_cursor.png") no-repeat; /* Your cursor image */
-  background-size: contain; /* Adjust size as needed */
+  background-size: 100px 50px; /* Adjust to the size of the sprite */
+  background-position: 0 0; /* Default position for the normal cursor */
   will-change: transform; /* Optimize performance */
   transition: transform 0.1s ease; /* Smooth transition */
 }
 
 .custom-cursor.clicking {
-  transform: scale(1.1); /* Slightly increase size on click */
-  transition: transform 0.05s ease; /* Quick transition for click effect */
+  background-position: -50px 0; /* Adjust background position for clicking state */
+  transition: background-position 0.05s ease; /* Quick transition for click effect */
 }
 
 .custom-cursor.hovering {
