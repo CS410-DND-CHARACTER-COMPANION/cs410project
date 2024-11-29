@@ -544,10 +544,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Clicking effect with smooth animation
   document.addEventListener("mousedown", () => {
     cursor.classList.add("clicking");
+    cursor.style.backgroundPosition = "-50px 0"; // Adjust background position for clicking state
   });
 
   document.addEventListener("mouseup", () => {
     cursor.classList.remove("clicking");
+    cursor.style.backgroundPosition = "0 0"; // Reset background position for normal state
   });
 
   // Hide default cursor
