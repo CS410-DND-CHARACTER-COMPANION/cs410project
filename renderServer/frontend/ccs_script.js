@@ -259,11 +259,11 @@ function updateEquipmentDisplay() {
     equipmentDiv.innerHTML = equipment
       .map(
         (item, index) => `
-              <div class="equipment-item">
-                  ${escapeHtml(item)} <!-- Escape HTML to prevent XSS -->
-                  <button class="delete-item-btn" onclick="removeEquipmentItem(${index})">Remove</button>
-              </div>
-          `
+            <div class="equipment-item">
+                ${escapeHtml(item)} <!-- Escape HTML to prevent XSS -->
+                <button class="delete-item-btn" onclick="removeEquipmentItem(${index})">Remove</button>
+            </div>
+        `
       )
       .join(""); // Join items into a single string
   } catch (error) {
@@ -531,25 +531,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to update the cursor position
   const updateCursor = () => {
-    cursor.style.transform = `translate(${mouseX}px, ${mouseY}px)`; // Use transform for smoother movement
+    cursor.style.left = `${mouseX}px`;
+    cursor.style.top = `${mouseY}px`;
     requestAnimationFrame(updateCursor); // Continue the animation
   };
 
   // Mouse movement event
   document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX - cursor.offsetWidth / 2; // Center the cursor
-    mouseY = e.clientY - cursor.offsetHeight / 2; // Center the cursor
+    mouseX = e.clientX; // Get mouse X position
+    mouseY = e.clientY; // Get mouse Y position
   });
 
   // Clicking effect with smooth animation
   document.addEventListener("mousedown", () => {
     cursor.classList.add("clicking");
-    cursor.style.backgroundPosition = "-50px 0"; // Adjust background position for clicking state
+    cursor.style.transition = "transform 0.05s ease"; // Quick transition for effect
   });
 
   document.addEventListener("mouseup", () => {
     cursor.classList.remove("clicking");
-    cursor.style.backgroundPosition = "0 0"; // Reset background position for normal state
+    cursor.style.transition = "transform 0.1s ease"; // Reset transition duration
   });
 
   // Hide default cursor
