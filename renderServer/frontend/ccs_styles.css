@@ -1018,38 +1018,39 @@ body {
   cursor: none;
 }
 
+/* Optimized Custom Cursor Styles */
 .custom-cursor {
   position: fixed;
   pointer-events: none;
+  will-change: transform;
   z-index: 9999;
   width: 50px;
   height: 50px;
   background: url("ccs_cursor.png") no-repeat;
   background-size: 100px 50px;
-  will-change: transform;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease, background-position 0.1s ease;
   image-rendering: crisp-edges;
+  transition: transform 0.1s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .custom-cursor.clicking {
   background-position: -50px 0;
   transform: translate(-50%, -50%) scale(1.1) rotate(-20deg);
-  opacity: 1;
 }
 
 .custom-cursor.hovering {
   opacity: 0.8;
 }
 
-/* Ensure custom cursor is used on all interactive elements */
+/* Hide default cursor globally */
+* {
+  cursor: none !important;
+}
+
+/* Ensure no cursor on specific interactive elements */
 button,
 a,
-input[type="button"],
-input[type="submit"],
-.shield-toggle,
-.add-item,
-.delete-item {
+input,
+.interactive {
   cursor: none !important;
 }
 
