@@ -520,48 +520,31 @@ window.onload = function () {
   }
 };
 
-// Smooth Custom Cursor Functionality
 document.addEventListener("DOMContentLoaded", () => {
-  const cursor = document.createElement("div");
-  cursor.className = "custom-cursor";
-  document.body.appendChild(cursor);
+  const cursor = document.querySelector(".custom-cursor");
 
-  // Use requestAnimationFrame for smoother animation
-  let rafId = null;
+  let cursorX = 0;
+  let cursorY = 0;
+  let targetX = 0;
+  let targetY = 0;
 
-  // Interpolation function for smoother movement
+  function updateCursor() {
+    cursorX = lerp(cursorX, targetX, 0.2);
+    cursorY = lerp(cursorY, targetY, 0.2);
+
+    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+    requestAnimationFrame(updateCursor);
+  }
+
   function lerp(start, end, amount) {
     return start * (1 - amount) + end * amount;
   }
 
-  // Optimized cursor tracking
-  const cursorState = {
-    x: 0,
-    y: 0,
-    targetX: 0,
-    targetY: 0,
-  };
-
-  // More performant cursor update function
-  function updateCursor() {
-    // Use precise interpolation for smoother movement
-    cursorState.x = lerp(cursorState.x, cursorState.targetX, 0.3);
-    cursorState.y = lerp(cursorState.y, cursorState.targetY, 0.3);
-
-    // Use transform for better performance
-    cursor.style.transform = `translate(${cursorState.x}px, ${cursorState.y}px) translate(-50%, -50%)`;
-
-    // Continue the animation loop
-    rafId = requestAnimationFrame(updateCursor);
-  }
-
-  // Mouse movement event with minimal processing
   function handleMouseMove(e) {
-    cursorState.targetX = e.clientX;
-    cursorState.targetY = e.clientY;
+    targetX = e.clientX;
+    targetY = e.clientY;
   }
 
-  // Interaction effects
   function handleMouseDown() {
     cursor.classList.add("clicking");
   }
@@ -570,36 +553,11 @@ document.addEventListener("DOMContentLoaded", () => {
     cursor.classList.remove("clicking");
   }
 
-  // Event listeners with passive optimization
   document.addEventListener("mousemove", handleMouseMove, { passive: true });
   document.addEventListener("mousedown", handleMouseDown, { passive: true });
   document.addEventListener("mouseup", handleMouseUp, { passive: true });
 
-  // Hover effect for interactive elements
-  const interactiveElements = document.querySelectorAll(
-    "button, a, input, .interactive"
-  );
-  interactiveElements.forEach((el) => {
-    el.addEventListener("mouseenter", () => cursor.classList.add("hovering"), {
-      passive: true,
-    });
-    el.addEventListener(
-      "mouseleave",
-      () => cursor.classList.remove("hovering"),
-      { passive: true }
-    );
-  });
-
-  // Start the cursor update loop
   updateCursor();
-
-  // Cleanup function (optional, but good practice)
-  return () => {
-    if (rafId) cancelAnimationFrame(rafId);
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mousedown", handleMouseDown);
-    document.removeEventListener("mouseup", handleMouseUp);
-  };
 });
 
 // Final cleanup and initialization
