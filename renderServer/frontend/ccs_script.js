@@ -259,11 +259,11 @@ function updateEquipmentDisplay() {
     equipmentDiv.innerHTML = equipment
       .map(
         (item, index) => `
-              <div class="equipment-item">
-                  ${escapeHtml(item)} <!-- Escape HTML to prevent XSS -->
-                  <button class="delete-item-btn" onclick="removeEquipmentItem(${index})">Remove</button>
-              </div>
-          `
+            <div class="equipment-item">
+                ${escapeHtml(item)} <!-- Escape HTML to prevent XSS -->
+                <button class="delete-item-btn" onclick="removeEquipmentItem(${index})">Remove</button>
+            </div>
+        `
       )
       .join(""); // Join items into a single string
   } catch (error) {
@@ -520,45 +520,50 @@ window.onload = function () {
   }
 };
 
+// Custom cursor functionality
 document.addEventListener("DOMContentLoaded", () => {
-  const cursor = document.querySelector(".custom-cursor");
+  const cursor = document.createElement("div");
+  cursor.className = "custom-cursor";
+  document.body.appendChild(cursor);
 
-  let cursorX = 0;
-  let cursorY = 0;
+  let mouseX = 0;
+  let mouseY = 0;
   let targetX = 0;
   let targetY = 0;
+  const speed = 0.1; // Adjust this value to control the smoothness
 
-  function updateCursor() {
-    cursorX = lerp(cursorX, targetX, 0.2);
-    cursorY = lerp(cursorY, targetY, 0.2);
+  // Function to update the cursor position
+  const updateCursor = () => {
+    targetX = mouseX;
+    targetY = mouseY;
+    mouseX += (targetX - mouseX) * speed;
+    mouseY += (targetY - mouseY) * speed;
+    cursor.style.left = `${mouseX}px`;
+    cursor.style.top = `${mouseY}px`;
+    requestAnimationFrame(updateCursor); // Continue the animation
+  };
 
-    // Update the cursor position to match the mouse pointer
-    cursor.style.left = `${cursorX}px`;
-    cursor.style.top = `${cursorY}px`;
-    requestAnimationFrame(updateCursor);
-  }
+  // Mouse movement event
+  document.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX; // Get mouse X position
+    mouseY = e.clientY; // Get mouse Y position
+  });
 
-  function lerp(start, end, amount) {
-    return start * (1 - amount) + end * amount;
-  }
-
-  function handleMouseMove(e) {
-    targetX = e.clientX;
-    targetY = e.clientY;
-  }
-
-  function handleMouseDown() {
+  // Clicking effect with smooth animation
+  document.addEventListener("mousedown", () => {
     cursor.classList.add("clicking");
-  }
+    cursor.style.transition = "transform 0.05s ease"; // Quick transition for effect
+  });
 
-  function handleMouseUp() {
+  document.addEventListener("mouseup", () => {
     cursor.classList.remove("clicking");
-  }
+    cursor.style.transition = "transform 0.1s ease"; // Reset transition duration
+  });
 
-  document.addEventListener("mousemove", handleMouseMove, { passive: true });
-  document.addEventListener("mousedown", handleMouseDown, { passive: true });
-  document.addEventListener("mouseup", handleMouseUp, { passive: true });
+  // Hide default cursor
+  document.body.style.cursor = "none";
 
+  // Start the cursor update loop
   updateCursor();
 });
 
