@@ -532,7 +532,9 @@ document.addEventListener("DOMContentLoaded", () => {
     cursorX = lerp(cursorX, targetX, 0.2);
     cursorY = lerp(cursorY, targetY, 0.2);
 
-    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+    // Update the cursor position to match the mouse pointer
+    cursor.style.left = `${cursorX}px`;
+    cursor.style.top = `${cursorY}px`;
     requestAnimationFrame(updateCursor);
   }
 
