@@ -526,30 +526,32 @@ document.addEventListener("DOMContentLoaded", () => {
   cursor.className = "custom-cursor";
   document.body.appendChild(cursor);
 
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
-  const speed = 0.001; // Adjust this value to control the smoothness
+  let mouseX = 0,
+    mouseY = 0; // Actual mouse positions
+  let cursorX = 0,
+    cursorY = 0; // Cursor positions
+  const speed = 0.001; // Easing speed (lower value = smoother movement)
 
-  // Function to update the cursor position
+  // Function to update the cursor position smoothly
   const updateCursor = () => {
-    targetX = mouseX;
-    targetY = mouseY;
-    mouseX += (targetX - mouseX) * speed;
-    mouseY += (targetY - mouseY) * speed;
-    cursor.style.left = `${mouseX}px`;
-    cursor.style.top = `${mouseY}px`;
-    requestAnimationFrame(updateCursor); // Continue the animation
+    // Apply easing for both axes
+    cursorX += (mouseX - cursorX) * speed;
+    cursorY += (mouseY - cursorY) * speed;
+
+    // Update cursor's position
+    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+
+    // Continue the animation
+    requestAnimationFrame(updateCursor);
   };
 
-  // Mouse movement event
+  // Track mouse movement
   document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX; // Get mouse X position
-    mouseY = e.clientY; // Get mouse Y position
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   });
 
-  // Clicking effect with smooth animation
+  // Clicking effect
   document.addEventListener("mousedown", () => {
     cursor.classList.add("clicking");
     cursor.style.transition = "transform 0.05s ease"; // Quick transition for effect
