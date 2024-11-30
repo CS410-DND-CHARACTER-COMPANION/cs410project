@@ -530,7 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let mouseY = 0;
   let targetX = 0;
   let targetY = 0;
-  const speed = 0.01; // Adjust this value to control the smoothness
+  const speed = 0.2; // Adjust this value to control the smoothness
 
   // Function to update the cursor position
   const updateCursor = () => {
