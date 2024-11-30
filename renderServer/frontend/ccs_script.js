@@ -520,56 +520,86 @@ window.onload = function () {
   }
 };
 
-// Custom cursor functionality
+// Smooth Custom Cursor Functionality
 document.addEventListener("DOMContentLoaded", () => {
   const cursor = document.createElement("div");
   cursor.className = "custom-cursor";
   document.body.appendChild(cursor);
 
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
-  const speed = 0.15; // Adjust this value to control the smoothness
+  // Use requestAnimationFrame for smoother animation
+  let rafId = null;
 
-  // Function to update the cursor position
-  const updateCursor = (timestamp) => {
-    const diffX = targetX - mouseX;
-    const diffY = targetY - mouseY;
+  // Interpolation function for smoother movement
+  function lerp(start, end, amount) {
+    return start * (1 - amount) + end * amount;
+  }
 
-    // Apply a damping effect to the cursor movement
-    mouseX += diffX * speed;
-    mouseY += diffY * speed;
-
-    cursor.style.left = `${mouseX}px`;
-    cursor.style.top = `${mouseY}px`;
-
-    // Request the next frame
-    requestAnimationFrame(updateCursor);
+  // Optimized cursor tracking
+  const cursorState = {
+    x: 0,
+    y: 0,
+    targetX: 0,
+    targetY: 0,
   };
 
-  // Mouse movement event
-  document.addEventListener("mousemove", (e) => {
-    targetX = e.clientX; // Get mouse X position
-    targetY = e.clientY; // Get mouse Y position
-  });
+  // More performant cursor update function
+  function updateCursor() {
+    // Use precise interpolation for smoother movement
+    cursorState.x = lerp(cursorState.x, cursorState.targetX, 0.3);
+    cursorState.y = lerp(cursorState.y, cursorState.targetY, 0.3);
 
-  // Clicking effect with smooth animation
-  document.addEventListener("mousedown", () => {
+    // Use transform for better performance
+    cursor.style.transform = `translate(${cursorState.x}px, ${cursorState.y}px) translate(-50%, -50%)`;
+
+    // Continue the animation loop
+    rafId = requestAnimationFrame(updateCursor);
+  }
+
+  // Mouse movement event with minimal processing
+  function handleMouseMove(e) {
+    cursorState.targetX = e.clientX;
+    cursorState.targetY = e.clientY;
+  }
+
+  // Interaction effects
+  function handleMouseDown() {
     cursor.classList.add("clicking");
-    cursor.style.transition = "transform 0.05s ease"; // Quick transition for effect
-  });
+  }
 
-  document.addEventListener("mouseup", () => {
+  function handleMouseUp() {
     cursor.classList.remove("clicking");
-    cursor.style.transition = "transform 0.1s ease"; // Reset transition duration
-  });
+  }
 
-  // Hide default cursor
-  document.body.style.cursor = "none";
+  // Event listeners with passive optimization
+  document.addEventListener("mousemove", handleMouseMove, { passive: true });
+  document.addEventListener("mousedown", handleMouseDown, { passive: true });
+  document.addEventListener("mouseup", handleMouseUp, { passive: true });
+
+  // Hover effect for interactive elements
+  const interactiveElements = document.querySelectorAll(
+    "button, a, input, .interactive"
+  );
+  interactiveElements.forEach((el) => {
+    el.addEventListener("mouseenter", () => cursor.classList.add("hovering"), {
+      passive: true,
+    });
+    el.addEventListener(
+      "mouseleave",
+      () => cursor.classList.remove("hovering"),
+      { passive: true }
+    );
+  });
 
   // Start the cursor update loop
   updateCursor();
+
+  // Cleanup function (optional, but good practice)
+  return () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mousedown", handleMouseDown);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
 });
 
 // Final cleanup and initialization
