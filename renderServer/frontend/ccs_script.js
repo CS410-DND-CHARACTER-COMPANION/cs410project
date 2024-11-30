@@ -259,11 +259,11 @@ function updateEquipmentDisplay() {
     equipmentDiv.innerHTML = equipment
       .map(
         (item, index) => `
-            <div class="equipment-item">
-                ${escapeHtml(item)} <!-- Escape HTML to prevent XSS -->
-                <button class="delete-item-btn" onclick="removeEquipmentItem(${index})">Remove</button>
-            </div>
-        `
+              <div class="equipment-item">
+                  ${escapeHtml(item)} <!-- Escape HTML to prevent XSS -->
+                  <button class="delete-item-btn" onclick="removeEquipmentItem(${index})">Remove</button>
+              </div>
+          `
       )
       .join(""); // Join items into a single string
   } catch (error) {
@@ -530,23 +530,28 @@ document.addEventListener("DOMContentLoaded", () => {
   let mouseY = 0;
   let targetX = 0;
   let targetY = 0;
-  const speed = 0.1; // Adjust this value to control the smoothness
+  const speed = 0.15; // Adjust this value to control the smoothness
 
   // Function to update the cursor position
-  const updateCursor = () => {
-    targetX = mouseX;
-    targetY = mouseY;
-    mouseX += (targetX - mouseX) * speed;
-    mouseY += (targetY - mouseY) * speed;
+  const updateCursor = (timestamp) => {
+    const diffX = targetX - mouseX;
+    const diffY = targetY - mouseY;
+
+    // Apply a damping effect to the cursor movement
+    mouseX += diffX * speed;
+    mouseY += diffY * speed;
+
     cursor.style.left = `${mouseX}px`;
     cursor.style.top = `${mouseY}px`;
-    requestAnimationFrame(updateCursor); // Continue the animation
+
+    // Request the next frame
+    requestAnimationFrame(updateCursor);
   };
 
   // Mouse movement event
   document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX; // Get mouse X position
-    mouseY = e.clientY; // Get mouse Y position
+    targetX = e.clientX; // Get mouse X position
+    targetY = e.clientY; // Get mouse Y position
   });
 
   // Clicking effect with smooth animation
