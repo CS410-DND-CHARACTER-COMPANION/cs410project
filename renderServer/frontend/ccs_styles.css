@@ -1009,49 +1009,45 @@ section {
   }
 }
 
-/* Custom Cursor Styles */
+@media (min-resolution: 2dppx) {
+  .custom-cursor {
+    width: 64px;
+    height: 64px;
+  }
+}
+
 * {
-  cursor: none;
+  cursor: none !important;
 }
 
 body {
-  cursor: none;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
 }
 
-/* Optimized Custom Cursor Styles */
 .custom-cursor {
   position: fixed;
   pointer-events: none;
-  will-change: transform;
+  width: 32px;
+  height: 32px;
+  background: url("cursor.png") no-repeat center;
+  background-size: contain;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease-in-out;
   z-index: 9999;
-  width: 50px;
-  height: 50px;
-  background: url("ccs_cursor.png") no-repeat;
-  background-size: 100px 50px;
-  image-rendering: crisp-edges;
-  transition: transform 0.1s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .custom-cursor.clicking {
-  background-position: -50px 0;
-  transform: translate(-50%, -50%) scale(1.1) rotate(-20deg);
+  transform: translate(-50%, -50%) scale(0.8);
 }
 
 .custom-cursor.hovering {
   opacity: 0.8;
-}
-
-/* Hide default cursor globally */
-* {
-  cursor: none !important;
-}
-
-/* Ensure no cursor on specific interactive elements */
-button,
-a,
-input,
-.interactive {
-  cursor: none !important;
 }
 
 .home-btn {
