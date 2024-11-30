@@ -526,44 +526,41 @@ document.addEventListener("DOMContentLoaded", () => {
   cursor.className = "custom-cursor";
   document.body.appendChild(cursor);
 
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
-  const speed = 0.1; // Adjust this value to control the smoothness
+  let mouseX = 0,
+    mouseY = 0;
+  let cursorX = 0,
+    cursorY = 0;
 
-  // Function to update the cursor position
+  // Smooth movement speed (adjust these values for even smoother animations)
+  const speed = 0.15;
+
+  // Function to interpolate between current and target positions
   const updateCursor = () => {
-    targetX = mouseX;
-    targetY = mouseY;
-    mouseX += (targetX - mouseX) * speed;
-    mouseY += (targetY - mouseY) * speed;
-    cursor.style.left = `${mouseX}px`;
-    cursor.style.top = `${mouseY}px`;
-    requestAnimationFrame(updateCursor); // Continue the animation
+    cursorX += (mouseX - cursorX) * speed;
+    cursorY += (mouseY - cursorY) * speed;
+    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+    requestAnimationFrame(updateCursor);
   };
 
-  // Mouse movement event
+  // Track real-time mouse position
   document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX; // Get mouse X position
-    mouseY = e.clientY; // Get mouse Y position
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   });
 
-  // Clicking effect with smooth animation
+  // Handle mouse down and up for clicking effect
   document.addEventListener("mousedown", () => {
     cursor.classList.add("clicking");
-    cursor.style.transition = "transform 0.05s ease"; // Quick transition for effect
   });
 
   document.addEventListener("mouseup", () => {
     cursor.classList.remove("clicking");
-    cursor.style.transition = "transform 0.1s ease"; // Reset transition duration
   });
 
-  // Hide default cursor
+  // Hide the default cursor
   document.body.style.cursor = "none";
 
-  // Start the cursor update loop
+  // Start the smooth cursor movement
   updateCursor();
 });
 
