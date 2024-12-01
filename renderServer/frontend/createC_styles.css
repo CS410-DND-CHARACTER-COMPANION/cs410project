@@ -1,13 +1,12 @@
-/* V3.9.1 */
-
-/* Font Import */
+/* Version 4.1.0 */
+/* Define custom font */
 @font-face {
   font-family: "Uncial Antiqua";
   src: url("UncialAntiqua.woff2") format("woff2");
   font-display: swap;
 }
 
-/* CSS Variables */
+/* Global color and style variables */
 :root {
   --color-primary: rgba(245, 245, 220, 1);
   --color-secondary: rgba(224, 205, 169, 1);
@@ -59,7 +58,7 @@
   --transition-toggle: all 0.3s ease;
 }
 
-/* Global HTML and Body Styles */
+/* Ensure smooth scrolling and full-page view */
 html,
 body {
   margin: 0;
@@ -112,6 +111,7 @@ body {
   scroll-behavior: smooth;
 }
 
+/* Body styling with a fixed background */
 body::after {
   content: "";
   position: fixed;
@@ -135,6 +135,7 @@ body::before {
   pointer-events: none;
 }
 
+/* Container for main content */
 .container {
   width: 97%;
   max-width: 1500px;
@@ -172,7 +173,7 @@ body::before {
   display: none;
 }
 
-/* Typography Styles */
+/* Heading styles */
 h1,
 h2 {
   color: var(--color-heading);
@@ -240,7 +241,7 @@ label {
   padding: var(--spacing-sm) 0;
 }
 
-/* Input and Form Styles */
+/* Form input styling */
 input[type="text"],
 input[type="number"],
 input[type="file"],
@@ -254,11 +255,11 @@ input[type="file"],
   background-color: var(--color-secondary);
   color: rgba(74, 59, 38, 1);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  /*box-shadow:
+  /* box-shadow:
         10px 10px 0 var(--color-shield-border),
-        inset 0 4px 8px rgba(0, 0, 0, 0.2);*/
+        inset 0 4px 8px rgba(0, 0, 0, 0.2); */
   margin-bottom: var(--spacing-md);
-  /*transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  /* transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
     transform-style: preserve-3d;
     transform: rotateX(10deg) rotateY(-10deg) translateZ(-10px);
     perspective: 1000px;
@@ -266,10 +267,10 @@ input[type="file"],
         transition: none;
     transform-style: initial;
     transform: none;
-    perspective: none;*/
+    perspective: none; */
 }
 
-/*input[type="text"]:hover,
+/* input[type="text"]:hover,
 input[type="number"]:hover,
 input[type="file"]:hover,
 .custom-select:hover {
@@ -278,7 +279,7 @@ input[type="file"]:hover,
         25px 25px 0 -5px var(--color-heading),
         25px 25px 0 0 var(--color-shield-border),
         inset 0 4px 8px rgba(0, 0, 0, 0.2);
-}*/
+} */
 
 input[type="text"]:focus,
 input[type="number"]:focus,
@@ -286,15 +287,16 @@ input[type="file"]:focus,
 .custom-select:focus {
   outline: none;
   border-color: var(--color-shield-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Keep the same shadow on focus */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-/*.custom-select:focus {
+
+/* .custom-select:focus {
     outline: none;
     box-shadow:
         15px 15px 0 -3px var(--color-heading),
         15px 15px 0 0 var(--color-shield-border),
         0 0 0 3px rgba(240, 215, 140, 0.5);
-}*/
+} */
 
 input[type="text"]:focus + label::before,
 input[type="number"]:focus + label::before,
@@ -377,7 +379,7 @@ button:focus {
   box-shadow: 0 0 0 4px rgba(240, 215, 140, 0.2);
 }
 
-/* Button Styles */
+/* Button styling */
 .add-item-btn,
 .delete-item-btn {
   --primary-color: rgba(52, 152, 219, 0.7);
@@ -505,7 +507,6 @@ button:focus {
   font-size: 1.1em;
 }
 
-/* Toggle and Checkbox Styles */
 .toggle-wrapper {
   margin-left: auto;
   position: relative;
@@ -518,6 +519,7 @@ button:focus {
   height: 0;
 }
 
+/* Shield toggle styles */
 .toggle-slot {
   position: relative;
   width: 60px;
@@ -618,7 +620,6 @@ button:focus {
   margin-bottom: var(--spacing-sm);
 }
 
-/* Scrollbar Styles */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-scrollbar-thumb) transparent;
@@ -677,7 +678,6 @@ section {
   overflow: visible;
 }
 
-/* Layout and Grid Styles */
 .ability-grid,
 .equipment-list,
 .form-group {
@@ -702,7 +702,7 @@ section {
   overscroll-behavior: contain;
 }
 
-/* Status and Connection Styles */
+/* Connection status styles */
 .connection-status {
   position: fixed;
   bottom: var(--spacing-lg);
@@ -739,7 +739,6 @@ section {
   box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
 }
 
-/* Loading and Spinner Styles */
 .loading-indicator {
   display: none;
   position: fixed;
@@ -772,6 +771,7 @@ section {
   animation: spin 1s linear infinite;
 }
 
+/* Loading spinner animation */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -799,7 +799,6 @@ section {
   z-index: -1;
 }
 
-/* Responsive Support Styles */
 @supports (padding: max(0px)) {
   .container {
     padding-left: max(var(--spacing-md), env(safe-area-inset-left));
@@ -815,7 +814,6 @@ section {
   }
 }
 
-/* Responsive Breakpoints */
 @media screen and (max-width: 1920px) {
   .container {
     width: 95%;
@@ -834,9 +832,8 @@ section {
   }
 }
 
-/* Mobile Breakpoints */
+/* Responsive media queries */
 @media screen and (max-width: 768px) {
-  /* General Mobile Styles */
   body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
@@ -879,7 +876,6 @@ section {
   }
 }
 
-/* Mobile Orientation Specific Styles */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   .container {
     width: 98%;
@@ -924,7 +920,6 @@ section {
   }
 }
 
-/* Small Mobile Breakpoint */
 @media screen and (max-width: 480px) {
   .container {
     width: 99%;
@@ -933,7 +928,6 @@ section {
   }
 }
 
-/* Large Screen Background Adjustment */
 @media screen and (min-width: 769px) {
   body::after {
     content: "";
@@ -953,7 +947,6 @@ section {
   }
 }
 
-/* Print Styles */
 @media print {
   body {
     background: none;
@@ -1001,7 +994,6 @@ section {
   }
 }
 
-/* High-Resolution Display Styles */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   body::after {
     background-size: contain;
@@ -1009,7 +1001,6 @@ section {
   }
 }
 
-/* Custom Cursor Styles */
 * {
   cursor: none;
 }
@@ -1042,7 +1033,6 @@ body {
   opacity: 0.8;
 }
 
-/* Ensure custom cursor is used on all interactive elements */
 button,
 a,
 input[type="button"],
