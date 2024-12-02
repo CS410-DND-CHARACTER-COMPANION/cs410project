@@ -1,0 +1,125 @@
+body {
+    background-image: url('createC_background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.banner {
+    width: 100%;
+    background-color: darkgoldenrod;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 24px;
+    font-weight: bold;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 200px;
+  width: 600px;
+  height: auto;
+  background: rgba(245, 245, 245, 0.783);
+  padding-bottom: 30px;
+  border-radius: 40px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.text {
+    color: darkgoldenrod;
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.underline {
+    width: 100px;
+    height: 5px;
+    background: darkgoldenrod;
+    border-radius: 10px;
+}
+
+.inputs {
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 480px;
+    height: 80px;
+    background: white;
+    border-radius: 10px;
+}
+
+.input img {
+    margin: 0 20px;
+}
+
+.input input {
+    width: 400px;
+    height: 50px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: black;
+    font-size: 24px;
+}
+
+.submit-container .btn-primary{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: auto;
+    margin-top: 50px;
+    width: 200px;
+    height: 60px;
+    color: white;
+    background: darkgoldenrod;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.submit-container .btn-link {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: auto;
+    margin-top: 50px;
+    width: 200px;
+    height: 60px;
+    color: white;
+    background: darkgoldenrod;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+}    
+
+
+.gold {
+    background: lightgray;
+    color: white;
+}   
