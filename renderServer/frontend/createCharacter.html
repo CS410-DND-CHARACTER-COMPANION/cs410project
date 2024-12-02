@@ -5,34 +5,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Create Character Version 4.1.0</title>
-  <!-- Socket.IO for real-time features -->
+  <!-- Socket.IO: Enables real-time features and dynamic updates -->
   <script src="/socket.io/socket.io.js"></script>
-  <!-- Custom fonts for thematic design -->
+  <!-- Custom typography to enhance thematic design -->
   <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Roboto+Slab:wght@300;700&display=swap"
     rel="stylesheet" />
-  <!-- External stylesheet and script -->
+  <!-- Stylesheet and client-side script for character creation interactions -->
   <link rel="stylesheet" href="createC_styles.css" />
   <script src="createC_script.js" defer></script>
 </head>
 
 <body>
   <div class="container creation-sheet" role="main">
-    <!-- Main page title -->
+    <!-- Main heading title -->
     <h1>D&D Forge Your Hero</h1>
-    <!-- Character creation form -->
+    <!-- Comprehensive character creation form with extensive validation -->
     <form id="character-form" novalidate>
-      <!-- User identification section -->
+      <!-- User identification section: Captures player information -->
       <section class="user-info">
         <h2>User Information</h2>
+        <!-- Username input with error handling -->
         <div class="form-group">
           <label for="username" data-label="Username">Username:</label>
           <input type="text" id="username" name="username" data-field="user-username" aria-label="Username"
             aria-required="true" placeholder="Enter your username" required />
-          <!-- Error message for validation -->
+          <!-- Dynamic error message container for input validation -->
           <span class="error-message" data-error="username"></span>
         </div>
       </section>
-      <!-- Character information -->
+      <!-- Character core information section -->
       <section class="character-info">
         <h2>Character Information</h2>
         <!-- Name input with validation -->
@@ -48,11 +49,12 @@
           <input type="text" id="background" name="background" data-field="character-background"
             aria-label="Character Background" placeholder="Choose character background" />
         </div>
-        <!-- Extensive race/species selection -->
+        <!-- Extensive race selection -->
         <div class="form-group">
           <label for="species" data-label="Race/Species">Race/Species (R/Sp):</label>
           <select id="species" name="species" class="custom-select" data-field="character-species"
             aria-label="Character Species" aria-required="true" required>
+            <!-- List of playable races -->
             <option value>Select Your Lineage</option>
             <option value="Human">Human</option>
             <option value="Elf">Elf</option>
@@ -99,6 +101,7 @@
           <input type="text" id="subclass" name="subclass" data-field="character-subclass"
             aria-label="Character Subclass" placeholder="Choose character subclass" />
         </div>
+        <!-- Dynamic level and proficiency bonus calculation -->
         <div class="form-group">
           <label for="level" data-label="Level">Level (Lv):</label>
           <input type="number" id="level" name="level" data-field="character-level" aria-label="Character Level"
@@ -106,7 +109,7 @@
             oninput="updateProficiencyBonus()" />
           <span class="error-message" data-error="level"></span>
         </div>
-        <!-- Read-only proficiency bonus field -->
+        <!-- Read-only proficiency bonus automatically calculated based on level -->
         <div class="form-group">
           <label for="proficiency-bonus" data-label="Proficiency Bonus">Proficiency Bonus (PB):</label>
           <input type="number" id="proficiency-bonus" name="proficiency-bonus" data-field="proficiency-bonus"
@@ -118,15 +121,16 @@
             placeholder="Enter character XP" />
         </div>
       </section>
-      <!-- Ability scores section -->
+      <!-- Ability scores with automatic modifier calculations -->
       <section class="ability-scores">
         <h2>Ability Scores</h2>
         <div class="ability-grid">
+          <!-- Each ability block dynamically calculates its modifier -->
           <div class="ability-block" data-ability="strength">
             <label for="strength" data-label="Strength">Strength (Str):</label>
             <input type="number" id="strength" name="strength" data-field="ability-strength" aria-label="Strength Score"
               aria-required="true" min="1" max="30" required oninput="calculateModifier('strength')" />
-            <!-- Automatic modifier calculation -->
+            <!-- Automatic modifier field updates with score changes -->
             <label for="strength-modifier" data-label="Strength Modifier">Str Modifier:</label>
             <input type="number" id="strength-modifier" name="strength-modifier" data-field="ability-strength-modifier"
               aria-label="Strength Modifier" readonly />
@@ -182,9 +186,10 @@
           </div>
         </div>
       </section>
-      <!-- Combat-specific details -->
+      <!-- Combat-specific details for character -->
       <section class="combat-details">
         <h2>Combat Details</h2>
+        <!-- HP tracking with current and maximum values -->
         <div class="form-group">
           <label for="current-hp" data-label="Current HP">Current HP (HP):</label>
           <input type="number" id="current-hp" name="current-hp" data-field="combat-current-hp"
@@ -203,12 +208,13 @@
             min="1" placeholder="Enter AC" required />
           <span class="error-message" data-error="ac"></span>
         </div>
-        <!-- Shield toggle with thematic presentation -->
+        <!-- Thematic shield toggle with visual representation -->
         <div class="form-group">
           <label for="shield" data-label="Shield">Shield (SHD):</label>
           <div class="shield-container">
             <span class="shield-icon" aria-hidden="true">🛡️</span>
             <span class="shield-text">Shield of the Hidden Lord</span>
+            <!-- Interactive shield toggle -->
             <label class="toggle-wrapper">
               <input type="checkbox" id="shield" name="shield" data-field="combat-shield" class="shield-checkbox"
                 aria-label="Toggle shield" />
@@ -227,25 +233,26 @@
             placeholder="Enter speed" />
         </div>
       </section>
-      <!-- Equipment management section -->
+      <!-- Equipment management with dynamic item addition -->
       <section class="equipment">
         <h2>Equipment</h2>
         <div class="form-group">
           <label for="equipment-item" data-label="New Item">New Item:</label>
           <input type="text" id="equipment-item" name="equipment-item" data-field="equipment-new-item"
             aria-label="New Equipment Item" placeholder="Enter item name" />
-          <!-- Dynamic item addition -->
+          <!-- Button to dynamically add equipment items -->
           <button type="button" class="add-item-btn" data-action="add-equipment" onclick="addEquipmentItem()"
             aria-label="Add equipment item">
             Add Item
           </button>
         </div>
-        <!-- Dynamic equipment list -->
+        <!-- Container for dynamically generated equipment list -->
         <div id="equipment" class="equipment-list" role="list" aria-label="Equipment list"></div>
       </section>
-      <!-- Inspirational section -->
+      <!-- Inspirational section to encourage roleplaying -->
       <section class="heroic-inspiration">
         <h2>Heroic Inspiration</h2>
+        <!-- Narrative-driven inspiration message to motivate players -->
         <div class="inspiration-message" role="note">
           <span class="inspiration-icon" aria-hidden="true">⭐</span>
           <p>
@@ -255,8 +262,9 @@
           </p>
         </div>
       </section>
-      <!-- Save and navigation buttons -->
+      <!-- Save and navigation controls -->
       <div class="sp">
+        <!-- Save character button with dynamic SVG arrow -->
         <button class="save-btn" id="save-character-btn" onclick="handleFormSubmission(event)"
           aria-label="Save character">
           <a href="#">
@@ -271,7 +279,7 @@
         </button>
       </div>
     </form>
-    <!-- Home navigation button -->
+    <!-- Home navigation button for easy return to main page -->
     <button class="home-btn">
       <a href="index.html">
         <span>
