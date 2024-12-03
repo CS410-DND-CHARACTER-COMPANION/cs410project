@@ -54,93 +54,96 @@ async function EditAttributeMenu(CharID) // Once clicked:
     const FormToChangeAtt = document.createElement("table")
     FormToChangeAtt.setAttribute("id", "FormToChangeAtt")
     //width and margin is not setting it to be centered. 
-    // for (Attribute in ReturnData){
-    //   if (Attribute != "_id" && Attribute != "__v"){
-    //     FormToChangeAtt.innerHTML = FormToChangeAtt.innerHTML +
-    //     <tr>
-    //     <th>${Attribute}:
-    //     <input id="${Attribute}" placeholder="${ReturnData[Attribute]}"/></th>
-    //     </tr>
-    //       ;
-    //     }
-    //   }
+    for (Attribute in ReturnData){
+        if (Attribute != "_id" && Attribute != "__v" && Attribute != "strengthModifier"
+          && Attribute != "dexterityModifier" && Attribute != "constitutionModifier" 
+          && Attribute != "intelligenceModifier" && Attribute != "wisdomModifier"
+          && Attribute != "charismaModifier"){
+          FormToChangeAtt.innerHTML = FormToChangeAtt.innerHTML +
+          `
+          <tr>
+          <th>${Attribute}:
+          <input id=${Attribute} placeholder="${ReturnData[Attribute]}"/></th>
+          </tr>
+          `;
+        }
+      }
     
-    FormToChangeAtt.innerHTML =
-     `
-      <tr>
-        <th style="width: 10px;">${"name:"}
-        <input id="name" placeholder="${ReturnData["name"]}"/></th>
-        
-      </tr>
-      <tr>
-        <th>${"species"}:
-        <input id="species" placeholder="${ReturnData["species"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"class"}:
-        <input id="class" placeholder="${ReturnData["class"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"level"}:
-        <input id="level" placeholder="${ReturnData["level"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"background"}:
-        <input id="background" placeholder="${ReturnData["background"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"subclass"}:
-        <input id="subclass" placeholder="${ReturnData["subclass"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"xp"}:
-        <input id="xp" placeholder="${ReturnData["xp"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"strength"}:
-        <input id="strength" placeholder="${ReturnData["strength"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"dexterity"}:
-        <input id="dexterity" placeholder="${ReturnData["dexterity"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"constitution"}:
-        <input id="constitution" placeholder="${ReturnData["constitution"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"intelligence"}:
-        <input id="intelligence" placeholder="${ReturnData["intelligence"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"wisdom"}:
-        <input id="wisdom" placeholder="${ReturnData["wisdom"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"charisma"}:
-        <input id="charisma" placeholder="${ReturnData["charisma"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"armor class"}:
-        <input id="ac" placeholder="${ReturnData["ac"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"current health"}:
-        <input id="currentHp" placeholder="${ReturnData["currentHp"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"initiative"}:
-        <input id="initiative" placeholder="${ReturnData["initiative"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"has shield"}:
-        <input id="hasShield" placeholder="${ReturnData["hasShield"]}"/></th>
-      </tr>
-      <tr>
-        <th>${"inventory"}:
-        <input id="inventory" placeholder="${ReturnData["inventory"]}"/></th>
-      </tr>
-      `;
+    // FormToChangeAtt.innerHTML =
+    //  `
+    //   <tr>
+    //     <th>${"name"}:
+    //     <input id="name" placeholder="${ReturnData["name"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"species"}:
+    //     <input id="species" placeholder="${ReturnData["species"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"class"}:
+    //     <input id="class" placeholder="${ReturnData["class"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"level"}:
+    //     <input id="level" placeholder="${ReturnData["level"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"background"}:
+    //     <input id="background" placeholder="${ReturnData["background"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"subclass"}:
+    //     <input id="subclass" placeholder="${ReturnData["subclass"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"xp"}:
+    //     <input id="xp" placeholder="${ReturnData["xp"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"strength"}:
+    //     <input id="strength" placeholder="${ReturnData["strength"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"dexterity"}:
+    //     <input id="dexterity" placeholder="${ReturnData["dexterity"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"constitution"}:
+    //     <input id="constitution" placeholder="${ReturnData["constitution"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"intelligence"}:
+    //     <input id="intelligence" placeholder="${ReturnData["intelligence"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"wisdom"}:
+    //     <input id="wisdom" placeholder="${ReturnData["wisdom"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"charisma"}:
+    //     <input id="charisma" placeholder="${ReturnData["charisma"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"armor class"}:
+    //     <input id="ac" placeholder="${ReturnData["ac"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"current health"}:
+    //     <input id="currentHp" placeholder="${ReturnData["currentHp"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"initiative"}:
+    //     <input id="initiative" placeholder="${ReturnData["initiative"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"has shield"}:
+    //     <input id="hasShield" placeholder="${ReturnData["hasShield"]}"/></th>
+    //   </tr>
+    //   <tr>
+    //     <th>${"inventory"}:
+    //     <input id="inventory" placeholder="${ReturnData["inventory"]}"/></th>
+    //   </tr>
+    //   `;
       
       // ReturnData["strengthModifier"] = Math.floor((ReturnData["strength"]-10)/2);
       // ReturnData["dexterityModifier"] = Math.floor((ReturnData["dexterity"]-10)/2);
