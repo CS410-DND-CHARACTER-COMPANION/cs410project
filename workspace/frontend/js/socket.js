@@ -270,13 +270,19 @@ socket.on('DMOverviewcharactersList', (characters) => {
         <td>${character.charisma} (${character.charismaModifier})</td>
       </tr>
       <tr class="blank_column" style="width:10%" style="height:10%">
-        <th rowspan="2" style="width:10%" style="height:10%"></th>
+        <th rowspan="3" style="width:10%" style="height:10%"></th>
       </tr>
       <tr>
         <th>Init</th>
         <th>Speed</th>
         <th>Size</th>
         <th>PP</th>
+      </tr>
+      <tr>
+        <td onclick=>${character.initiative}</td>
+        <td>${character.speed}</td>
+        <td> [Size] </td>
+        <td> [PP] </td>
       </tr>
       `;
       // <tr class="blank_column" style="width:10%" style="height:10%">
