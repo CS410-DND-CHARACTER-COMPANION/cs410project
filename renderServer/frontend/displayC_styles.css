@@ -16,12 +16,11 @@ body::before {
     background-size: cover;
     background-repeat: no-repeat;
     opacity: 0.3;
-    /* Adjust as needed */
     z-index: -1;
 }
 
 .container {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(26, 26, 46, 0.8);
     border: 3px solid #8b4513;
     box-shadow: 0 0 20px rgba(139, 69, 19, 0.5);
     position: relative;
