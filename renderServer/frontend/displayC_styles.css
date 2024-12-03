@@ -3,6 +3,8 @@ body {
     font-family: "Papyrus", "Palatino Linotype", serif;
     color: #d4af37;
     position: relative;
+    overflow: auto;
+    /* Added this to make the page scrollable */
 }
 
 body::before {
@@ -15,16 +17,23 @@ body::before {
     background-image: url("displayC_background.jpg");
     background-size: cover;
     background-repeat: no-repeat;
-    opacity: 0.3;
+    opacity: 0.5;
+    /* Increased the opacity to make the background more visible */
     z-index: -1;
 }
 
 .container {
-    background-color: rgba(26, 26, 46, 0.8);
+    background-color: rgba(26,
+            26,
+            46,
+            0.6);
+    /* Decreased the opacity to make the background more visible */
     border: 3px solid #8b4513;
     box-shadow: 0 0 20px rgba(139, 69, 19, 0.5);
     position: relative;
     z-index: 1;
+    margin: 20px;
+    /* Added margin to create some space around the container */
 }
 
 h1 {
@@ -42,10 +51,16 @@ h1 {
 .health,
 .hit-dice,
 .death-saves {
-    background-color: #2c2c3e;
+    background-color: rgba(44,
+            44,
+            62,
+            0.8);
+    /* Decreased the opacity to make the background more visible */
     border: 2px solid #8b4513;
     box-shadow: 0 0 10px rgba(139, 69, 19, 0.3);
     transition: transform 0.3s ease;
+    padding: 10px;
+    /* Added padding to create some space within the sections */
 }
 
 .charinfo:hover,
