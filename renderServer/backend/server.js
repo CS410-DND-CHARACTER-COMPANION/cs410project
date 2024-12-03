@@ -1,4 +1,3 @@
-
 // Import the Express framework
 const express = require("express");
 // Import path module for file path handling
