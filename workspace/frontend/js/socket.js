@@ -183,8 +183,6 @@ async function EditAttributeMenu(CharID) // Once clicked:
         }
       );
 
-      console.log(newCharData["strength"])
-      console.log(Math.floor((newCharData["strength"]-10)/2))
       newCharData["strengthModifier"] = Math.floor((newCharData["strength"]-10)/2);
       newCharData["dexterityModifier"] = Math.floor((newCharData["dexterity"]-10)/2);
       newCharData["constitutionModifier"] = Math.floor((newCharData["constitution"]-10)/2);
@@ -250,7 +248,7 @@ socket.on('DMOverviewcharactersList', (characters) => {
       <tr>
         <th>${character.species}</th>
         <th>${character.class}</th>
-        <th> ${character.currentHp}</th>
+        <th> ${character.currentHp} / ${character.maxHP} </th>
       </tr>
       <tr class="blank_column" style="width:10%" style="height:10%">
           <th rowspan="3" style="width:10%" style="height:10%">Attributes</th>
