@@ -1,182 +1,300 @@
 
+// Import the Express framework
 const express = require("express");
+// Import path module for file path handling
 const path = require("path");
+// Import HTTP module to create a server
 const http = require("http");
+// Import Socket.IO for real-time communication
 const { Server } = require("socket.io");
-const { MongoClient, ObjectId } = require("mongodb");
+// Import Mongoose for MongoDB interactions
+const mongoose = require("mongoose");
+// Import dotenv to manage environment variables
 const dotenv = require("dotenv");
-const userModule = require("./backend/userModule"); // Import userModule
+// Import user-related routes
+const userRoutes = require("./routes/userRoutes");
+// Import middleware for token verification
+const verifyToken = require("./middleware/authMiddleware");
+// Import the Character model
+const Character = require("./models/characterModel");
 
-// Load environment variables
+// Load environment variables from .env file
 dotenv.config();
-console.log("MONGO_URI:", process.env.MONGO_URI);
-
 
 // Initialize Express app and HTTP server
 const app = express();
 const server = http.createServer(app);
+// Initialize Socket.IO server
 const io = new Server(server);
 
-// Port setup
-const port = 3000;
+// Port setup: use environment variable or default to 3000
+const port = process.env.PORT || 3000;
+
+// Get MongoDB URI from environment variables
+const uri = process.env.MONGO_URI;
+if (!uri) {
+    // Log error if URI is missing
+    console.error("MONGO_URI is not defined in the environment variables.");
+    // Exit if MONGO_URI is not defined
+    process.exit(1);
+}
+
+// Connect to MongoDB and handle connection success or error
+mongoose
+    .connect(uri)
+    // Log success message
+    .then(() => console.log("Connected to MongoDB"))
+    // Log connection error
+    .catch((err) => console.error("MongoDB connection error:", err));
 
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // Serve static files from the 'frontend' directory
-app.use(express.static(path.join(__dirname, 'frontend')));
-
-// Database connection
-const uri = process.env.MONGO_URI; // Use URI from environment variables
-let db;
-
-// Connect to MongoDB 
-MongoClient.connect(uri, { useUnifiedTopology: true })
-  .then((client) => {
-    console.log("Connected to MongoDB");
-    db = client.db("dnd_screen");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
-  });
-
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Route for user-related API endpoints
-app.use('/api/users', userModule.router);
+app.use("/api/users", userRoutes);
 
-// Protected route example
-app.get('/api/users/profile', userModule.verifyToken, (req, res) => {
-  res.json({ message: 'This is a protected profile route!' });
+// Protected route example: requires token verification
+app.get("/api/users/profile", verifyToken, (req, res) => {
+    res.json({ message: "This is a protected profile route!" });
 });
 
-// Connect to frontend
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+// Connect to frontend: serve the main HTML file
+app.get("/", (req, res) => {
+    // Serve index.html
+    res.sendFile(path.join(__dirname, "../frontend", "index.html"));
 });
 
 // New route for character sheet page
-app.get('/character-sheet-v1.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'character-sheet-v1.html'));
+app.get("/character-sheet-v1.html", (req, res) => {
+    // Serve character sheet HTML
+    res.sendFile(path.join(__dirname, "../frontend", "character-sheet-v1.html"));
 });
 
-// socket.io connection
-io.on('connection', async (socket) => {
-  console.log("A user connected:", socket.id);
+// Socket.IO connection event
+io.on("connection", (socket) => {
+    // Log when a user connects
+    console.log("A user connected:", socket.id);
 
-  // get a list of all characters
-  socket.on('getAllCharacters', async () => {
-    const client = new MongoClient(uri);
-    try {
-      await client.connect();
-      const characters = await client.db("dnd_screen").collection("character_sheets").find().toArray();
-      socket.emit('charactersList', characters);
-    } catch (e) {
-      console.error("Error getting characters:", e);
-      socket.emit('error', 'Failed to retrieve characters');
-    } finally {
-      await client.close();
-    }
-  });
+    // Get a list of all characters
+    socket.on("getAllCharacters", async () => {
+        try {
+            // Fetch all characters from the database
+            const characters = await Character.find();
+            // Emit the list of characters to the client
+            socket.emit("charactersList", characters);
+        } catch (e) {
+            console.error("Error getting characters:", e);
+            socket.emit("error", "Failed to retrieve characters");
+        }
+    });
 
-  // New handler for getting a single character
-  socket.on('getCharacter', async (characterId) => {
-    const client = new MongoClient(uri);
-    try {
-      await client.connect();
-      const character = await client.db("dnd_screen")
-        .collection("character_sheets")
-        .findOne({ _id: new ObjectId(characterId) });
-      
-      if (character) {
-        socket.emit('characterData', character);
-      } else {
-        socket.emit('error', 'Character not found');
-      }
-    } catch (e) {
-      console.error("Error retrieving character:", e);
-      socket.emit('error', 'Failed to retrieve character');
-    } finally {
-      await client.close();
-    }
-  });
+    // Handler for getting a single character by username
+    socket.on("getCharacter", async (username) => {
+        try {
+            // Search by username
+            const character = await Character.findOne({ username: username });
+            if (character) {
+                // Emit character data if found
+                socket.emit("characterData", character);
+            } else {
+                // Emit error if not found
+                socket.emit("error", "Character not found");
+            }
+        } catch (e) {
+            // Log error
+            console.error("Error retrieving character:", e);
+            // Emit error message
+            socket.emit("error", "Failed to retrieve character");
+        }
+    });
 
-  // real-time event: new character created
-  socket.on('newCharacter', async (character) => {
-    const client = new MongoClient(uri);
-    try {
-      await client.connect();
-      const result = await client.db("dnd_screen").collection("character_sheets").insertOne(character);
-      console.log(`New character created with the following id: ${result.insertedId}`);
-      character._id = result.insertedId;
-      io.emit('characterAdded', character);
-    } catch (e) {
-      console.error("Error creating character:", e);
-      socket.emit('error', 'Failed to create character');
-    } finally {
-      await client.close();
-    }
-  });
+    // Updated character update handler
+    socket.on("updateCharacter", async ({ username, characterData }) => {
+        try {
+            // Validate required fields
+            if (!username) {
+                socket.emit("characterUpdateResponse", {
+                    success: false,
+                    message: "Username is required",
+                });
+                return;
+            }
 
-  // Save character
-  socket.on('saveCharacter', async (characterData) => {
-    const client = new MongoClient(uri);
-    try {
-      await client.connect();
-      const result = await client.db("dnd_screen")
-        .collection("character_sheets")
-        .insertOne(characterData);
-      
-      console.log(`Character saved with ID: ${result.insertedId}`);
-      socket.emit('characterSaved', { 
-        success: true, 
-        characterId: result.insertedId 
-      });
-    } catch (e) {
-      console.error("Error saving character:", e);
-      socket.emit('characterSaved', { 
-        success: false, 
-        error: 'Failed to save character' 
-      });
-    } finally {
-      await client.close();
-    }
-  });
+            // Find the existing character
+            const existingCharacter = await Character.findOne({ username: username });
 
-  // real-time event: character sheet updated
-  socket.on('updateCharacter', async (updatedCharacter) => {
-    const client = new MongoClient(uri);
-    try {
-      await client.connect();
-      const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
-        { _id: new ObjectId(updatedCharacter._id) }, 
-        { $set: updatedCharacter }
-      );
-      console.log(`Character updated: ${updatedCharacter.name}`);
-      io.emit('characterUpdated', updatedCharacter);
-    } catch (e) {
-      console.error("Error updating character:", e);
-      socket.emit('error', 'Failed to update character');
-    } finally {
-      await client.close();
-    }
-  });
+            if (!existingCharacter) {
+                socket.emit("characterUpdateResponse", {
+                    success: false,
+                    message: "Character not found",
+                });
+                return;
+            }
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
+            // Prepare update data with validation
+            const updateData = {
+                name: characterData.name || existingCharacter.name,
+                background: characterData.background || existingCharacter.background,
+                class: characterData.class || existingCharacter.class,
+                species: characterData.species || existingCharacter.species,
+                subclass: characterData.subclass || existingCharacter.subclass,
+
+                // Numeric fields with parsing and fallback
+                level: parseInt(characterData.level) || existingCharacter.level,
+                xp: parseInt(characterData.xp) || existingCharacter.xp,
+
+                // Ability Scores
+                strength:
+                    parseInt(characterData.strength) || existingCharacter.strength,
+                dexterity:
+                    parseInt(characterData.dexterity) || existingCharacter.dexterity,
+                constitution:
+                    parseInt(characterData.constitution) ||
+                    existingCharacter.constitution,
+                intelligence:
+                    parseInt(characterData.intelligence) ||
+                    existingCharacter.intelligence,
+                wisdom: parseInt(characterData.wisdom) || existingCharacter.wisdom,
+                charisma:
+                    parseInt(characterData.charisma) || existingCharacter.charisma,
+
+                // Other fields
+                ac: parseInt(characterData.ac) || existingCharacter.ac,
+                hasShield:
+                    characterData.hasShield !== undefined
+                        ? characterData.hasShield
+                        : existingCharacter.hasShield,
+
+                currentHp:
+                    parseInt(characterData.currentHp) || existingCharacter.currentHp,
+                maxHp: parseInt(characterData.maxHp) || existingCharacter.maxHp,
+            };
+
+            // Calculate modifiers
+            updateData.strengthModifier = Math.floor((updateData.strength - 10) / 2);
+            updateData.dexterityModifier = Math.floor(
+                (updateData.dexterity - 10) / 2
+            );
+            updateData.constitutionModifier = Math.floor(
+                (updateData.constitution - 10) / 2
+            );
+            updateData.intelligenceModifier = Math.floor(
+                (updateData.intelligence - 10) / 2
+            );
+            updateData.wisdomModifier = Math.floor((updateData.wisdom - 10) / 2);
+            updateData.charismaModifier = Math.floor((updateData.charisma - 10) / 2);
+
+            // Update the character in the database
+            const updatedCharacter = await Character.findOneAndUpdate(
+                { username: username },
+                updateData,
+                { new: true, runValidators: true }
+            );
+
+            // Emit success response
+            socket.emit("characterUpdateResponse", {
+                success: true,
+                message: "Character updated successfully",
+                character: updatedCharacter,
+            });
+
+            // Optionally broadcast to all connected clients
+            io.emit("characterDataUpdated", updatedCharacter);
+        } catch (error) {
+            console.error("Error updating character:", error);
+
+            // Emit error response
+            socket.emit("characterUpdateResponse", {
+                success: false,
+                message: error.message || "Failed to update character",
+            });
+        }
+    });
+
+    // Existing create character event
+    socket.on("saveCharacter", async ({ userId, characterId, data }) => {
+        try {
+            // Check if username already exists
+            const existingCharacter = await Character.findOne({
+                username: data.username,
+            });
+            if (existingCharacter) {
+                socket.emit("characterSaved", {
+                    success: false,
+                    error: "Username already exists. Please choose a different username.",
+                });
+                return;
+            }
+
+            // Format the data to match the schema
+            const characterData = {
+                username: data.username,
+                name: data.name,
+                species: data.species,
+                class: data.class,
+                level: parseInt(data.level),
+                background: data.background,
+                subclass: data.subclass,
+                xp: parseInt(data.xp) || 0,
+                strength: parseInt(data.strength),
+                dexterity: parseInt(data.dexterity),
+                constitution: parseInt(data.constitution),
+                intelligence: parseInt(data.intelligence),
+                wisdom: parseInt(data.wisdom),
+                charisma: parseInt(data.charisma),
+                ac: parseInt(data.ac),
+                currentHp: parseInt(data["currentHp"]),
+                maxHp: parseInt(data["maxHp"]),
+                initiative: parseInt(data.initiative),
+                speed: parseInt(data.speed),
+                hasShield: Boolean(data.shield),
+                inventory: Array.isArray(data.equipment) ? data.equipment : [],
+            };
+
+            const newCharacter = new Character(characterData);
+            const result = await newCharacter.save();
+            socket.emit("characterSaved", {
+                success: true,
+                characterId: result._id,
+                username: result.username,
+            });
+        } catch (e) {
+            console.error("Error saving character:", e);
+            socket.emit("characterSaved", {
+                success: false,
+                error:
+                    e.code === 11000
+                        ? "Username already exists"
+                        : "Failed to save character",
+            });
+        }
+    });
+
+    // Handle user disconnection
+    socket.on("disconnect", () => {
+        // Log when a user disconnects
+        console.log("User  disconnected:", socket.id);
+    });
 });
 
-// Start listening on port
+// Start listening on the defined port
 server.listen(port, () => {
-  console.log("DnD app listening on port " + port);
+    // Log server start message
+    console.log("DnD app listening on port " + port);
 });
 
-// Handle graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('\nGracefully shutting down...');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
-  });
+// Handle graceful shutdown on SIGINT (Ctrl+C)
+process.on("SIGINT", async () => {
+    // Log shutdown message
+    console.log("\nGracefully shutting down...");
+    // Close MongoDB connection
+    await mongoose.connection.close();
+    server.close(() => {
+        // Log server closure
+        console.log("Server closed");
+        process.exit(0);
+    });
 });
