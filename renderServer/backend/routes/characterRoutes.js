@@ -1,20 +1,16 @@
+// Import the express library
 const express = require("express");
+// Create a new router instance
 const router = express.Router();
+// Import the character controller
 const characterController = require("../controllers/characterController");
 
-// Create a new character
+// Handle POST requests to create a new character
 router.post("/create", characterController.createCharacter);
-
-// Get all characters
+// Handle GET requests to retrieve all characters
 router.get("/", characterController.getAllCharacters);
+// Handle GET requests to retrieve a character by its ID
+router.get("/:id", characterController.getCharacterById);
 
-// Get a character by username
-router.get("/:username", characterController.getCharacterByUsername);
-
-// Update a character
-router.put("/:username", characterController.updateCharacter);
-
-// Delete a character
-router.delete("/:username", characterController.deleteCharacter);
-
+// Export the router for use in other parts of the application
 module.exports = router;
