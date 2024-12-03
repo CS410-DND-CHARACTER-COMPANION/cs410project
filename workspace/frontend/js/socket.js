@@ -54,6 +54,17 @@ async function EditAttributeMenu(CharID) // Once clicked:
     const FormToChangeAtt = document.createElement("table")
     FormToChangeAtt.setAttribute("id", "FormToChangeAtt")
     //width and margin is not setting it to be centered. 
+    for (Attribute in ReturnData){
+      if (Attribute != "_id" && Attribute != "__v"){
+        FormToChangeAtt.innerHTML = FormToChangeAtt.innerHTML +
+        <tr>
+        <th>${Attribute}:
+        <input id="${Attribute}" placeholder="${ReturnData[Attribute]}"/></th>
+        </tr>
+          ;
+        }
+      }
+      /*
     FormToChangeAtt.innerHTML =
      `
       <tr>
@@ -130,6 +141,7 @@ async function EditAttributeMenu(CharID) // Once clicked:
         <input id="inventory" placeholder="${ReturnData["inventory"]}"/></th>
       </tr>
       `;
+      */
       ReturnData["strengthModifier"] = Math.floor((ReturnData["strength"]-10)/2);
       ReturnData["dexterityModifier"] = Math.floor((ReturnData["dexterity"]-10)/2);
       ReturnData["constitutionModifier"] = Math.floor((ReturnData["constitution"]-10)/2);

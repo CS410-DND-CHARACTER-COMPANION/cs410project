@@ -90,7 +90,7 @@ io.on("connection", (socket) => {
         }
     });
 
-    // New handler for getting a single character by ID
+    // Handler for getting a single character by username
     socket.on("getCharacter", async (username) => {
         try {
             // Search by username
@@ -110,24 +110,110 @@ io.on("connection", (socket) => {
         }
     });
 
-    // Real-time event: new character created
-    socket.on("newCharacter", async (character) => {
+    // Updated character update handler
+    socket.on("updateCharacter", async ({ username, characterData }) => {
         try {
-            // Create a new character instance
-            const newCharacter = new Character(character);
-            // Save the new character to the database
-            await newCharacter.save();
-            // Emit event to all clients
-            io.emit("characterAdded", newCharacter);
-        } catch (e) {
-            // Log error
-            console.error("Error creating character:", e);
-            // Emit error message
-            socket.emit("error", "Failed to create character");
+            // Validate required fields
+            if (!username) {
+                socket.emit("characterUpdateResponse", {
+                    success: false,
+                    message: "Username is required",
+                });
+                return;
+            }
+
+            // Find the existing character
+            const existingCharacter = await Character.findOne({ username: username });
+
+            if (!existingCharacter) {
+                socket.emit("characterUpdateResponse", {
+                    success: false,
+                    message: "Character not found",
+                });
+                return;
+            }
+
+            // Prepare update data with validation
+            const updateData = {
+                name: characterData.name || existingCharacter.name,
+                background: characterData.background || existingCharacter.background,
+                class: characterData.class || existingCharacter.class,
+                species: characterData.species || existingCharacter.species,
+                subclass: characterData.subclass || existingCharacter.subclass,
+
+                // Numeric fields with parsing and fallback
+                level: parseInt(characterData.level) || existingCharacter.level,
+                xp: parseInt(characterData.xp) || existingCharacter.xp,
+
+                // Ability Scores
+                strength:
+                    parseInt(characterData.strength) || existingCharacter.strength,
+                dexterity:
+                    parseInt(characterData.dexterity) || existingCharacter.dexterity,
+                constitution:
+                    parseInt(characterData.constitution) ||
+                    existingCharacter.constitution,
+                intelligence:
+                    parseInt(characterData.intelligence) ||
+                    existingCharacter.intelligence,
+                wisdom: parseInt(characterData.wisdom) || existingCharacter.wisdom,
+                charisma:
+                    parseInt(characterData.charisma) || existingCharacter.charisma,
+
+                // Other fields
+                ac: parseInt(characterData.ac) || existingCharacter.ac,
+                hasShield:
+                    characterData.hasShield !== undefined
+                        ? characterData.hasShield
+                        : existingCharacter.hasShield,
+
+                currentHp:
+                    parseInt(characterData.currentHp) || existingCharacter.currentHp,
+                maxHp: parseInt(characterData.maxHp) || existingCharacter.maxHp,
+            };
+
+            // Calculate modifiers
+            updateData.strengthModifier = Math.floor((updateData.strength - 10) / 2);
+            updateData.dexterityModifier = Math.floor(
+                (updateData.dexterity - 10) / 2
+            );
+            updateData.constitutionModifier = Math.floor(
+                (updateData.constitution - 10) / 2
+            );
+            updateData.intelligenceModifier = Math.floor(
+                (updateData.intelligence - 10) / 2
+            );
+            updateData.wisdomModifier = Math.floor((updateData.wisdom - 10) / 2);
+            updateData.charismaModifier = Math.floor((updateData.charisma - 10) / 2);
+
+            // Update the character in the database
+            const updatedCharacter = await Character.findOneAndUpdate(
+                { username: username },
+                updateData,
+                { new: true, runValidators: true }
+            );
+
+            // Emit success response
+            socket.emit("characterUpdateResponse", {
+                success: true,
+                message: "Character updated successfully",
+                character: updatedCharacter,
+            });
+
+            // Optionally broadcast to all connected clients
+            io.emit("characterDataUpdated", updatedCharacter);
+        } catch (error) {
+            console.error("Error updating character:", error);
+
+            // Emit error response
+            socket.emit("characterUpdateResponse", {
+                success: false,
+                message: error.message || "Failed to update character",
+            });
         }
     });
 
-    // Save character event
+    // Existing create character event
     socket.on("saveCharacter", async ({ userId, characterId, data }) => {
         try {
             // Check if username already exists
@@ -159,8 +245,8 @@ io.on("connection", (socket) => {
                 wisdom: parseInt(data.wisdom),
                 charisma: parseInt(data.charisma),
                 ac: parseInt(data.ac),
-                currentHp: parseInt(data["current-hp"]),
-                maxHp: parseInt(data["max-hp"]),
+                currentHp: parseInt(data["currentHp"]),
+                maxHp: parseInt(data["maxHp"]),
                 initiative: parseInt(data.initiative),
                 speed: parseInt(data.speed),
                 hasShield: Boolean(data.shield),
@@ -183,26 +269,6 @@ io.on("connection", (socket) => {
                         ? "Username already exists"
                         : "Failed to save character",
             });
-        }
-    });
-
-    // Real-time event: character sheet updated
-    socket.on("updateCharacter", async (updatedCharacter) => {
-        try {
-            const character = await Character.findByIdAndUpdate(
-                // Find character by ID
-                updatedCharacter._id,
-                // Update with new data
-                updatedCharacter,
-                // Return the updated document
-                { new: true }
-            );
-
-            // Emit updated character to all clients
-            io.emit("characterUpdated", character);
-        } catch (e) {
-            console.error("Error updating character:", e);
-            socket.emit("error", "Failed to update character");
         }
     });
 
