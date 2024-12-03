@@ -5,9 +5,7 @@ window.addEventListener("DOMContentLoaded", function () {
     const username = params.get("username");
 
     if (username) {
-        // Log the username being requested
         console.log("Requesting character for username:", username);
-        // Request character data from server using username
         socket.emit("getCharacter", username);
     } else {
         console.error("No username provided");
@@ -15,49 +13,100 @@ window.addEventListener("DOMContentLoaded", function () {
 
     // Listen for character data from server
     socket.on("characterData", (character) => {
-        // Populate form fields with character data
-        document.getElementById("charName").value = character.name || "";
-        document.getElementById("background").value = character.background || "";
-        document.getElementById("charClass").value = character.class || "";
-        document.getElementById("species").value = character.species || "";
-        document.getElementById("subclass").value = character.subclass || "";
-        document.getElementById("level").value = character.level || "";
-        document.getElementById("xp").value = character.xp || "";
-        document.getElementById("armorClass").value = character.ac || "";
-        document.getElementById("shield").checked = character.hasShield || false;
-        document.getElementById("currhp").value = character.currentHp || "";
-        document.getElementById("maxhp").value = character.maxHp || "";
+        // Populate all form fields with character data
+        const formFields = [
+            "charName",
+            "background",
+            "charClass",
+            "species",
+            "subclass",
+            "level",
+            "xp",
+            "armorClass",
+            "currhp",
+            "maxhp",
+            "strength",
+            "dexterity",
+            "constitution",
+            "intelligence",
+            "wisdom",
+            "charisma",
+            "initiative",
+            "speed",
+        ];
 
-        // Stats
-        document.getElementById("strength").value = character.strength || "";
-        document.getElementById("dexterity").value = character.dexterity || "";
-        document.getElementById("constitution").value =
-            character.constitution || "";
-        document.getElementById("intelligence").value =
-            character.intelligence || "";
-        document.getElementById("wisdom").value = character.wisdom || "";
-        document.getElementById("charisma").value = character.charisma || "";
-
-        // Make all form fields readonly since this is display mode
-        const formElements = document.querySelectorAll("input, select");
-        formElements.forEach((element) => {
-            element.readOnly = true;
-            if (element.tagName === "SELECT") {
-                element.disabled = true;
+        formFields.forEach((field) => {
+            const element = document.getElementById(field);
+            if (element) {
+                element.value = character[field] || "";
             }
         });
 
-        // Hide the submit button since we're in display mode
-        const submitButton = document.getElementById("char-submit");
-        if (submitButton) {
-            submitButton.style.display = "none";
+        // Handle shield checkbox
+        const shieldCheckbox = document.getElementById("shield");
+        if (shieldCheckbox) {
+            shieldCheckbox.checked = character.hasShield || false;
         }
+
+        // Calculate and set ability modifiers
+        const abilities = [
+            "strength",
+            "dexterity",
+            "constitution",
+            "intelligence",
+            "wisdom",
+            "charisma",
+        ];
+        abilities.forEach((ability) => {
+            const modifierElement = document.getElementById(`${ability}-modifier`);
+            if (modifierElement) {
+                const score = character[ability] || 10;
+                const modifier = Math.floor((score - 10) / 2);
+                modifierElement.value = modifier;
+            }
+        });
+
+        // Enable editing
+        const formElements = document.querySelectorAll("input, select");
+        formElements.forEach((element) => {
+            element.readOnly = false;
+            if (element.tagName === "SELECT") {
+                element.disabled = false;
+            }
+        });
     });
 
-    // Handle errors
-    socket.on("error", (errorMessage) => {
-        console.error("Error:", errorMessage);
-        alert("Error loading character: " + errorMessage);
+    // Handle form submission to update character
+    const form = document.getElementById("characterForm");
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        // Collect form data
+        const formData = new FormData(form);
+        const characterData = {};
+
+        for (const [key, value] of formData.entries()) {
+            // Convert numeric values
+            characterData[key] =
+                !isNaN(value) && value !== "" ? Number(value) : value;
+        }
+
+        // Special handling for checkbox
+        characterData.hasShield = document.getElementById("shield").checked;
+
+        // Emit update event
+        socket.emit("updateCharacter", {
+            username: username,
+            updates: characterData,
+        });
+
+        // Show success message
+        alert("Character updated successfully!");
+    });
+
+    // Handle update confirmation
+    socket.on("characterUpdated", (updatedCharacter) => {
+        console.log("Character updated:", updatedCharacter);
     });
 });
 
