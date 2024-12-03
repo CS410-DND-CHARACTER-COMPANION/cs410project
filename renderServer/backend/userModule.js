@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const { MongoClient, ObjectId } = require("mongodb");
 const dotenv = require("dotenv");
 
-dotenv.config(); // Load .env file
+dotenv.config();
 
 // Initialize Router
 const router = express.Router();
@@ -43,18 +43,22 @@ const verifyToken = (req, res, next) => {
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
 
+  // Validate input
   if (!username || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
+    // Check if user already exists
     const existingUser = await db.collection("users").findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Insert new user
     const result = await db.collection("users").insertOne({
       username,
       email,
@@ -72,21 +76,25 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
+  // Validate input
   if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
+    // Find user
     const user = await db.collection("users").findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
+    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    // Generate JWT
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.json({ token });

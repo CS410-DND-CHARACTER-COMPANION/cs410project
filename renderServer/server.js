@@ -3,13 +3,13 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const userRoutes = require('./userRoutes');
-const verifyToken = require('./authMiddleware');
+const userModule = require("./backend/userModule"); // Import userModule
 
 // Load environment variables
 dotenv.config();
+console.log("MONGO_URI:", process.env.MONGO_URI);
+
 
 // Initialize Express app and HTTP server
 const app = express();
@@ -19,25 +19,33 @@ const io = new Server(server);
 // Port setup
 const port = 3000;
 
-// Database connection
-const uri = "mongodb+srv://GroupUser:cs410project@cluster0.gjnf5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
-// Connect to MongoDB using Mongoose
-mongoose.connect(uri)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error("MongoDB connection error:", err));
-
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // Serve static files from the 'frontend' directory
 app.use(express.static(path.join(__dirname, 'frontend')));
 
+// Database connection
+const uri = process.env.MONGO_URI; // Use URI from environment variables
+let db;
+
+// Connect to MongoDB 
+MongoClient.connect(uri, { useUnifiedTopology: true })
+  .then((client) => {
+    console.log("Connected to MongoDB");
+    db = client.db("dnd_screen");
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
+
+
 // Route for user-related API endpoints
-app.use('/api/users', userRoutes);
+app.use('/api/users', userModule.router);
 
 // Protected route example
-app.get('/api/users/profile', verifyToken, (req, res) => {
+app.get('/api/users/profile', userModule.verifyToken, (req, res) => {
   res.json({ message: 'This is a protected profile route!' });
 });
 
