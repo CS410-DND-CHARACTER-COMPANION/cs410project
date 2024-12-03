@@ -1,9 +1,10 @@
+// Version 6.1.0
 class CharacterState {
-  // Constructor initializes state and listeners
+  // Manages character state with a pub/sub pattern for real-time updates
   constructor() {
-    this.listeners = new Set(); // Set to hold listener functions
+    this.listeners = new Set();
     this.state = {
-      // Initial character state with default values
+      // Initial state for a D&D character with default values
       name: "",
       background: "",
       species: "",
@@ -29,85 +30,86 @@ class CharacterState {
     };
   }
 
-  // Allows subscribing listeners to state changes
+  // Allows components to listen for state changes
   subscribe(listener) {
-    this.listeners.add(listener); // Add listener to the set
-    return () => this.listeners.delete(listener); // Return unsubscribe function
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
   }
 
-  // Updates the state and notifies subscribers
+  // Updates state and notifies all subscribers
   update(updates) {
-    this.state = { ...this.state, ...updates }; // Merge updates into current state
-    this.notify(); // Notify all listeners of the state change
+    this.state = { ...this.state, ...updates };
+    this.notify();
   }
 
-  // Notifies all subscribed listeners about state change
+  // Broadcasts state changes to all registered listeners
   notify() {
-    this.listeners.forEach((listener) => listener(this.state)); // Call each listener with the new state
+    this.listeners.forEach((listener) => listener(this.state));
   }
 
-  // Returns the current character state
+  // Retrieves the current character state snapshot
   getState() {
-    return this.state; // Return the current state
+    return this.state;
   }
 }
 
 // Creates a new CharacterState instance
-const characterState = new CharacterState(); // Instantiate character state
+const characterState = new CharacterState();
 
 // Socket connection with error handling and reconnection logic
 class SocketManager {
-  // Sets up socket connection and event listeners
+  // Manages WebSocket connection with robust error handling and reconnection
   constructor() {
     this.socket = io({
-      // Initialize socket connection with options
+      // Configures socket to automatically attempt reconnection
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
     });
-    this.setupSocketListeners(); // Set up socket event listeners
+    this.setupSocketListeners();
   }
 
   setupSocketListeners() {
+    // Handles various socket connection events
     this.socket.on("connect", () => {
-      // Handle successful connection
+      // Establishes user session on successful connection
       console.log("Connected to server");
-      this.socket.emit("joinCharacterSession", { userId: this.getUserId() }); // Join character session
+      this.socket.emit("joinCharacterSession", { userId: this.getUserId() });
     });
 
     this.socket.on("connect_error", (error) => {
-      // Handle connection errors
+      // Logs and displays connection errors
       console.error("Connection error:", error);
-      showError("Connection failed. Retrying..."); // Show error message
+      showError("Connection failed. Retrying...");
     });
 
     this.socket.on("reconnect_failed", () => {
-      // Handle failed reconnection
+      // Handles persistent connection failures
       console.error("Failed to reconnect");
-      showError("Connection lost. Please refresh the page."); // Show error message
+      showError("Connection lost. Please refresh the page.");
     });
 
+    // Handles incoming character data updates
     this.socket.on("characterData", (data) => {
-      // Handle incoming character data
       if (data && this.validateData(data)) {
-        characterState.update(data); // Update character state
-        updateFormFields(data); // Update form fields with new data
+        characterState.update(data);
+        updateFormFields(data);
       }
     });
 
+    // Processes partial character updates
     this.socket.on("characterUpdate", (updates) => {
-      // Handle character updates
       if (this.validateData(updates)) {
-        characterState.update(updates); // Update character state
-        updateFormFields(updates); // Update form fields with new updates
+        characterState.update(updates);
+        updateFormFields(updates);
       }
     });
   }
 
-  // Validates incoming data based on a schema
+  // Validates incoming data against predefined schema
   validateData(data) {
     const schema = {
-      // Define validation schema
+      // Defines strict validation rules for character attributes
       name: (value) => typeof value === "string",
       level: (value) => Number.isInteger(value) && value > 0 && value <= 20,
       xp: (value) => Number.isInteger(value) && value >= 0,
@@ -123,95 +125,97 @@ class SocketManager {
       charisma: (value) => Number.isInteger(value) && value >= 1 && value <= 30,
     };
 
+    // Checks each incoming data point against its respective validation rule
     return Object.entries(data).every(([key, value]) => {
-      return !schema[key] || schema[key](value); // Validate each field against the schema
+      return !schema[key] || schema[key](value);
     });
   }
 
-  // Emits an event to the server if connected
+  // Safely emits events only when socket is connected
   emit(event, data) {
     if (this.socket.connected) {
-      this.socket.emit(event, data); // Emit event with data
+      this.socket.emit(event, data);
     } else {
-      showError("Cannot send updates: No connection"); // Show error if not connected
+      showError("Cannot send updates: No connection");
     }
   }
 
-  // Returns the user's socket ID
+  // Retrieves the current socket's unique user identifier
   getUserId() {
-    return this.socket.id; // Return the socket ID of the user
+    return this.socket.id;
   }
 }
 
 // Creates a new SocketManager instance
-const socketManager = new SocketManager(); // Instantiate socket manager
+const socketManager = new SocketManager();
 
-// Debounces the character update function
+// Utility function to prevent rapid successive function calls
 function debounce(func, wait) {
-  let timeout; // Variable to hold the timeout ID
+  let timeout;
   return function executedFunction(...args) {
     const later = () => {
-      clearTimeout(timeout); // Clear the timeout
-      func(...args); // Call the original function
+      clearTimeout(timeout);
+      func(...args);
     };
-    clearTimeout(timeout); // Clear the previous timeout
-    timeout = setTimeout(later, wait); // Set a new timeout
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
   };
 }
 
-// Error handling utility
+// Displays error messages with a temporary toast notification
 function showError(message) {
-  const errorContainer = document.createElement("div"); // Create error message container
-  errorContainer.className = "error-toast"; // Set class for styling
-  errorContainer.textContent = message; // Set error message text
-  errorContainer.style.backgroundColor = "rgba(231, 76, 60, 0.9)"; // Set background color
-  errorContainer.style.color = "white"; // Set text color
-  errorContainer.style.padding = "10px 20px"; // Set padding
-  errorContainer.style.borderRadius = "4px"; // Set border radius
-  errorContainer.style.position = "fixed"; // Position fixed on screen
-  errorContainer.style.top = "20px"; // Position from top
-  errorContainer.style.right = "20px"; // Position from right
-  errorContainer.style.zIndex = "1000"; // Ensure it appears above other elements
-  document.body.appendChild(errorContainer); // Append to body
-  setTimeout(() => errorContainer.remove(), 5000); // Remove after 5 seconds
+  // Creates a dismissable error toast with consistent styling
+  const errorContainer = document.createElement("div");
+  errorContainer.className = "error-toast";
+  errorContainer.textContent = message;
+  errorContainer.style.backgroundColor = "rgba(231, 76, 60, 0.9)";
+  errorContainer.style.color = "white";
+  errorContainer.style.padding = "10px 20px";
+  errorContainer.style.borderRadius = "4px";
+  errorContainer.style.position = "fixed";
+  errorContainer.style.top = "20px";
+  errorContainer.style.right = "20px";
+  errorContainer.style.zIndex = "1000";
+  document.body.appendChild(errorContainer);
+  setTimeout(() => errorContainer.remove(), 5000);
 }
 
 // Success message utility
 function showSuccess(message) {
-  const successContainer = document.createElement("div"); // Create success message container
-  successContainer.className = "success-toast"; // Set class for styling
-  successContainer.textContent = message; // Set success message text
-  successContainer.style.backgroundColor = "rgba(46, 204, 113, 0.9)"; // Set background color
-  successContainer.style.color = "white"; // Set text color
-  successContainer.style.padding = "10px 20px"; // Set padding
-  successContainer.style.borderRadius = "4px"; // Set border radius
-  successContainer.style.position = "fixed"; // Position fixed on screen
-  successContainer.style.top = "20px"; // Position from top
-  successContainer.style.right = "20px"; // Position from right
-  successContainer.style.zIndex = "1000"; // Ensure it appears above other elements
-  document.body.appendChild(successContainer); // Append to body
-  setTimeout(() => successContainer.remove(), 3000); // Remove after 3 seconds
+  const successContainer = document.createElement("div");
+  successContainer.className = "success-toast";
+  successContainer.textContent = message;
+  successContainer.style.backgroundColor = "rgba(46, 204, 113, 0.9)";
+  successContainer.style.color = "white";
+  successContainer.style.padding = "10px 20px";
+  successContainer.style.borderRadius = "4px";
+  successContainer.style.position = "fixed";
+  successContainer.style.top = "20px";
+  successContainer.style.right = "20px";
+  successContainer.style.zIndex = "1000";
+  document.body.appendChild(successContainer);
+  setTimeout(() => successContainer.remove(), 3000);
 }
 
 // Form field update with error boundary
 function updateFormFields(data) {
   try {
     Object.entries(data).forEach(([key, value]) => {
-      const element = document.getElementById(key); // Get form element by ID
+      const element = document.getElementById(key);
       if (element) {
         if (element.type === "checkbox") {
-          element.checked = Boolean(value); // Update checkbox state
+          element.checked = Boolean(value);
         } else {
-          element.value = value; // Update input value
+          element.value = value;
         }
       }
     });
 
-    updateProficiencyBonus(); // Update proficiency bonus
-    updateAbilityModifiers(); // Update ability modifiers
+    updateProficiencyBonus();
+    updateAbilityModifiers();
   } catch (error) {
-    console.error("Error updating form fields:", error); // Log error
-    showError("Failed to update some fields"); // Show error message
+    console.error("Error updating form fields:", error);
+    showError("Failed to update some fields");
   }
 }
 
@@ -219,42 +223,40 @@ function updateFormFields(data) {
 const debouncedUpdate = debounce((updates) => {
   // Emits an updateCharacter event to the server
   socketManager.emit("updateCharacter", {
-    userId: socketManager.getUserId(), // Get user ID
-    characterId: characterState.getState().characterId, // Get character ID
-    updates, // Send updates
+    userId: socketManager.getUserId(),
+    characterId: characterState.getState().characterId,
+    updates,
   });
-}, 300); // 300ms debounce time
+}, 300);
 
 // Handles adding a new equipment item
 function addEquipmentItem() {
   try {
-    const itemInput = document.getElementById("equipment-item"); // Get input for new item
-    const newItem = itemInput.value.trim(); // Trim whitespace
+    const itemInput = document.getElementById("equipment-item");
+    const newItem = itemInput.value.trim();
 
     if (!newItem) {
-      showError("Equipment item cannot be empty"); // Show error if empty
+      showError("Equipment item cannot be empty");
       return;
     }
 
-    const currentEquipment = characterState.getState().equipment; // Get current equipment
-    const updatedEquipment = [...currentEquipment, newItem]; // Add new item to equipment list
-
-    characterState.update({ equipment: updatedEquipment }); // Update character state
-    debouncedUpdate({ equipment: updatedEquipment }); // Emit debounced update for equipment
-    updateEquipmentDisplay(); // Update the display of equipment
-    itemInput.value = ""; // Clear the input field
+    const currentEquipment = characterState.getState().equipment;
+    const updatedEquipment = [...currentEquipment, newItem];
+    characterState.update({ equipment: updatedEquipment });
+    debouncedUpdate({ equipment: updatedEquipment });
+    updateEquipmentDisplay();
+    itemInput.value = "";
   } catch (error) {
-    console.error("Error adding equipment:", error); // Log error
-    showError("Failed to add equipment item"); // Show error message
+    console.error("Error adding equipment:", error);
+    showError("Failed to add equipment item");
   }
 }
 
 // Updates the equipment display
 function updateEquipmentDisplay() {
   try {
-    const equipmentDiv = document.getElementById("equipment"); // Get the equipment display element
-    const equipment = characterState.getState().equipment; // Get current equipment
-
+    const equipmentDiv = document.getElementById("equipment");
+    const equipment = characterState.getState().equipment;
     // Generate HTML for each equipment item
     equipmentDiv.innerHTML = equipment
       .map(
@@ -265,25 +267,24 @@ function updateEquipmentDisplay() {
             </div>
         `
       )
-      .join(""); // Join items into a single string
+      .join("");
   } catch (error) {
-    console.error("Error updating equipment display:", error); // Log error
-    showError("Failed to update equipment display"); // Show error message
+    console.error("Error updating equipment display:", error);
+    showError("Failed to update equipment display");
   }
 }
 
 // Handles removing an equipment item
 function removeEquipmentItem(index) {
   try {
-    const currentEquipment = characterState.getState().equipment; // Get current equipment
-    const updatedEquipment = currentEquipment.filter((_, i) => i !== index); // Remove item by index
-
-    characterState.update({ equipment: updatedEquipment }); // Update character state
-    debouncedUpdate({ equipment: updatedEquipment }); // Emit debounced update for equipment
-    updateEquipmentDisplay(); // Update the display of equipment
+    const currentEquipment = characterState.getState().equipment;
+    const updatedEquipment = currentEquipment.filter((_, i) => i !== index);
+    characterState.update({ equipment: updatedEquipment });
+    debouncedUpdate({ equipment: updatedEquipment });
+    updateEquipmentDisplay();
   } catch (error) {
-    console.error("Error removing equipment:", error); // Log error
-    showError("Failed to remove equipment item"); // Show error message
+    console.error("Error removing equipment:", error);
+    showError("Failed to remove equipment item");
   }
 }
 
@@ -291,38 +292,36 @@ function removeEquipmentItem(index) {
 function calculateModifier(abilityType) {
   try {
     const abilityScore =
-      parseInt(document.getElementById(abilityType).value) || 10; // Get ability score
+      parseInt(document.getElementById(abilityType).value) || 10;
 
     if (abilityScore < 1 || abilityScore > 30) {
-      throw new Error("Invalid ability score"); // Validate ability score
+      throw new Error("Invalid ability score");
     }
 
-    const modifier = Math.floor((abilityScore - 10) / 2); // Calculate modifier
-    document.getElementById(`${abilityType}-modifier`).value = modifier; // Update modifier field
-
-    debouncedUpdate({ [`${abilityType}Modifier`]: modifier }); // Emit debounced update for modifier
+    const modifier = Math.floor((abilityScore - 10) / 2);
+    document.getElementById(`${abilityType}-modifier`).value = modifier;
+    debouncedUpdate({ [`${abilityType}Modifier`]: modifier });
   } catch (error) {
-    console.error(`Error calculating ${abilityType} modifier:`, error); // Log error
-    showError(`Failed to calculate ${abilityType} modifier`); // Show error message
+    console.error(`Error calculating ${abilityType} modifier:`, error);
+    showError(`Failed to calculate ${abilityType} modifier`);
   }
 }
 
 // Updates the proficiency bonus based on the character's level
 function updateProficiencyBonus() {
   try {
-    const level = parseInt(document.getElementById("level").value) || 1; // Get character level
+    const level = parseInt(document.getElementById("level").value) || 1;
 
     if (level < 1 || level > 20) {
-      throw new Error("Invalid level"); // Validate level
+      throw new Error("Invalid level");
     }
 
-    const proficiencyBonus = Math.ceil(level / 4) + 1; // Calculate proficiency bonus
-    document.getElementById("proficiency-bonus").value = proficiencyBonus; // Update proficiency bonus field
-
-    debouncedUpdate({ proficiencyBonus }); // Emit debounced update for proficiency bonus
+    const proficiencyBonus = Math.ceil(level / 4) + 1;
+    document.getElementById("proficiency-bonus").value = proficiencyBonus;
+    debouncedUpdate({ proficiencyBonus });
   } catch (error) {
-    console.error("Error updating proficiency bonus:", error); // Log error
-    showError("Failed to update proficiency bonus"); // Show error message
+    console.error("Error updating proficiency bonus:", error);
+    showError("Failed to update proficiency bonus");
   }
 }
 
@@ -335,34 +334,34 @@ function updateAbilityModifiers() {
     "intelligence",
     "wisdom",
     "charisma",
-  ].forEach((ability) => calculateModifier(ability)); // Calculate modifier for each ability
+  ].forEach((ability) => calculateModifier(ability));
 }
 
 // Escapes HTML to prevent XSS attacks
 function escapeHtml(unsafe) {
   return unsafe
-    .replace(/&/g, "&amp;") // Escape ampersands
-    .replace(/</g, "&lt;") // Escape less than
-    .replace(/>/g, "&gt;") // Escape greater than
-    .replace(/"/g, "&quot;") // Escape double quotes
-    .replace(/'/g, "&#039;"); // Escape single quotes
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
-// Validates the character form before submission
+// Performs character form validation before submission
 function validateForm() {
-  const requiredFields = ["username", "name", "species", "class", "level"]; // Required fields for validation
-  const errors = []; // Array to hold error messages
-
+  // Checks required fields and ensures numeric fields are valid
+  const requiredFields = ["username", "name", "species", "class", "level"];
+  const errors = [];
   requiredFields.forEach((field) => {
-    const element = document.getElementById(field); // Get form element by ID
+    const element = document.getElementById(field);
     if (!element.value) {
       errors.push(
         `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
-      ); // Add error if field is empty
+      );
     }
   });
 
-  // Additional validation for numeric fields
+  // Additional validation for numeric fields to ensure positive values
   const numericFields = [
     "level",
     "strength",
@@ -382,31 +381,30 @@ function validateForm() {
     const value = parseInt(element.value);
     if (isNaN(value) || value < 1) {
       errors.push(
-        `${
-          field.charAt(0).toUpperCase() + field.slice(1).replace("-", " ")
+        `${field.charAt(0).toUpperCase() + field.slice(1).replace("-", " ")
         } must be a valid positive number`
       );
     }
   });
 
+  // Displays consolidated error messages or allows form submission
   if (errors.length > 0) {
-    showError(errors.join(", ")); // Show all error messages
-    return false; // Return false if there are validation errors
+    showError(errors.join(", "));
+    return false;
   }
-  return true; // Return true if validation passes
+  return true;
 }
 
 // Handles the character form submission
 function handleFormSubmission(event) {
-  event.preventDefault(); // Prevent default form submission
+  event.preventDefault();
   if (!validateForm()) {
-    return; // Stop execution if validation fails
+    return;
   }
   try {
     const form = document.getElementById("character-form");
     const formData = new FormData(form);
     const characterData = {};
-
     // Convert FormData to a plain object
     for (const [key, value] of formData.entries()) {
       // Convert numeric values
@@ -461,78 +459,80 @@ function handleFormSubmission(event) {
 // Set up the socket listener for characterSaved event
 socketManager.socket.on("characterSaved", (response) => {
   if (response.success) {
-    showSuccess("Character saved successfully!"); // Show success message
-    window.location.href = "displayCharacter.html"; // Redirect after successful save
+    showSuccess("Character saved successfully!");
+    window.location.href = "displayCharacter.html";
   } else {
-    showError("Failed to save character"); // Show error if save failed
+    showError("Failed to save character");
   }
 });
 
-// Sets up event listeners for the character form
+// Sets up event listeners for all form inputs to enable real-time updates
 function setupFormListeners() {
   try {
-    const formElements = document.querySelectorAll("input, select"); // Get all input and select elements
+    // Attaches change event listeners to all form inputs
+    const formElements = document.querySelectorAll("input, select");
     formElements.forEach((element) => {
       if (element.id) {
         element.addEventListener("change", (e) => {
+          // Handles both checkbox and regular input updates
           const value =
-            element.type === "checkbox" ? element.checked : element.value; // Get value based on type
-          const update = { [element.id]: value }; // Create update object
-
+            element.type === "checkbox" ? element.checked : element.value;
+          const update = { [element.id]: value };
+          // Validates and updates character state if input is valid
           if (socketManager.validateData(update)) {
-            characterState.update(update); // Update character state
-            debouncedUpdate(update); // Emit debounced update
+            characterState.update(update);
+            debouncedUpdate(update);
           } else {
-            showError(`Invalid value for ${element.id}`); // Show error for invalid value
-            e.target.value = characterState.getState()[element.id]; // Reset to previous value
+            showError(`Invalid value for ${element.id}`);
+            e.target.value = characterState.getState()[element.id];
           }
         });
       }
     });
   } catch (error) {
-    console.error("Error setting up form listeners:", error); // Log error
-    showError("Failed to initialize form listeners"); // Show error message
+    console.error("Error setting up form listeners:", error);
+    showError("Failed to initialize form listeners");
   }
 }
 
 // Event listener for the "Save Character" button
 function setupSaveButtonListener() {
   try {
-    const saveButton = document.getElementById("save-character-btn"); // Get save button
-    saveButton.addEventListener("click", handleFormSubmission); // Set click event to handle submission
+    const saveButton = document.getElementById("save-character-btn");
+    saveButton.addEventListener("click", handleFormSubmission);
   } catch (error) {
-    console.error("Error setting up save button listener:", error); // Log error
-    showError("Failed to initialize save button"); // Show error message
+    console.error("Error setting up save button listener:", error);
+    showError("Failed to initialize save button");
   }
 }
 
 // Initializes the character sheet on page load
 window.onload = function () {
   try {
-    const form = document.getElementById("character-form"); // Get the character form
-    form.setAttribute("novalidate", ""); // Disable default HTML validation
-    setupFormListeners(); // Set up form listeners
-    setupSaveButtonListener(); // Set up save button listener
-    console.log("Character sheet initialized"); // Log initialization
+    const form = document.getElementById("character-form");
+    form.setAttribute("novalidate", "");
+    setupFormListeners();
+    setupSaveButtonListener();
+    console.log("Character sheet initialized");
   } catch (error) {
-    console.error("Error initializing character sheet:", error); // Log error
-    showError("Failed to initialize character sheet"); // Show error message
+    console.error("Error initializing character sheet:", error);
+    showError("Failed to initialize character sheet");
   }
 };
 
-// Custom cursor functionality
+// Initializes custom cursor with smooth tracking and interaction effects
 document.addEventListener("DOMContentLoaded", () => {
+  // Creates a custom cursor element with smooth movement and click animations
   const cursor = document.createElement("div");
   cursor.className = "custom-cursor";
   document.body.appendChild(cursor);
-
+  // Variables for interpolated cursor movement
   let mouseX = 0;
   let mouseY = 0;
   let targetX = 0;
   let targetY = 0;
-  const speed = 0.15; // Adjust this value to control the smoothness
-
-  // Function to update the cursor position
+  const speed = 0.15;
+  // Animates cursor with interpolated movement
   const updateCursor = () => {
     targetX = mouseX;
     targetY = mouseY;
@@ -540,32 +540,32 @@ document.addEventListener("DOMContentLoaded", () => {
     mouseY += (targetY - mouseY) * speed;
     cursor.style.left = `${mouseX}px`;
     cursor.style.top = `${mouseY}px`;
-    requestAnimationFrame(updateCursor); // Continue the animation
+    requestAnimationFrame(updateCursor);
   };
 
-  // Mouse movement event
+  // Event listeners for cursor interaction
   document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX; // Get mouse X position
-    mouseY = e.clientY; // Get mouse Y position
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   });
 
-  // Clicking effect with smooth animation
+  // Adds visual feedback for mouse clicks
   document.addEventListener("mousedown", () => {
     cursor.classList.add("clicking");
-    cursor.style.transition = "transform 0.05s ease"; // Quick transition for effect
+    cursor.style.transition = "transform 0.05s ease";
   });
 
   document.addEventListener("mouseup", () => {
     cursor.classList.remove("clicking");
-    cursor.style.transition = "transform 0.1s ease"; // Reset transition duration
+    cursor.style.transition = "transform 0.1s ease";
   });
 
-  // Hide default cursor
+  // Hides default cursor
   document.body.style.cursor = "none";
 
-  // Start the cursor update loop
+  // Starts cursor animation loop
   updateCursor();
 });
 
 // Final cleanup and initialization
-console.log("All components initialized successfully"); // Log successful initialization
+console.log("All components initialized successfully");
