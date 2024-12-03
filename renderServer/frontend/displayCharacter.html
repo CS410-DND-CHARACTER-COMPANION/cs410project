@@ -2,302 +2,190 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>D&D Character Sheet</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .charinfo ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .charinfo li {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-
-        .charinfo label {
-            margin-left: 10px;
-            white-space: nowrap;
-        }
-
-        .charinfo input {
-            margin-right: 10px;
-        }
-
-        .section {
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="number"] {
-            padding: 5px;
-        }
-
-        .submit-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
+    <meta charset="utf-8" />
+    <title>Display Character Version 2.0.0</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="displayC_script.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="displayC_styles.css" />
 </head>
 
 <body>
     <div class="container">
         <h1>D&D Character Sheet</h1>
-
-        <div class="charinfo">
-            <ul>
-                <li>
-                    <input type="text" id="charName" name="charName" style="width: 480px"
-                        placeholder="Enter Character Name" />
-                    <label for="charName">Character Name</label>
-                </li>
-                <li>
-                    <input type="text" id="background" name="background" style="width: 230px"
-                        placeholder="Background" />
-                    <label for="background">Background</label>
-                </li>
-                <li>
-                    <select id="species" name="species" style="width: 240px">
-                        <option value="">Select Species</option>
-                        <option value="Dwarf">Dwarf</option>
-                        <option value="Elf">Elf</option>
-                        <option value="Halfling">Halfling</option>
-                        <option value="Human">Human</option>
-                        <option value="Aasimar">Aasimar</option>
-                        <option value="Dragonborn">Dragonborn</option>
-                        <option value="Gnome">Gnome</option>
-                        <option value="Goliath">Goliath</option>
-                        <option value="Orc">Orc</option>
-                        <option value="Tiefling">Tiefling</option>
-                    </select>
-                    <label for="species">Species</label>
-                </li>
-                <li>
-                    <select id="charClass" name="charClass" style="width: 240px">
-                        <option value="">Select Class</option>
-                        <option value="Barbarian">Barbarian</option>
-                        <option value="Bard">Bard</option>
-                        <option value="Cleric">Cleric</option>
-                        <option value="Druid">Druid</option>
-                        <option value="Fighter">Fighter</option>
-                        <option value="Monk">Monk</option>
-                        <option value="Paladin">Paladin</option>
-                        <option value="Ranger">Ranger</option>
-                        <option value="Rogue">Rogue</option>
-                        <option value="Sorcerer">Sorcerer</option>
-                        <option value="Warlock">Warlock</option>
-                        <option value="Wizard">Wizard</option>
-                    </select>
-                    <label for="charClass">Class</label>
-                </li>
-                <li>
-                    <input type="text" id="subclass" name="subclass" style="width: 230px" placeholder="Subclass" />
-                    <label for="subclass">Subclass</label>
-                </li>
-                <li>
-                    <input type="number" id="xp" name="xp" style="width: 50px" min="0" />
-                    <label for="xp">XP:</label>
-                </li>
-            </ul>
-        </div>
-
-        <div class="experience">
-            <label for="level">Level:</label>
-            <input type="number" id="level" name="level" min="1" max="20" />
-        </div>
-
-        <div class="armorClass" style="text-align: center">
-            <strong>Armor Class:</strong>
-            <input type="number" id="armorClass" name="armorClass" min="10" />
-            <label for="shield">Shield:</label>
-            <input type="checkbox" id="shield" name="shield" />
-        </div>
-
-        <div class="health">
-            <h3>Hit Points</h3>
-            <div>
-                <label for="currentHP">Current HP:</label>
-                <input type="number" id="currentHP" name="currentHP" />
-
-                <label for="tempHP">Temp HP:</label>
-                <input type="number" id="tempHP" name="tempHP" min="0" />
-
-                <label for="maxHP">Max HP:</label>
-                <input type="number" id="maxHP" name="maxHP" min="1" />
+        <form class="charactersheet" id="characterForm">
+            <!-- Existing Character Info Section -->
+            <div class="charinfo">
+                <ul>
+                    <li>
+                        <input type="text" id="charName" name="charName" style="width: 480px" />
+                        <label for="charName">Character Name</label>
+                    </li>
+                    <li>
+                        <input type="text" id="background" name="background" style="width: 230px" />
+                        <label for="background">Background</label>
+                    </li>
+                    <li>
+                        <select name="charClass" id="charClass" style="width: 230px">
+                            <option value="Barbarian">Barbarian</option>
+                            <option value="Bard">Bard</option>
+                            <option value="Cleric">Cleric</option>
+                            <option value="Druid">Druid</option>
+                            <option value="Fighter">Fighter</option>
+                            <option value="Monk">Monk</option>
+                            <option value="Paladin">Paladin</option>
+                            <option value="Ranger">Ranger</option>
+                            <option value="Rogue">Rogue</option>
+                            <option value="Sorcerer">Sorcerer</option>
+                            <option value="Warlock">Warlock</option>
+                            <option value="Wizard">Wizard</option>
+                        </select>
+                        <label for="charClass">Class</label>
+                    </li>
+                    <li>
+                        <select name="species" id="species" style="width: 230px">
+                            <option value="Dwarf">Dwarf</option>
+                            <option value="Elf">Elf</option>
+                            <option value="Halfling">Halfling</option>
+                            <option value="Human">Human</option>
+                            <option value="Aasimar">Aasimar</option>
+                            <option value="Dragonborn">Dragonborn</option>
+                            <option value="Gnome">Gnome</option>
+                            <option value="Goliath">Goliath</option>
+                            <option value="Orc">Orc</option>
+                            <option value="Tiefling">Tiefling</option>
+                        </select>
+                        <label for="species">Species</label>
+                    </li>
+                    <li>
+                        <input type="text" id="subclass" name="subclass" style="width: 230px" />
+                        <label for="subclass">Subclass</label>
+                    </li>
+                </ul>
             </div>
-        </div>
 
-        <div class="hit-dice" style="text-align: center">
-            <h3>Hit Dice</h3>
-            <label for="spentHitDice">Spent:</label>
-            <input type="number" id="spentHitDice" name="spentHitDice" min="0" />
-
-            <label for="maxHitDice">Max:</label>
-            <input type="number" id="maxHitDice" name="maxHitDice" min="0" />
-        </div>
-
-        <div class="death-saves" style="text-align: center">
-            <h3>Death Saves</h3>
-            <div>
-                <label for="deathSaveSuccesses">Successes:</label>
-                <input type="number" id="deathSaveSuccesses" name="deathSaveSuccesses" min="0" max="3" />
-
-                <label for="deathSaveFailures">Failures:</label>
-                <input type="number" id="deathSaveFailures" name="deathSaveFailures" min="0" max="3" />
+            <!-- Experience and Level -->
+            <div class="experience">
+                <input type="number" id="level" name="level" style="width: 50px" />
+                <label for="level">Level:</label>
+                <input type="number" id="xp" name="xp" style="width: 50px" />
+                <label for="xp">XP:</label>
             </div>
-        </div>
 
-        <div class="skills">
-            <h3>Skills</h3>
-            <div class="skill-grid">
-                <div class="section acrobatics">
+            <!-- Armor Class -->
+            <div class="armorClass" style="text-align: center">
+                <label for="armorClass"><b>Armor Class:</b></label>
+                <input type="number" id="armorClass" name="armorClass"
+                    style="display: block; margin: auto; width: 50px" />
+                <label for="shield">Shield:</label>
+                <input type="checkbox" id="shield" name="shield" style="display: block; margin: auto" />
+            </div>
+
+            <!-- Health Section -->
+            <div class="health">
+                <p style="text-align: center"><b>Hit Points</b></p>
+                <label for="currhp">Current HP:</label>
+                <input type="number" id="currhp" name="currhp" style="width: 50px" />
+                <div class="right-items">
+                    <label for="temphp">Temp:</label>
+                    <input type="number" id="temphp" name="temphp" style="width: 50px" />
+                    <label for="maxhp">Max HP:</label>
+                    <input type="number" id="maxhp" name="maxhp" style="width: 50px" />
+                </div>
+            </div>
+
+            <!-- Hit Dice -->
+            <div class="hit-dice" style="text-align: center">
+                <p><b>Hit Dice</b></p>
+                <input type="number" id="dice-spent" name="dice-spent" style="width: 50px" />
+                <label for="dice-spent">Spent</label>
+                <input type="number" id="dice-max" name="dice-max" style="width: 50px" />
+                <label for="dice-max">Max</label>
+            </div>
+
+            <!-- Death Saves -->
+            <div class="death-saves" style="text-align: center">
+                <p><b>Death Saves</b></p>
+                <p>Successes</p>
+                <input type="checkbox" id="death-save-success-1" name="death-save-success-1" />
+                <input type="checkbox" id="death-save-success-2" name="death-save-success-2" />
+                <input type="checkbox" id="death-save-success-3" name="death-save-success-3" />
+                <p>Failures</p>
+                <input type="checkbox" id="death-save-failure-1" name="death-save-failure-1" />
+                <input type="checkbox" id="death-save-failure-2" name="death-save-failure-2" />
+                <input type="checkbox" id="death-save-failure-3" name="death-save-failure-3" />
+            </div>
+
+            <!-- Skills Section -->
+            <div style="float: right">
+                <h4>Skills</h4>
+                <section class="acrobatics">
                     <label for="acrobatics">Acrobatics:</label>
                     <input type="number" id="acrobatics" name="acrobatics" />
-                </div>
-                <div class="section animal-handling">
-                    <label for="animalHandling">Animal Handling:</label>
-                    <input type="number" id="animalHandling" name="animalHandling" />
-                </div>
-                <div class="section arcana">
+                </section>
+                <section class="animal-handling">
+                    <label for="animal-handling">Animal Handling:</label>
+                    <input type="number" id="animal-handling" name="animal-handling" />
+                </section>
+                <section class="arcana">
                     <label for="arcana">Arcana:</label>
                     <input type="number" id="arcana" name="arcana" />
-                </div>
-                <div class="section athletics">
+                </section>
+                <section class="athletics">
                     <label for="athletics">Athletics:</label>
                     <input type="number" id="athletics" name="athletics" />
-                </div>
-                <div class="section deception">
-                    <label for="deception">Deception:</label>
-                    <input type="number" id="deception" name="deception" />
-                </div>
-                <div class="section history">
-                    <label for="history">History:</label>
-                    <input type="number" id="history" name="history" />
-                </div>
-                <div class="section insight">
-                    <label for="insight">Insight:</label>
-                    <input type="number" id="insight" name="insight" />
-                </div>
-                <div class="section intimidation">
-                    <label for="intimidation">Intimidation:</label>
-                    <input type="number" id="intimidation" name="intimidation" />
-                </div>
-                <div class="section investigation">
-                    <label for="investigation">Investigation:</label>
-                    <input type="number" id="investigation" name="investigation" />
-                </div>
-                <div class="section medicine">
-                    <label for="medicine">Medicine:</label>
-                    <input type="number" id="medicine" name="medicine" />
-                </div>
-                <div class="section nature">
-                    <label for="nature">Nature:</label>
-                    <input type="number" id="nature" name="nature" />
-                </div>
-                <div class="section perception">
-                    <label for="perception">Perception:</label>
-                    <input type="number" id="perception" name="perception" />
-                </div>
-                <div class="section performance">
-                    <label for="performance">Performance:</label>
-                    <input type="number" id="performance" name="performance" />
-                </div>
-                <div class="section persuasion">
-                    <label for="persuasion">Persuasion:</label>
-                    <input type="number" id="persuasion" name="persuasion" />
-                </div>
-                <div class="section religion">
-                    <label for="religion">Religion:</label>
-                    <input type="number" id="religion" name="religion" />
-                </div>
-                <div class="section sleight-of-hand">
-                    <label for="sleightOfHand">Sleight of Hand:</label>
-                    <input type="number" id="sleightOfHand" name="sleightOfHand" />
-                </div>
-                <div class="section stealth">
-                    <label for="stealth">Stealth:</label>
-                    <input type="number" id="stealth" name="stealth" />
-                </div>
-                <div class="section survival">
-                    <label for="survival">Survival:</label>
-                    <input type="number" id="survival" name="survival" />
-                </div>
+                </section>
+                <!-- Add more skill sections as needed -->
             </div>
-        </div>
 
-        <div class="stats">
-            <h3>Stats</h3>
-            <div class="stat-grid">
-                <div class="section strength">
+            <!-- Ability Scores Section -->
+            <div style="clear: both; text-align: center; margin-top: 20px">
+                <h4>Ability Scores</h4>
+                <section class="strength">
                     <label for="strength">Strength:</label>
-                    <input type="number" id="strength" name="strength" min="1" max="30" />
-                </div>
-                <div class="section dexterity">
+                    <input type="number" id="strength" name="strength" />
+                    <label for="strength-modifier">Modifier:</label>
+                    <input type="number" id="strength-modifier" name="strength-modifier" readonly />
+                </section>
+                <section class="dexterity">
                     <label for="dexterity">Dexterity:</label>
-                    <input type="number" id="dexterity" name="dexterity" min="1" max="30" />
-                </div>
-                <div class="section constitution">
+                    ```html
+                    <input type="number" id="dexterity" name="dexterity" />
+                    <label for="dexterity-modifier">Modifier:</label>
+                    <input type="number" id="dexterity-modifier" name="dexterity-modifier" readonly />
+                </section>
+                <section class="constitution">
                     <label for="constitution">Constitution:</label>
-                    <input type="number" id="constitution" name="constitution" min="1" max="30" />
-                </div>
-                <div class="section intelligence">
+                    <input type="number" id="constitution" name="constitution" />
+                    <label for="constitution-modifier">Modifier:</label>
+                    <input type="number" id="constitution-modifier" name="constitution-modifier" readonly />
+                </section>
+                <section class="intelligence">
                     <label for="intelligence">Intelligence:</label>
-                    <input type="number" id="intelligence" name="intelligence" min="1" max="30" />
-                </div>
-                <div class="section wisdom">
+                    <input type="number" id="intelligence" name="intelligence" />
+                    <label for="intelligence-modifier">Modifier:</label>
+                    <input type="number" id="intelligence-modifier" name="intelligence-modifier" readonly />
+                </section>
+                <section class="wisdom">
                     <label for="wisdom">Wisdom:</label>
-                    <input type="number" id="wisdom" name="wisdom" min="1" max="30" />
-                </div>
-                <div class="section charisma">
+                    <input type="number" id="wisdom" name="wisdom" />
+                    <label for="wisdom-modifier">Modifier:</label>
+                    <input type="number" id="wisdom-modifier" name="wisdom-modifier" readonly />
+                </section>
+                <section class="charisma">
                     <label for="charisma">Charisma:</label>
-                    <input type="number" id="charisma" name="charisma" min="1" max="30" />
-                </div>
+                    <input type="number" id="charisma" name="charisma" />
+                    <label for="charisma-modifier">Modifier:</label>
+                    <input type="number" id="charisma-modifier" name="charisma-modifier" readonly />
+                </section>
             </div>
-        </div>
 
-        <div class="submit-container">
-            <button type="submit">Submit Character Sheet</button>
-        </div>
+            <!-- Submit Button -->
+            <div style="clear: both; text-align: center; margin-top: 20px">
+                <button type="submit" id="char-submit">Save Changes</button>
+            </div>
+        </form>
     </div>
-
-    <script>
-        // Basic form validation and submission script
-        document
-            .querySelector('button[type="submit"]')
-            .addEventListener("click", function (event) {
-                event.preventDefault();
-
-                // Collect form data
-                const formData = {
-                    characterName: document.getElementById("charName").value,
-                    background: document.getElementById("background").value,
-                    species: document.getElementById("species").value,
-                    characterClass: document.getElementById("charClass").value,
-                    subclass: document.getElementById("subclass").value,
-                    xp: document.getElementById("xp").value,
-                    // Add other form fields as needed
-                };
-
-                // Basic validation
-                if (!formData.characterName) {
-                    alert("Please enter a character name.");
-                    return;
-                }
-
-                // Here you would typically send the data to a server
-                console.log("Character Sheet Data:", formData);
-                alert("Character sheet submitted!");
-            });
-    </script>
 </body>
 
 </html>
