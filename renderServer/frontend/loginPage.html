@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="mock_loginstyle.css">
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="loginP_styles.css" />
     <script src="/socket.io/socket.io.js"></script>
 </head>
-<h1 style="text-transform: uppercase;">Character Selection</h1>
+<h1 style="text-transform: uppercase">Character Selection</h1>
+
 <body>
     <div class="userInfo">
         <form id="loginForm">
@@ -13,7 +15,7 @@
             <select id="username" name="username">
                 <option value="">Choose a character...</option>
             </select>
-            
+
             <button type="submit" id="loginBtn">View Character</button>
         </form>
     </div>
@@ -21,23 +23,23 @@
 
     <script>
         const socket = io();
-        
+
         // Request character list when page loads
-        socket.emit('getAllCharacters');
-        
+        socket.emit("getAllCharacters");
+
         // Populate dropdown when character list is received
-        socket.on('charactersList', (characters) => {
-            const select = document.getElementById('username');
+        socket.on("charactersList", (characters) => {
+            const select = document.getElementById("username");
             // Clear existing options except the default one
             while (select.options.length > 1) {
                 select.remove(1);
             }
-            
+
             // Add new options, sorted by name
             characters
                 .sort((a, b) => a.name.localeCompare(b.name))
-                .forEach(char => {
-                    const option = document.createElement('option');
+                .forEach((char) => {
+                    const option = document.createElement("option");
                     option.value = char.username;
                     option.textContent = `${char.name} (${char.username})`;
                     select.appendChild(option);
@@ -45,22 +47,26 @@
         });
 
         // Handle form submission
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
+        document.getElementById("loginForm").addEventListener("submit", (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value;
+            const username = document.getElementById("username").value;
             if (username) {
-                socket.emit('getCharacter', username);
+                socket.emit("getCharacter", username);
             }
         });
 
         // Add handler for character data response
-        socket.on('characterData', (character) => {
-            window.location.href = `displayCharacter.html?username=${encodeURIComponent(character.username)}`;
+        socket.on("characterData", (character) => {
+            window.location.href = `displayCharacter.html?username=${encodeURIComponent(
+                character.username
+            )}`;
         });
 
         // Add handler for errors
-        socket.on('error', (errorMessage) => {
+        socket.on("error", (errorMessage) => {
             alert(errorMessage);
         });
     </script>
 </body>
+
+</html>
