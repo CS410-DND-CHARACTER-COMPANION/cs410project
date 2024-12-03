@@ -19,8 +19,8 @@ const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");//Fred testing
 const dotenv = require("dotenv");//Fred testing
-const userRoutes = require('./backend/routes/userRoutes');// Fred testing
-const verifyToken = require('./backend/middleware/authMiddleware'); // Adjust path if needed
+// const userRoutes = require('./backend/routes/userRoutes');// Fred testing
+// const verifyToken = require('./backend/middleware/authMiddleware'); // Adjust path if needed
 
 
 // Load environment variables/Fred testing
@@ -51,13 +51,13 @@ app.use(express.json()); // Allows Express to parse incoming JSON requests
 // Serve static files from the 'frontend' directory
 app.use(express.static(path.join(__dirname, 'frontend'))); // Serve static files like HTML, CSS, JS from 'frontend'
 
-// Route for user-related API endpoints
-app.use('/api/users', userRoutes); // Directs all /api/users requests to the userRoutes module
+// // Route for user-related API endpoints
+// app.use('/api/users', userRoutes); // Directs all /api/users requests to the userRoutes module
 
-// Protected route example (requires authentication)
-app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
-  res.json({ message: 'This is a protected profile route!' }); // Send a response if the token is valid
-});
+// // Protected route example (requires authentication)
+// app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
+//   res.json({ message: 'This is a protected profile route!' }); // Send a response if the token is valid
+// });
 
 // Connect to frontend
 app.get('/', (req, res) => {
@@ -78,12 +78,35 @@ io.on('connection', async (socket) => {
 
       // emit "charactersList" event
       socket.emit('charactersList', characters);
+      socket.emit('DMOverviewcharactersList', characters);
     } catch (e) {
       console.error("Error getting characters:", e);
       socket.emit('error', 'Failed to retrieve characters');
     } finally {
       await client.close();
     }
+  });
+  
+  socket.on('getCharacterByID', async (CharID, callback) => {
+    const client = new MongoClient(uri);
+    callback = typeof callback == "function" ? callback : () => {};
+    try {
+      await client.connect();
+
+      // Attempts to find the one edited character with IDs
+      const FoundCharacter = await client.db("dnd_screen").collection("character_sheets").findOne({"_id": new ObjectId(CharID)});
+      callback(FoundCharacter) // Return back
+    }
+    catch (e)
+    {
+        console.error("Error updating characters:", e);
+        socket.emit('error', 'Failed to update characters');
+        callback({error:e.message});
+      } finally
+      {
+        await client.close();
+      }
+    //socket.emit('ReturnCharByID') // Log when a user disconnects
   });
 
   // real-time event: new character created
@@ -107,26 +130,70 @@ io.on('connection', async (socket) => {
     }
   });
 
-  // real-time event: character sheet updated
-  socket.on('updateCharacter', async (updatedCharacter) => {
+  // Test -j
+  socket.on('updateCharacter', async (updatedCharacterData) => {
     const client = new MongoClient(uri);
     try {
       await client.connect();
+      CharID = updatedCharacterData._id
+      delete updatedCharacterData._id
       const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
-        { _id: updatedCharacter._id }, 
-        { $set: updatedCharacter }
+        { _id: new ObjectId(CharID) }, 
+        { $set: updatedCharacterData}
       );
-
-      console.log('Character updated: ${updatedCharacter.name}');
-      
-      // Broadcast the 'characterUpdated' event to all connected clients
-      io.emit('characterUpdated', updatedCharacter);
+      if (result) 
+      {
+        //console.log("updated");
+      }
+      else { console.log(result); }
     } catch (e) {
       console.error(e);
     } finally {
       await client.close();
     }
+
+    // for (UpdAttribute in updatedCharacterData)
+    // {
+    //   try {
+    //     await client.connect();
+    //     const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
+    //       { _id: updatedCharacterData._id }, 
+    //       { $set: {UpdAttribute: updatedCharacterData[UpdAttribute]}}
+    //     );
+    //     if (result) 
+    //     {
+    //       console.log("updated");
+    //     }
+    //     else { console.log(result); }
+    //   } catch (e) {
+    //     console.error(e);
+    //   } finally {
+    //     await client.close();
+    //   }
+    // }
+    //console.log("Hope")
   });
+
+  // // real-time event: character sheet updated
+  // socket.on('updateCharacter', async (updatedCharacter) => {
+  //   const client = new MongoClient(uri);
+  //   try {
+  //     await client.connect();
+  //     const result = await client.db("dnd_screen").collection("character_sheets").updateOne(
+  //       { _id: updatedCharacter._id }, 
+  //       { $set: updatedCharacter }
+  //     );
+
+  //     console.log('Character updated: ${updatedCharacter.name}');
+      
+  //     // Broadcast the 'characterUpdated' event to all connected clients
+  //     io.emit('characterUpdated', updatedCharacter);
+  //   } catch (e) {
+  //     console.error(e);
+  //   } finally {
+  //     await client.close();
+  //   }
+  // });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);

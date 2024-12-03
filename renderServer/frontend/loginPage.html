@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="loginP_styles.css" />
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<h1 style="text-transform: uppercase">Character Selection</h1>
+
+<body>
+    <div class="userInfo">
+        <form id="loginForm">
+            <label for="username">Select Character:</label>
+            <select id="username" name="username">
+                <option value="">Choose a character...</option>
+            </select>
+
+            <button type="submit" id="loginBtn">View Character</button>
+        </form>
+    </div>
+    <a href="index.html" class="home-button">Back to Home</a>
+
+    <script>
+        const socket = io();
+
+        // Request character list when page loads
+        socket.emit("getAllCharacters");
+
+        // Populate dropdown when character list is received
+        socket.on("charactersList", (characters) => {
+            const select = document.getElementById("username");
+            // Clear existing options except the default one
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+
+            // Add new options, sorted by name
+            characters
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .forEach((char) => {
+                    const option = document.createElement("option");
+                    option.value = char.username;
+                    option.textContent = `${char.name} (${char.username})`;
+                    select.appendChild(option);
+                });
+        });
+
+        // Handle form submission
+        document.getElementById("loginForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            if (username) {
+                socket.emit("getCharacter", username);
+            }
+        });
+
+        // Add handler for character data response
+        socket.on("characterData", (character) => {
+            window.location.href = `displayCharacter.html?username=${encodeURIComponent(
+                character.username
+            )}`;
+        });
+
+        // Add handler for errors
+        socket.on("error", (errorMessage) => {
+            alert(errorMessage);
+        });
+    </script>
+</body>
+
+</html>
