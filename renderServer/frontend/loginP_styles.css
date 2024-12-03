@@ -24,7 +24,7 @@ button {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -41,7 +41,7 @@ button:hover {
     padding: 10px;
     margin: 20px auto;
     text-align: center;
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     text-decoration: none;
     border-radius: 5px;
