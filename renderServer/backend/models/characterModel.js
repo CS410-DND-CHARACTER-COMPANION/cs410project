@@ -1,11 +1,12 @@
-const mongoose = require('mongoose'); // Import the mongoose library for MongoDB object modeling
+// Import the mongoose library for MongoDB object modeling
+const mongoose = require("mongoose");
 
 // Define the character schema with relevant fields
 const characterSchema = new mongoose.Schema({
-    username: { 
-        type: String, 
+    username: {
+        type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     name: { type: String, required: true },
     species: { type: String, required: true },
@@ -32,11 +33,15 @@ const characterSchema = new mongoose.Schema({
     initiative: Number,
     speed: Number,
     hasShield: { type: Boolean, default: false },
-    inventory: [String]
+    inventory: [String],
 });
 
 // Create a model for the Character using the defined schema
-const Character = mongoose.model('Character', characterSchema, 'character_sheets');
+const Character = mongoose.model(
+    "Character",
+    characterSchema,
+    "character_sheets"
+);
 
 // Export the Character model for use in other parts of the application
 module.exports = Character;
