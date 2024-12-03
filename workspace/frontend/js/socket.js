@@ -142,12 +142,12 @@ async function EditAttributeMenu(CharID) // Once clicked:
       </tr>
       `;
       
-      ReturnData["strengthModifier"] = Math.floor((ReturnData["strength"]-10)/2);
-      ReturnData["dexterityModifier"] = Math.floor((ReturnData["dexterity"]-10)/2);
-      ReturnData["constitutionModifier"] = Math.floor((ReturnData["constitution"]-10)/2);
-      ReturnData["intelligenceModifier"] = Math.floor((ReturnData["intelligence"]-10)/2);
-      ReturnData["wisdomModifier"] = Math.floor((ReturnData["wisdom"]-10)/2);
-      ReturnData["charismaModifier"] = Math.floor((ReturnData["charisma"]-10)/2);
+      // ReturnData["strengthModifier"] = Math.floor((ReturnData["strength"]-10)/2);
+      // ReturnData["dexterityModifier"] = Math.floor((ReturnData["dexterity"]-10)/2);
+      // ReturnData["constitutionModifier"] = Math.floor((ReturnData["constitution"]-10)/2);
+      // ReturnData["intelligenceModifier"] = Math.floor((ReturnData["intelligence"]-10)/2);
+      // ReturnData["wisdomModifier"] = Math.floor((ReturnData["wisdom"]-10)/2);
+      // ReturnData["charismaModifier"] = Math.floor((ReturnData["charisma"]-10)/2);
     
     //setting the edit form to center? not working
     
@@ -164,7 +164,7 @@ async function EditAttributeMenu(CharID) // Once clicked:
       // console.log(ExistingFormChildren.item(1))
       const newCharData = {_id: ApplyChangeButton.id}
       const InputElements = ExistingFormChildren.item(0).querySelectorAll("input")
-      console.log(InputElements)
+      //console.log(InputElements)
       InputElements.forEach(
         function(Node, Index) {
           var InputValue
@@ -183,7 +183,14 @@ async function EditAttributeMenu(CharID) // Once clicked:
         }
       );
 
-
+      console.log(newCharData["strength"])
+      console.log(Math.floor((newCharData["strength"]-10)/2))
+      newCharData["strengthModifier"] = Math.floor((newCharData["strength"]-10)/2);
+      newCharData["dexterityModifier"] = Math.floor((newCharData["dexterity"]-10)/2);
+      newCharData["constitutionModifier"] = Math.floor((newCharData["constitution"]-10)/2);
+      newCharData["intelligenceModifier"] = Math.floor((newCharData["intelligence"]-10)/2);
+      newCharData["wisdomModifier"] = Math.floor((newCharData["wisdom"]-10)/2);
+      newCharData["charismaModifier"] = Math.floor((newCharData["charisma"]-10)/2);
       //console.log(ExistingFormChildren.getElementById("FormToChangeAtt"))
       //const newCharData = {_id: ApplyChangeButton.id}
       // for (var i = 0; i < ExistingFormChildren.length; i++)
@@ -257,25 +264,25 @@ socket.on('DMOverviewcharactersList', (characters) => {
         <th>CHA</th>
       </tr>
       <tr>
-        <td onclick=>${character.strength}</td>
-        <td>${character.dexterity}</td>
-        <td>${character.constitution}</td>
-        <td>${character.intelligence}</td>
-        <td>${character.wisdom}</td>
-        <td>${character.charisma}</td>
-      </tr>
-      <tr class="blank_column" style="width:10%" style="height:10%">
-          <th rowspan="2" style="width:10%" style="height:10%">Attributes Modifier</th>
-      </tr>
-      <tr>
-        <td onclick=>${character.strengthModifier}</td>
-        <td>${character.dexterityModifier}</td>
-        <td>${character.constitutionModifier}</td>
-        <td>${character.intelligenceModifier}</td>
-        <td>${character.wisdomModifier}</td>
-        <td>${character.charismaModifier}</td>
+        <td onclick=>${character.strength} (${character.strengthModifier})</td>
+        <td>${character.dexterity} (${character.dexterityModifier})</td>
+        <td>${character.constitution} (${character.constitutionModifier})</td>
+        <td>${character.intelligence} (${character.intelligenceModifier})</td>
+        <td>${character.wisdom} (${character.wisdomModifier})</td>
+        <td>${character.charisma} (${character.charismaModifier})</td>
       </tr>
       `;
+      // <tr class="blank_column" style="width:10%" style="height:10%">
+      //     <th rowspan="2" style="width:10%" style="height:10%">Attributes Modifier</th>
+      // </tr>
+      // <tr>
+      //   <td onclick=>${character.strengthModifier}</td>
+      //   <td>${character.dexterityModifier}</td>
+      //   <td>${character.constitutionModifier}</td>
+      //   <td>${character.intelligenceModifier}</td>
+      //   <td>${character.wisdomModifier}</td>
+      //   <td>${character.charismaModifier}</td>
+      // </tr>
       const EditButton = document.createElement('button');
       EditButton.innerHTML = "Edit";
       EditButton.setAttribute("id", character._id);
