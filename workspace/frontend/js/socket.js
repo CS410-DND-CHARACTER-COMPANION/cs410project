@@ -58,7 +58,7 @@ async function EditAttributeMenu(CharID) // Once clicked:
         if (Attribute != "_id" && Attribute != "__v" && Attribute != "strengthModifier"
           && Attribute != "dexterityModifier" && Attribute != "constitutionModifier" 
           && Attribute != "intelligenceModifier" && Attribute != "wisdomModifier"
-          && Attribute != "charismaModifier"){
+          && Attribute != "charismaModifier" && Attribute != "username"){
           FormToChangeAtt.innerHTML = FormToChangeAtt.innerHTML +
           `
           <tr>
