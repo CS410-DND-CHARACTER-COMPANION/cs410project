@@ -1,34 +1,26 @@
 // Import the express library
 const express = require("express");
-// Create a new router instance
+const { registerUser, loginUser } = require("../userModule");
+const verifyToken = require("../middleware/authMiddleware");
+
 const router = express.Router();
 
-// Example route to get a list of users
-router.get("/", (req, res) => {
-  // Placeholder for database logic to retrieve users
-  res.json({ message: "List of users" });
+// Static route for profile
+router.get("/profile", verifyToken, (req, res) => {
+  res.json({ message: "This is a protected profile route!", userId: req.userId });
 });
 
-// Example route to get a specific user by ID
+// User registration route
+router.post("/register", registerUser);
+
+// User login route
+router.post("/login", loginUser);
+
+// Dynamic route for user by ID
 router.get("/:id", (req, res) => {
-  // Extract user ID from request parameters
   const userId = req.params.id;
-  // Placeholder for database lookup logic for the specific user
-  res.json({ message: `User  data for user ID: ${userId}` });
+  res.json({ message: `User data for user ID: ${userId}` });
 });
 
-// Example route to create a new user
-router.post("/", (req, res) => {
-  // Get new user data from the request body
-  const newUser = req.body;
-  // In a real app, you'd validate and save this to a database
-  res.status(201).json({
-    // Respond with a 201 status for successful creation
-    message: "User  created successfully",
-    // Include the created user data in the response
-    user: newUser,
-  });
-});
-
-// Export the router for use in other parts of the application
 module.exports = router;
+
