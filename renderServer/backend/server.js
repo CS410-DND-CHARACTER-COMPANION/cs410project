@@ -92,6 +92,11 @@ app.get("/api/users/profile", verifyToken, (req, res) => {
     res.json({ message: "This is a protected profile route!" });
   });
 
+// Serve the `DMoverview.html` page
+app.get("/DMoverview.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/DMoverview.html"));
+});
+
 // Socket.IO connection event
 io.on("connection", (socket) => {
     // Log when a user connects
@@ -104,6 +109,7 @@ io.on("connection", (socket) => {
             const characters = await Character.find();
             // Emit the list of characters to the client
             socket.emit("charactersList", characters);
+            socket.emit('DMOverviewcharactersList', characters);
         } catch (e) {
             console.error("Error getting characters:", e);
             socket.emit("error", "Failed to retrieve characters");
@@ -127,6 +133,44 @@ io.on("connection", (socket) => {
             console.error("Error retrieving character:", e);
             // Emit error message
             socket.emit("error", "Failed to retrieve character");
+        }
+    });
+
+    socket.on('getCharacterByID', async (CharID, callback) => {
+        callback = typeof callback == "function" ? callback : () => {};
+        try {
+            // Use mongoose to find the character
+            const foundCharacter = await Character.findById(CharID);
+            callback(foundCharacter);
+        }
+        catch (e) {
+            console.error("Error getting character:", e);
+            socket.emit('error', 'Failed to get character');
+            callback({error: e.message});
+        }
+    });
+
+    // Test -j
+    socket.on('updateCharacterDMOverview', async (updatedCharacterData) => {
+        try {
+            const charId = updatedCharacterData._id;
+            delete updatedCharacterData._id;
+            
+            // Use mongoose to update the character
+            const result = await Character.findByIdAndUpdate(
+                charId,
+                updatedCharacterData,
+                { new: true }
+            );
+            
+            if (result) {
+                socket.emit('characterUpdated', result);
+            } else {
+                console.log('No character found to update');
+            }
+        } catch (e) {
+            console.error("Error updating character:", e);
+            socket.emit('error', 'Failed to update character');
         }
     });
 

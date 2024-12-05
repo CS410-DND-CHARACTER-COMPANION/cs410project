@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" type="text/css" href="DMOverview.css"> -->  
     <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Roboto+Slab:wght@300;700&display=swap"
     rel="stylesheet">  
     <title>Dungeon Master Overview</title>
     <style>
+        table td {background-color: #f2f2f2;}
         table {
             width: 100%;
             border-collapse: collapse;
@@ -53,98 +53,31 @@
             color: #444;
             margin-top: 20px;
         }
+
+        .back-button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <h1>All Characters Summary</h1>
-    <!--
-    <table>
-        <tr>
-            <th>Players</th>
-            <th>Me</th>
-            <th>You</th>
-            <th>Them</th>
-        </tr>
-        <tr>
-            <td>Species</td>
-            <td>Me species</td>
-            <td>You species</td>
-            <td>Them species</td>
-        </tr>
-        <tr>
-            <td>Class</td>
-            <td>Me class</td>
-            <td>You class</td>
-            <td>Them class</td>
-        </tr>
-        <tr>
-            <td>HP</td>
-            <td>Me HP</td>
-            <td>You HP</td>
-            <td>Them HP</td>
-        </tr>
-        <tr class="blank_row">
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td>STR</td>
-            <td>Me STR</td>
-            <td>You STR</td>
-            <td>Them STR</td>
-        </tr>
-        <tr>
-            <td>DEX</td>
-            <td>Me DEX</td>
-            <td>You DEX</td>
-            <td>Them DEX</td>
-        </tr>
-        <tr>
-            <td>CON</td>
-            <td>Me CON</td>
-            <td>You CON</td>
-            <td>Them CON</td>
-        </tr>
-        <tr>
-            <td>WIS</td>
-            <td>Me WIS</td>
-            <td>You WIS</td>
-            <td>Them WIS</td>
-        </tr>
-        <tr>
-            <td>CHA</td>
-            <td>Me CHA</td>
-            <td>You CHA</td>
-            <td>Them CHA</td>
-        </tr>
-        <tr class="blank_row">
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td>Init</td>
-            <td>Me #</td>
-            <td>You #</td>
-            <td>Them #</td>
-        </tr>
-        <tr>
-            <td>Speed</td>
-            <td>Me ft</td>
-            <td>You ft</td>
-            <td>Them ft</td>
-        </tr>
-        <tr>
-            <td>Size</td>
-            <td>Me size</td>
-            <td>You size</td>
-            <td>Them size</td>
-        </tr>
-        <tr>
-            <td>PP</td>
-            <td>Me ?</td>
-            <td>You ?</td>
-            <td>Them ?</td>
-        </tr>
-    </table>-->
-    <div class ="container">
+    <div class="container">
         <section class="character-List">
             <ul id="characterList">
                 <!-- Characters will be dynamically added here -->
@@ -152,8 +85,13 @@
         </section>
     </div>
 
-    <!-- socket.io integration -->
+    <!-- Add back button -->
+    <div class="back-button-container">
+        <a href="index.html" class="back-button">Back to Home</a>
+    </div>
+
+    <!-- Socket.IO scripts -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/socket.js"></script>
+    <script src="/socket.js"></script>
 </body>
 </html>
