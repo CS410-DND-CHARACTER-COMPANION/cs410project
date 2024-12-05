@@ -10,12 +10,15 @@ const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 // Import dotenv to manage environment variables
 const dotenv = require("dotenv");
+// Middleware for handling CORS
+const cors = require("cors");
 // Import user-related routes
 const userRoutes = require("./routes/userRoutes");
 // Import middleware for token verification
 const verifyToken = require("./middleware/authMiddleware");
 // Import the Character model
 const Character = require("./models/characterModel");
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -47,6 +50,12 @@ mongoose
     .catch((err) => console.error("MongoDB connection error:", err));
 
 // Middleware to parse JSON requests
+app.use(
+    cors({
+        origin: "http://localhost:5500", // Allow requests only from your frontend
+        methods: ["GET", "POST"], // Specify allowed HTTP methods
+    })
+);
 app.use(express.json());
 
 // Serve static files from the 'frontend' directory
