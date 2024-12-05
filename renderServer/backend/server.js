@@ -52,7 +52,7 @@ mongoose
 // Middleware to parse JSON requests
 app.use(
     cors({
-        origin: "http://localhost:5500", // Allow requests only from your frontend
+        origin: "http://localhost:3000", // Allow frontend requests
         methods: ["GET", "POST"], // Specify allowed HTTP methods
     })
 );
@@ -64,22 +64,33 @@ app.use(express.static(path.join(__dirname, "../frontend")));
 // Route for user-related API endpoints
 app.use("/api/users", userRoutes);
 
-// Protected route example: requires token verification
-app.get("/api/users/profile", verifyToken, (req, res) => {
-    res.json({ message: "This is a protected profile route!" });
-});
-
 // Connect to frontend: serve the main HTML file
 app.get("/", (req, res) => {
     // Serve index.html
     res.sendFile(path.join(__dirname, "../frontend", "index.html"));
 });
 
+// Serve the `login.html` page
+app.get("/login.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/login.html"));
+  });
+
+// Serve the `signup.html` page
+app.get("/signup.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/signup.html"));
+  });
+
+
 // New route for character sheet page
 app.get("/character-sheet-v1.html", (req, res) => {
     // Serve character sheet HTML
     res.sendFile(path.join(__dirname, "../frontend", "character-sheet-v1.html"));
 });
+
+// Protected route example
+app.get("/api/users/profile", verifyToken, (req, res) => {
+    res.json({ message: "This is a protected profile route!" });
+  });
 
 // Socket.IO connection event
 io.on("connection", (socket) => {
