@@ -62,7 +62,10 @@ io.on('connection', async (socket) => {
       // Connect to MongoDB
       await client.connect();
       // Get all characters from the database
-      const characters = await client.db("dnd_screen").collection("character_sheets").find().toArray();
+      const characters = await client.db("dnd_screen")
+        .collection("character_sheets")
+        .find()
+        .toArray();
       // emit "charactersList" event
       socket.emit('charactersList', characters);
       // emit "DMOverviewcharactersList" event

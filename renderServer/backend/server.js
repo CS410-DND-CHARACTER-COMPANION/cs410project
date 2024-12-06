@@ -111,12 +111,14 @@ io.on("connection", (socket) => {
             socket.emit("charactersList", characters);
             socket.emit('DMOverviewcharactersList', characters);
         } catch (e) {
+            // Log error
             console.error("Error getting characters:", e);
+            // Emit error message
             socket.emit("error", "Failed to retrieve characters");
         }
     });
 
-    // Handler for getting a single character by username
+    // Get a single character by username
     socket.on("getCharacter", async (username) => {
         try {
             // Search by username

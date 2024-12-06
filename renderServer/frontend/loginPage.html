@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="loginP_styles.css" />
     <script src="/socket.io/socket.io.js"></script>
 </head>
-<h1 style="text-transform: uppercase">Character Selection</h1>
+<h1 style="text-align: center">Character Selection</h1>
 
 <body>
     <div class="userInfo">
@@ -15,54 +15,61 @@
             <select id="username" name="username">
                 <option value="">Choose a character...</option>
             </select>
-
             <button type="submit" id="loginBtn">View Character</button>
         </form>
     </div>
     <a href="index.html" class="home-button">Back to Home</a>
 
+    <!-- Script to connect to the socket.io server and handle the character list -->
     <script>
+        // Connect to the socket.io server
         const socket = io();
 
         // Request character list when page loads
         socket.emit("getAllCharacters");
 
-        // Populate dropdown when character list is received
+        // Dropdown menu is populated when character list is received
         socket.on("charactersList", (characters) => {
+            // Get the dropdown menu
             const select = document.getElementById("username");
             // Clear existing options except the default one
             while (select.options.length > 1) {
                 select.remove(1);
             }
-
-            // Add new options, sorted by name
-            characters
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .forEach((char) => {
-                    const option = document.createElement("option");
-                    option.value = char.username;
-                    option.textContent = `${char.name} (${char.username})`;
-                    select.appendChild(option);
-                });
+            // Add new options, sorted by character name
+            characters.sort((a, b) => a.name.localeCompare(b.name)).forEach((char) => {
+                // Create a new option for each character
+                const option = document.createElement("option");
+                // Set the value to the character's username
+                option.value = char.username;
+                // Set the text content to the character's name and username
+                option.textContent = `${char.name} (${char.username})`;
+                // Add the option to the dropdown menu
+                select.appendChild(option);
+            });
         });
 
         // Handle form submission
         document.getElementById("loginForm").addEventListener("submit", (e) => {
+            // Prevent the default form submission behavior
             e.preventDefault();
+            // Get the selected username
             const username = document.getElementById("username").value;
+            // If a username is selected, emit a request for the character data
             if (username) {
+                // Emit a request for the character data
                 socket.emit("getCharacter", username);
             }
         });
 
-        // Add handler for character data response
+        // Redirect to the displayCharacter.html with character data
         socket.on("characterData", (character) => {
             window.location.href = `displayCharacter.html?username=${encodeURIComponent(
                 character.username
             )}`;
         });
 
-        // Add handler for errors
+        // Error handling
         socket.on("error", (errorMessage) => {
             alert(errorMessage);
         });
