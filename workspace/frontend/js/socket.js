@@ -1,12 +1,11 @@
 /*
 Connects to the socket.io server and handles the events for the character sheet.
-
 */
 
 // connect to socket.io server
 const socket = io();
 
-// Global array for inventory (if needed later)
+// Global array for inventory 
 let inventory = [];
 
 // Request all characters when the page loads
@@ -15,11 +14,11 @@ socket.emit('getAllCharacters');
 // Listen for the 'charactersList' event and handle the received data
 socket.on('charactersList', (characters) => {
   console.log('All characters:', characters);
-  
-  // Clear and update the DOM with the list of characters
+  // Clear and update the character list
   const characterList = document.getElementById('characterList');
-  characterList.innerHTML = ''; // Clear existing list
-  
+  // Clear the existing list
+  characterList.innerHTML = ''; 
+  // Update the list with the new characters
   characters.forEach(character => {
       // Create list item for each character
       const characterItem = document.createElement('li');
@@ -29,6 +28,7 @@ socket.on('charactersList', (characters) => {
         <div>HP: ${character.currentHP} | AC: ${character.ac + character.shield} (${character.ac} + ${character.shield}) | 
         ${character.inspiration ? '⭐ Inspired' : ''}</div>
       `;
+      // Add the character item to the list
       characterList.appendChild(characterItem);
   });
 });

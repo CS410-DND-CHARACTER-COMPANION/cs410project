@@ -17,13 +17,10 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
-const mongoose = require("mongoose");//Fred testing
-const dotenv = require("dotenv");//Fred testing
-// const userRoutes = require('./backend/routes/userRoutes');// Fred testing
-// const verifyToken = require('./backend/middleware/authMiddleware'); // Adjust path if needed
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
-
-// Load environment variables/Fred testing
+// Load environment variables
 dotenv.config();
 
 // Initialize Express app and HTTP server
@@ -31,7 +28,7 @@ const app = express();
 const server = http.createServer(app);  // Create HTTP server
 const io = new Server(server);          // Attach socket.io to the server
 
-// Serve static files from the 'frontend' directory
+// Set up express server to erve static files from the 'frontend' directory
 app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Port setup
@@ -46,18 +43,7 @@ mongoose.connect(uri)
   .catch(err => console.error("MongoDB connection error:", err));
 
 // Middleware to parse JSON requests
-app.use(express.json()); // Allows Express to parse incoming JSON requests
-
-// Serve static files from the 'frontend' directory
-app.use(express.static(path.join(__dirname, 'frontend'))); // Serve static files like HTML, CSS, JS from 'frontend'
-
-// // Route for user-related API endpoints
-// app.use('/api/users', userRoutes); // Directs all /api/users requests to the userRoutes module
-
-// // Protected route example (requires authentication)
-// app.get('/api/users/profile', verifyToken, (req, res) => { // Use verifyToken middleware to protect this route
-//   res.json({ message: 'This is a protected profile route!' }); // Send a response if the token is valid
-// });
+app.use(express.json());
 
 // Connect to frontend
 app.get('/', (req, res) => {
@@ -66,66 +52,83 @@ app.get('/', (req, res) => {
 
 // socket.io connection
 io.on('connection', async (socket) => {
+  // Log when a user connects
   console.log("A user connected:", socket.id);
-
   // get a list of all characters
   socket.on('getAllCharacters', async () => {
+    // Connect to MongoDB
     const client = new MongoClient(uri);
     try {
+      // Connect to MongoDB
       await client.connect();
-
+      // Get all characters from the database
       const characters = await client.db("dnd_screen").collection("character_sheets").find().toArray();
-
       // emit "charactersList" event
       socket.emit('charactersList', characters);
+      // emit "DMOverviewcharactersList" event
       socket.emit('DMOverviewcharactersList', characters);
     } catch (e) {
+      // Log error
       console.error("Error getting characters:", e);
+      // emit "error" event
       socket.emit('error', 'Failed to retrieve characters');
     } finally {
+      // Close the MongoDB client
       await client.close();
     }
   });
   
+  // get a character by ID
   socket.on('getCharacterByID', async (CharID, callback) => {
     const client = new MongoClient(uri);
     callback = typeof callback == "function" ? callback : () => {};
     try {
+      // Connect to MongoDB
       await client.connect();
-
       // Attempts to find the one edited character with IDs
       const FoundCharacter = await client.db("dnd_screen").collection("character_sheets").findOne({"_id": new ObjectId(CharID)});
-      callback(FoundCharacter) // Return back
+      // Return back the character
+      callback(FoundCharacter)
     }
     catch (e)
     {
-        console.error("Error updating characters:", e);
-        socket.emit('error', 'Failed to update characters');
-        callback({error:e.message});
-      } finally
-      {
-        await client.close();
-      }
+      // Log error
+      console.error("Error updating characters:", e);
+      // emit "error" event
+      socket.emit('error', 'Failed to update characters');
+      // Return back the error
+      callback({error:e.message});
+    } finally
+    {
+      // Close the MongoDB client
+      await client.close();
+    }
     //socket.emit('ReturnCharByID') // Log when a user disconnects
   });
 
   // real-time event: new character created
   socket.on('newCharacter', async (character) => {
+    // Log the new character
     console.log('New character received:', character);
     const client = new MongoClient(uri);
     try {
+      // Connect to MongoDB
       await client.connect();
       // Insert the new character into the database
       const result = await client.db("dnd_screen").collection("character_sheets").insertOne(character);
+      // Log the new character's ID
       console.log(`New character created with the following id: ${result.insertedId}`);
+      // Set the character's ID to the new ID
       character._id = result.insertedId;
-
       // Broadcast the 'characterAdded' event to all connected clients
       io.emit('characterAdded', character);
     } catch (e) {
-        console.error("Error creating character:", e);
-        socket.emit('error', 'Failed to create character');
+      // Log error
+      console.error("Error creating character:", e);
+      // emit "error" event
+      socket.emit('error', 'Failed to create character');
     } finally {
+      // Close the MongoDB client
       await client.close();
     }
   });
@@ -195,22 +198,29 @@ io.on('connection', async (socket) => {
   //   }
   // });
 
+  // Log when a user disconnects
   socket.on("disconnect", () => {
+    // Log when a user disconnects
     console.log("User disconnected:", socket.id);
   });
 });
 
 // Start listening on port
 server.listen(port, () => {
+  // Log when the server starts listening
   console.log("DnD app listening on port " + port)
 });
 
-// Handle graceful shutdown
+// Handle shutdown
 process.on('SIGINT', async () => {
-  console.log('\nGracefully shutting down...');
+  // Log when the server is shutting down
+  console.log('\nShutting down...');
+  // Close the server, will wait for all connections to close
   server.close(() => {
-      console.log('Server closed');
-      process.exit(0);
+    // Log when the server is closed
+    console.log('Server closed');
+    // Exit the process
+    process.exit(0);
   });
 });
 

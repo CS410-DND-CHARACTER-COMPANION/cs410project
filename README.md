@@ -6,21 +6,21 @@ Fall 2024
 
 This app will allow players and DMs to log in create and store character sheets, as well as update them in real time. The DM will also have the ability to update any character sheet in real time. 
 
-Built with Node.js, Express, MongoDB, and Socket.io.
+Built with Node.js, Express, MongoDB, Socket.io, and JWT for authentication.
 
 ## Features
 
 * User authentication and authorization
 * Character sheet creation, storage, and real-time updates
 * DM tools for updating character sheets
-* Responsive design for mobile and desktop
 
 ## Prerequisites
 
-* Node.js
+* Node.js (v18 or higher)
 * Express
 * MongoDB
 * Socket.io
+* JWT for authentication
 
 ## Installation
 
