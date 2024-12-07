@@ -43,6 +43,10 @@
             <label for="species">Species</label>
           </li>
           <li>
+            <input type="text" id="size" name="size" style="width: 110px" readonly />
+            <label for="size">Size</label>
+          </li>
+          <li>
             <input type="text" id="subclass" name="subclass" style="width: 110px" readonly />
             <label for="subclass">Subclass</label>
           </li>
@@ -99,6 +103,15 @@
         <input type="checkbox" id="death-save-failure-1" name="death-save-failure-1" disabled />
         <input type="checkbox" id="death-save-failure-2" name="death-save-failure-2" disabled />
         <input type="checkbox" id="death-save-failure-3" name="death-save-failure-3" disabled />
+      </div>
+
+      <!-- Passive Abilities -->
+      <div class="passive-abilities" style="float: right; margin-bottom: 20px">
+        <h4>Passive Abilities</h4>
+        <section class="passive-perception">
+          <label for="passive-perception">Passive Perception:</label>
+          <input type="number" id="passive-perception" name="passive-perception" readonly />
+        </section>
       </div>
 
       <!-- Skills Section -->

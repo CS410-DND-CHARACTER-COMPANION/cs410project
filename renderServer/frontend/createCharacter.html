@@ -89,6 +89,21 @@
           </select>
           <span class="error-message" data-error="species"></span>
         </div>
+        <!-- Size selection -->
+        <div class="form-group">
+          <label for="size" data-label="Size">Size (Sz):</label>
+          <select id="size" name="size" class="custom-select" data-field="character-size" 
+            aria-label="Character Size" aria-required="true" required>
+            <option value="">Select Size</option>
+            <option value="Tiny">Tiny</option>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+            <option value="Huge">Huge</option>
+            <option value="Gargantuan">Gargantuan</option>
+          </select>
+          <span class="error-message" data-error="size"></span>
+        </div>
         <!-- Class and level inputs with dynamic proficiency bonus -->
         <div class="form-group">
           <label for="class" data-label="Class">Class (Cl):</label>
@@ -184,6 +199,16 @@
               aria-label="Charisma Modifier" readonly />
             <span class="error-message" data-error="charisma"></span>
           </div>
+        </div>
+      </section>
+      <!-- Passive abilities section -->
+      <section class="passive-abilities">
+        <h2>Passive Abilities</h2>
+        <div class="form-group">
+          <label for="passive-perception" data-label="Passive Perception">Passive Perception (PP):</label>
+          <input type="number" id="passive-perception" name="passive-perception" 
+            data-field="passive-perception" aria-label="Passive Perception" 
+            readonly />
         </div>
       </section>
       <!-- Combat-specific details for character -->

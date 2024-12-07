@@ -27,6 +27,8 @@ class CharacterState {
       initiative: 0,
       speed: 30,
       hasShield: false,
+      size: "",
+      passivePerception: 10,
     };
   }
 
@@ -111,18 +113,29 @@ class SocketManager {
     const schema = {
       // Defines strict validation rules for character attributes
       name: (value) => typeof value === "string",
-      level: (value) => Number.isInteger(value) && value > 0 && value <= 20,
+      level: (value) => {
+        // Convert string value to number if needed
+        const numValue = typeof value === 'string' ? parseInt(value) : value;
+        return !isNaN(numValue) && numValue >= 1 && numValue <= 20;
+      },
       xp: (value) => Number.isInteger(value) && value >= 0,
       equipment: (value) => Array.isArray(value),
-      strength: (value) => Number.isInteger(value) && value >= 1 && value <= 30,
-      dexterity: (value) =>
-        Number.isInteger(value) && value >= 1 && value <= 30,
+      strength: (value) => {
+        const numValue = typeof value === 'string' ? parseInt(value) : value;
+        return !isNaN(numValue) && numValue >= 1 && numValue <= 30;
+      },
+      dexterity: (value) => {
+        const numValue = typeof value === 'string' ? parseInt(value) : value;
+        return !isNaN(numValue) && numValue >= 1 && numValue <= 30;
+      },
       constitution: (value) =>
         Number.isInteger(value) && value >= 1 && value <= 30,
       intelligence: (value) =>
         Number.isInteger(value) && value >= 1 && value <= 30,
       wisdom: (value) => Number.isInteger(value) && value >= 1 && value <= 30,
       charisma: (value) => Number.isInteger(value) && value >= 1 && value <= 30,
+      size: (value) => ["Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan"].includes(value),
+      passivePerception: (value) => Number.isInteger(value) && value >= 0,
     };
 
     // Checks each incoming data point against its respective validation rule
@@ -405,18 +418,56 @@ function handleFormSubmission(event) {
     const form = document.getElementById("character-form");
     const formData = new FormData(form);
     const characterData = {};
+    
     // Convert FormData to a plain object
     for (const [key, value] of formData.entries()) {
-      // Convert numeric values
-      if (!isNaN(value) && value !== "") {
-        characterData[key] = Number(value);
-      } else {
+      // Special handling for HP fields
+      if (key === 'current-hp') {
+        const currentHp = parseInt(value);
+        if (isNaN(currentHp)) {
+          throw new Error('Current HP must be a valid number');
+        }
+        characterData.currentHp = currentHp;
+      }
+      else if (key === 'max-hp') {
+        const maxHp = parseInt(value);
+        if (isNaN(maxHp)) {
+          throw new Error('Maximum HP must be a valid number');
+        }
+        characterData.maxHp = maxHp;
+      }
+      // Handle all other fields normally
+      else {
         characterData[key] = value;
       }
     }
 
-    // Add equipment array
+    // Add equipment array and other required fields
     characterData.equipment = characterState.getState().equipment || [];
+    characterData.userId = socketManager.getUserId();
+    characterData.characterId = characterState.getState().characterId;
+
+    // Debug log
+    console.log('Character data to be saved:', characterData);
+
+    // Remove any existing characterSaved listener
+    socketManager.socket.off('characterSaved');
+
+    // Set up the characterSaved listener
+    socketManager.socket.on('characterSaved', (response) => {
+      if (response.success) {
+        showSuccess('Character saved successfully!');
+        const username = document.getElementById('username').value;
+        window.location.href = `displayCharacter.html?username=${encodeURIComponent(username)}`;
+      } else {
+        showError(response.error || 'Failed to save character');
+        if (response.error && response.error.includes('Username already exists')) {
+          const usernameField = document.getElementById('username');
+          usernameField.focus();
+          usernameField.select();
+        }
+      }
+    });
 
     // Emit the saveCharacter event with properly structured data
     socketManager.emit("saveCharacter", {
@@ -424,74 +475,58 @@ function handleFormSubmission(event) {
       characterId: characterState.getState().characterId,
       data: characterData,
     });
-
-    // Show success message
-    showSuccess("Saving character...");
-
-    // Listen for the characterSaved event to redirect
-    socketManager.socket.on("characterSaved", (response) => {
-      if (response.success) {
-        showSuccess("Character saved successfully!");
-        // Redirect to displayCharacter.html with the username
-        const username = document.getElementById("username").value;
-        window.location.href = `displayCharacter.html?username=${encodeURIComponent(
-          username
-        )}`;
-      } else {
-        showError(response.error || "Failed to save character");
-        // If username exists, focus the username field for the user to change it
-        if (
-          response.error &&
-          response.error.includes("Username already exists")
-        ) {
-          const usernameField = document.getElementById("username");
-          usernameField.focus();
-          usernameField.select();
-        }
-      }
-    });
   } catch (error) {
     console.error("Error saving character:", error);
     showError("Failed to save character");
   }
 }
 
-// Set up the socket listener for characterSaved event
-socketManager.socket.on("characterSaved", (response) => {
-  if (response.success) {
-    showSuccess("Character saved successfully!");
-    window.location.href = "displayCharacter.html";
-  } else {
-    showError("Failed to save character");
-  }
-});
-
 // Sets up event listeners for all form inputs to enable real-time updates
 function setupFormListeners() {
   try {
-    // Attaches change event listeners to all form inputs
     const formElements = document.querySelectorAll("input, select");
     formElements.forEach((element) => {
       if (element.id) {
         element.addEventListener("change", (e) => {
-          // Handles both checkbox and regular input updates
-          const value =
-            element.type === "checkbox" ? element.checked : element.value;
+          let value = element.type === "checkbox" ? element.checked : element.value;
+          
+          // Convert numeric inputs to numbers before validation
+          if (element.type === "number") {
+            value = value === "" ? "" : parseInt(value);
+          }
+          
           const update = { [element.id]: value };
-          // Validates and updates character state if input is valid
+          
           if (socketManager.validateData(update)) {
             characterState.update(update);
             debouncedUpdate(update);
           } else {
-            showError(`Invalid value for ${element.id}`);
+            // More specific error messages
+            const fieldName = element.id.charAt(0).toUpperCase() + element.id.slice(1);
+            if (element.id === 'level') {
+              showError(`${fieldName} must be between 1 and 20`);
+            } else if (['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].includes(element.id)) {
+              showError(`${fieldName} must be between 1 and 30`);
+            } else {
+              showError(`Invalid value for ${fieldName}`);
+            }
             e.target.value = characterState.getState()[element.id];
           }
         });
       }
     });
+
+    // Listener for wisdom score changes
+    const wisdomInput = document.getElementById('wisdom');
+    if (wisdomInput) {
+      wisdomInput.addEventListener('change', () => {
+        calculateModifier('wisdom');
+        updatePassivePerception();
+      });
+    }
   } catch (error) {
-    console.error("Error setting up form listeners:", error);
-    showError("Failed to initialize form listeners");
+    console.error('Error setting up form listeners:', error);
+    showError('Failed to initialize form listeners');
   }
 }
 
@@ -569,3 +604,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Final cleanup and initialization
 console.log("All components initialized successfully");
+
+// Function to calculate passive perception
+function updatePassivePerception() {
+  try {
+    const wisdomModifier = parseInt(document.getElementById('wisdom-modifier').value) || 0;
+    const proficiencyBonus = parseInt(document.getElementById('proficiency-bonus').value) || 0;
+    
+    // Base passive perception is 10 + wisdom modifier
+    let passivePerception = 10 + wisdomModifier;
+    
+    // TODO: Add proficiency bonus if the character is proficient in Perception
+    // This could be expanded later with a proper skills system
+    
+    document.getElementById('passive-perception').value = passivePerception;
+    characterState.update({ passivePerception });
+    debouncedUpdate({ passivePerception });
+  } catch (error) {
+    console.error('Error updating passive perception:', error);
+    showError('Failed to update passive perception');
+  }
+}

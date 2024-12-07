@@ -32,6 +32,11 @@ window.addEventListener("DOMContentLoaded", function () {
             const modifier = calculateModifier(score);
 
             modifierInput.value = modifier;
+
+            // Update passive perception when wisdom changes
+            if (ability === 'wisdom') {
+                updatePassivePerception();
+            }
         });
     }
 
@@ -79,6 +84,8 @@ window.addEventListener("DOMContentLoaded", function () {
             intelligence: document.getElementById("intelligence").value,
             wisdom: document.getElementById("wisdom").value,
             charisma: document.getElementById("charisma").value,
+            size: document.getElementById("size").value,
+            passivePerception: document.getElementById("passive-perception").value,
         };
 
         // Emit save event to server
@@ -110,6 +117,8 @@ window.addEventListener("DOMContentLoaded", function () {
         document.getElementById("shield").checked = character.hasShield || false;
         document.getElementById("currhp").value = character.currentHp || "";
         document.getElementById("maxhp").value = character.maxHp || "";
+        document.getElementById("size").value = character.size || "";
+        document.getElementById("passive-perception").value = character.passivePerception || 10;
 
         // Ability Scores
         abilityScores.forEach((ability) => {
@@ -120,6 +129,11 @@ window.addEventListener("DOMContentLoaded", function () {
             scoreInput.value = score;
             modifierInput.value = calculateModifier(score);
         });
+
+        // Update passive perception when wisdom changes
+        const wisdomScore = parseInt(document.getElementById("wisdom").value) || 10;
+        const wisdomMod = calculateModifier(wisdomScore);
+        document.getElementById("passive-perception").value = 10 + wisdomMod;
     });
 
     // Handle character update response
@@ -138,6 +152,13 @@ window.addEventListener("DOMContentLoaded", function () {
         console.error("Error:", errorMessage);
         alert("Error loading character: " + errorMessage);
     });
+
+    // Add a function to update passive perception when wisdom changes
+    function updatePassivePerception() {
+        const wisdomScore = parseInt(document.getElementById("wisdom").value) || 10;
+        const wisdomMod = calculateModifier(wisdomScore);
+        document.getElementById("passive-perception").value = 10 + wisdomMod;
+    }
 });
 
 // Add a home button to the page
