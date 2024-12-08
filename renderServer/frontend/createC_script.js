@@ -60,7 +60,6 @@ const characterState = new CharacterState();
 
 // Socket connection with error handling and reconnection logic
 class SocketManager {
-  // Manages WebSocket connection with robust error handling and reconnection
   constructor() {
     this.socket = io({
       // Configures socket to automatically attempt reconnection
@@ -71,6 +70,7 @@ class SocketManager {
     this.setupSocketListeners();
   }
 
+  // Sets up socket listeners for connection events and incoming data
   setupSocketListeners() {
     // Handles various socket connection events
     this.socket.on("connect", () => {
@@ -79,20 +79,21 @@ class SocketManager {
       this.socket.emit("joinCharacterSession", { userId: this.getUserId() });
     });
 
+    // Handles connection errors
     this.socket.on("connect_error", (error) => {
-      // Logs and displays connection errors
       console.error("Connection error:", error);
       showError("Connection failed. Retrying...");
     });
 
+    // Handles reconnection failure
     this.socket.on("reconnect_failed", () => {
-      // Handles persistent connection failures
       console.error("Failed to reconnect");
       showError("Connection lost. Please refresh the page.");
     });
 
     // Handles incoming character data updates
     this.socket.on("characterData", (data) => {
+      // If data is valid, updates the character state and form fields
       if (data && this.validateData(data)) {
         characterState.update(data);
         updateFormFields(data);
@@ -108,10 +109,10 @@ class SocketManager {
     });
   }
 
-  // Validates incoming data against predefined schema
+  // Validate incoming data against schema
   validateData(data) {
     const schema = {
-      // Defines strict validation rules for character attributes
+      // Defines validation rules for character attributes
       name: (value) => typeof value === "string",
       level: (value) => {
         // Convert string value to number if needed
@@ -144,7 +145,7 @@ class SocketManager {
     });
   }
 
-  // Safely emits events only when socket is connected
+  // Emits events only when socket is connected
   emit(event, data) {
     if (this.socket.connected) {
       this.socket.emit(event, data);
@@ -450,9 +451,6 @@ function handleFormSubmission(event) {
     // Debug log
     console.log('Character data to be saved:', characterData);
 
-    // Remove any existing characterSaved listener
-    socketManager.socket.off('characterSaved');
-
     // Set up the characterSaved listener
     socketManager.socket.on('characterSaved', (response) => {
       if (response.success) {
@@ -500,17 +498,6 @@ function setupFormListeners() {
           if (socketManager.validateData(update)) {
             characterState.update(update);
             debouncedUpdate(update);
-          } else {
-            // More specific error messages
-            const fieldName = element.id.charAt(0).toUpperCase() + element.id.slice(1);
-            if (element.id === 'level') {
-              showError(`${fieldName} must be between 1 and 20`);
-            } else if (['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].includes(element.id)) {
-              showError(`${fieldName} must be between 1 and 30`);
-            } else {
-              showError(`Invalid value for ${fieldName}`);
-            }
-            e.target.value = characterState.getState()[element.id];
           }
         });
       }
@@ -614,8 +601,8 @@ function updatePassivePerception() {
     // Base passive perception is 10 + wisdom modifier
     let passivePerception = 10 + wisdomModifier;
     
-    // TODO: Add proficiency bonus if the character is proficient in Perception
-    // This could be expanded later with a proper skills system
+    // Add proficiency bonus if the character is proficient in Perception
+    passivePerception += proficiencyBonus;
     
     document.getElementById('passive-perception').value = passivePerception;
     characterState.update({ passivePerception });
